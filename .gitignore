@@ -12,3 +12,6 @@ coverage/
 # éditeurs / OS
 .DS_Store
 *.log
+
+# apprentissage perso, non versionné
+.claude/LEARNING.local.md
