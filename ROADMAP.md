@@ -16,13 +16,18 @@ On ne passe à la suivante que quand la précédente tourne.
 **Objectif pédagogique :** comprendre ce qu'un monorepo résout réellement, et pourquoi
 `pnpm workspaces` et Turborepo sont deux outils distincts qui ne font pas le même travail.
 
-- [ ] Supprimer l'échafaudage Expo (`app/`, `components/`, `hooks/`, `constants/`, `app.json`, `node_modules`)
-- [ ] `pnpm-workspace.yaml` : déclarer `apps/*` et `packages/*`
-- [ ] `package.json` racine : scripts qui délèguent à Turborepo, aucune dépendance applicative
-- [ ] `turbo.json` : pipeline `build`, `dev`, `test`, `lint` avec ses dépendances
-- [ ] TypeScript : une config de base partagée, étendue par chaque package
-- [ ] ESLint (flat config) + Prettier à la racine
-- [ ] Premier commit de la nouvelle structure
+- [x] Supprimer l'échafaudage Expo (`app/`, `components/`, `hooks/`, `constants/`, `app.json`, `node_modules`)
+- [x] `pnpm-workspace.yaml` : déclarer `apps/*` et `packages/*`
+- [x] `package.json` racine : scripts qui délèguent à Turborepo, aucune dépendance applicative
+- [x] `turbo.json` : pipeline `build`, `dev`, `test`, `lint` avec ses dépendances
+- [x] TypeScript : une config de base partagée, étendue par chaque package (`packages/tsconfig`)
+- [ ] ESLint (flat config) + Prettier à la racine — **reporté** : on le branchera quand il y aura du code à linter
+- [x] Premier commit de la nouvelle structure
+- [x] Dépôt GitHub public créé et poussé : https://github.com/kbosc/deck-roulette
+
+> **Fait le 31/08/2026.** pnpm 10.17.1 activé via Corepack, Turborepo 2.10.12, TypeScript 5.9.
+> Le contexte personnel et les objectifs d'apprentissage ont été sortis du skill vers
+> `.claude/LEARNING.local.md` (non versionné), le dépôt étant public.
 
 **Concepts :** workspace vs package · pourquoi pnpm n'aplatit pas `node_modules` ·
 graphe de tâches et cache de Turborepo · dépendance interne déclarée avec `workspace:*`.
