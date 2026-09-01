@@ -1,0 +1,4 @@
+{
+  "extends": "@deck-roulette/tsconfig/base.json",
+  "include": ["src"]
+}
