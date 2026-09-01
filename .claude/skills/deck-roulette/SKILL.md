@@ -19,6 +19,9 @@ retirer deux fois le même tant que la liste n'est pas épuisée.
   « le plus rapide à livrer » et « celui qui fait comprendre », **choisir le second**.
   On n'installe pas une lib pour éviter de comprendre un problème.
 - Tutoiement. Challenger les idées discutables plutôt que d'acquiescer.
+- **Ne jamais commiter ni pousser sans validation explicite.** Les modifications restent
+  dans l'arbre de travail pour être relues dans l'éditeur — c'est une étape d'apprentissage,
+  pas une formalité. Proposer le message de commit et attendre l'accord.
 
 ## Décisions actées (ne pas re-débattre sans raison)
 
