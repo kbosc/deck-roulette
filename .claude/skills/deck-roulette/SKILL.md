@@ -110,6 +110,13 @@ d'une entité `Match` séparée (voir ROADMAP phase 8), à prévoir dès le vers
 
 ## Règles de qualité non négociables
 
+- **Tout le code est en anglais** : noms, commentaires, messages d'erreur, libellés de
+  tests. Seuls les documents de suivi (ce guide, la roadmap, le journal) sont en français.
+  Un dépôt public bilingue se lit deux fois moins bien qu'un dépôt monolingue.
+- **Lecture et action séparées.** Une fonction qui *interroge* l'état (`getPoolDrawState`)
+  se tient à côté de celle qui *le modifie* (`drawDeck`), pour que l'UI puisse désactiver
+  un bouton sans avoir à tenter l'action. La fonction d'action garde malgré tout ses cas
+  d'échec : le domaine ne fait jamais confiance à son appelant.
 - **TypeScript strict, jamais de `any`.** Quand le type est réellement inconnu (JSON externe),
   c'est `unknown` puis un narrowing — ou Zod.
 - **Design tokens d'abord.** Aucune couleur, aucun espacement en dur dans un composant.

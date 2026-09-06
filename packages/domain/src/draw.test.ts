@@ -1,0 +1,129 @@
+import { describe, expect, it } from "vitest";
+import type { Pool } from "./types";
+import { drawDeck, getPoolDrawState, getRemainingDeckIds } from "./draw";
+
+/**
+ * Builds a pool with sensible defaults, so each test only spells out what it
+ * actually cares about. `= {}` is a default parameter value, which makes the
+ * argument optional: `makePool()` returns the base pool untouched.
+ */
+function makePool(overrides: Partial<Pool> = {}): Pool {
+  return {
+    id: "pool-1",
+    name: "Thursday table",
+    deckIds: [],
+    drawnDeckIds: [],
+    createdAt: "2026-09-05T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+describe("getRemainingDeckIds", () => {
+  it("returns the decks that have not been drawn yet", () => {
+    const pool = makePool({ deckIds: ["a", "b", "c"], drawnDeckIds: ["b"] });
+
+    expect(getRemainingDeckIds(pool)).toEqual(["a", "c"]);
+  });
+});
+
+describe("getPoolDrawState", () => {
+  it("reports an empty pool", () => {
+    expect(getPoolDrawState(makePool())).toBe("empty");
+  });
+
+  it("reports an exhausted pool", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a", "b"] });
+
+    expect(getPoolDrawState(pool)).toBe("exhausted");
+  });
+
+  it("reports a pool that can still be drawn from", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(getPoolDrawState(pool)).toBe("ready");
+  });
+});
+
+describe("drawDeck", () => {
+  it("returns the empty status when the pool holds no deck", () => {
+    expect(drawDeck(makePool(), () => 0)).toEqual({ status: "empty" });
+  });
+
+  it("returns the exhausted status when every deck has been drawn", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a", "b"] });
+
+    expect(drawDeck(pool, () => 0)).toEqual({ status: "exhausted" });
+  });
+
+  it("draws the first remaining deck when random() returns 0", () => {
+    const pool = makePool({ deckIds: ["a", "b", "c"], drawnDeckIds: ["a"] });
+
+    const result = drawDeck(pool, () => 0);
+
+    expect(result).toEqual({
+      status: "drawn",
+      deckId: "b",
+      pool: { ...pool, drawnDeckIds: ["a", "b"] },
+    });
+  });
+
+  it("draws the last remaining deck when random() approaches 1", () => {
+    const pool = makePool({ deckIds: ["a", "b", "c"] });
+
+    const result = drawDeck(pool, () => 0.999);
+
+    expect(result).toMatchObject({ status: "drawn", deckId: "c" });
+  });
+
+  it("does not mutate the given pool", () => {
+    const pool = makePool({ deckIds: ["a"] });
+
+    drawDeck(pool, () => 0);
+
+    expect(pool.drawnDeckIds).toEqual([]);
+  });
+
+  it("eventually draws every deck exactly once", () => {
+    let current = makePool({ deckIds: ["a", "b", "c"] });
+    const drawn: string[] = [];
+
+    for (let i = 0; i < 3; i++) {
+      const result = drawDeck(current, Math.random);
+      if (result.status !== "drawn") throw new Error(`draw ${i}: ${result.status}`);
+      drawn.push(result.deckId);
+      current = result.pool;
+    }
+
+    expect(drawn.toSorted()).toEqual(["a", "b", "c"]);
+    expect(drawDeck(current, Math.random)).toEqual({ status: "exhausted" });
+  });
+
+  it("maps the whole [0, 1) range onto the remaining decks", () => {
+    const pool = makePool({ deckIds: ["a", "b", "c", "d"] });
+    // Four decks means each one owns exactly a quarter of the range. Both edges
+    // of every quarter are checked, which is where off-by-one bugs live.
+    const cases: ReadonlyArray<readonly [number, string]> = [
+      [0, "a"],
+      [0.249, "a"],
+      [0.25, "b"],
+      [0.499, "b"],
+      [0.5, "c"],
+      [0.749, "c"],
+      [0.75, "d"],
+      [0.999, "d"],
+    ];
+
+    for (const [value, expected] of cases) {
+      expect(drawDeck(pool, () => value)).toMatchObject({
+        status: "drawn",
+        deckId: expected,
+      });
+    }
+  });
+
+  it("rejects an out-of-contract source of randomness", () => {
+    const pool = makePool({ deckIds: ["a"] });
+
+    expect(() => drawDeck(pool, () => 1)).toThrow(RangeError);
+  });
+});
