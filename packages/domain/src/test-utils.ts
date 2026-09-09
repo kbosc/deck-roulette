@@ -1,4 +1,4 @@
-import type { Pool } from "./types";
+import type { Deck, Pool } from "./types";
 
 /**
  * Builds a pool with sensible defaults, so each test only spells out what it
@@ -13,6 +13,16 @@ export function makePool(overrides: Partial<Pool> = {}): Pool {
     name: "Thursday table",
     deckIds: [],
     drawnDeckIds: [],
+    createdAt: "2026-09-05T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+/** Same idea as `makePool`, for decks. */
+export function makeDeck(overrides: Partial<Deck> = {}): Deck {
+  return {
+    id: "deck-1",
+    name: "Atraxa, Praetors' Voice",
     createdAt: "2026-09-05T00:00:00.000Z",
     ...overrides,
   };
