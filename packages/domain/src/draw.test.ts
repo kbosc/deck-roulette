@@ -1,22 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Pool } from "./types";
 import { drawDeck, getPoolDrawState, getRemainingDeckIds, resetPool } from "./draw";
-
-/**
- * Builds a pool with sensible defaults, so each test only spells out what it
- * actually cares about. `= {}` is a default parameter value, which makes the
- * argument optional: `makePool()` returns the base pool untouched.
- */
-function makePool(overrides: Partial<Pool> = {}): Pool {
-  return {
-    id: "pool-1",
-    name: "Thursday table",
-    deckIds: [],
-    drawnDeckIds: [],
-    createdAt: "2026-09-05T00:00:00.000Z",
-    ...overrides,
-  };
-}
+import { makePool } from "./test-utils";
 
 describe("getRemainingDeckIds", () => {
   it("returns the decks that have not been drawn yet", () => {
