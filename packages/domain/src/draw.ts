@@ -87,3 +87,19 @@ export function drawDeck(pool: Pool, random: Random): DrawResult {
     pool: { ...pool, drawnDeckIds: [...pool.drawnDeckIds, deckId] },
   };
 }
+
+/**
+ * Starts a new cycle: every deck becomes drawable again.
+ *
+ * Resetting a pool that is not exhausted is allowed — the user may want to start
+ * over mid-cycle. Warning them is the UI's job, not the domain's.
+ *
+ * Returns the very same pool when there is nothing to clear, so that a needless
+ * reset does not produce a new reference and re-render everything for nothing.
+ */
+export function resetPool(pool: Pool): Pool {
+  if (pool.drawnDeckIds.length === 0) {
+    return pool;
+  }
+  return { ...pool, drawnDeckIds: [] };
+}

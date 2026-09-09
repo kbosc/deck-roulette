@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Pool } from "./types";
-import { drawDeck, getPoolDrawState, getRemainingDeckIds } from "./draw";
+import { drawDeck, getPoolDrawState, getRemainingDeckIds, resetPool } from "./draw";
 
 /**
  * Builds a pool with sensible defaults, so each test only spells out what it
@@ -125,5 +125,51 @@ describe("drawDeck", () => {
     const pool = makePool({ deckIds: ["a"] });
 
     expect(() => drawDeck(pool, () => 1)).toThrow(RangeError);
+  });
+});
+
+describe("resetPool", () => {
+  it("clears the decks drawn during the cycle", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a", "b"] });
+
+    expect(resetPool(pool)).toEqual({ ...pool, drawnDeckIds: [] });
+  });
+
+  it("resets a pool that is not exhausted yet", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(resetPool(pool).drawnDeckIds).toEqual([]);
+  });
+
+  it("makes every deck drawable again", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a", "b"] });
+
+    expect(getPoolDrawState(resetPool(pool))).toBe("ready");
+  });
+
+  it("does not mutate the given pool", () => {
+    const pool = makePool({ deckIds: ["a"], drawnDeckIds: ["a"] });
+
+    resetPool(pool);
+
+    expect(pool.drawnDeckIds).toEqual(["a"]);
+  });
+
+  it("returns a new reference when it actually clears something", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(resetPool(pool)).not.toBe(pool);
+  });
+
+  it("returns the same reference when there is nothing to clear", () => {
+    const pool = makePool({ deckIds: ["a", "b"] });
+
+    // `toBe` is reference equality, unlike `toEqual` which compares content.
+    // A new object here would re-render every subscriber for no reason.
+    expect(resetPool(pool)).toBe(pool);
+  });
+
+  it("leaves an empty pool empty", () => {
+    expect(getPoolDrawState(resetPool(makePool()))).toBe("empty");
   });
 });
