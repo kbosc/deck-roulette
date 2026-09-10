@@ -1,3 +1,5 @@
+import type { DeckId, PoolId } from "./ids";
+
 /**
  * The five Magic colors, plus colorless.
  * W = White, U = Blue, B = Black, R = Red, G = Green, C = Colorless.
@@ -21,7 +23,7 @@ export type Bracket = 1 | 2 | 3 | 4 | 5;
 export type Commanders = readonly [string] | readonly [string, string];
 
 export type Deck = {
-  readonly id: string;
+  readonly id: DeckId;
   readonly name: string;
   readonly commanders?: Commanders;
   readonly colors?: ColorIdentity;
@@ -39,10 +41,10 @@ export type Deck = {
  * Deleting a deck must clean up both lists.
  */
 export type Pool = {
-  readonly id: string;
+  readonly id: PoolId;
   readonly name: string;
-  readonly deckIds: readonly string[];
+  readonly deckIds: readonly DeckId[];
   /** Decks already drawn during the current cycle. */
-  readonly drawnDeckIds: readonly string[];
+  readonly drawnDeckIds: readonly DeckId[];
   readonly createdAt: string;
 };

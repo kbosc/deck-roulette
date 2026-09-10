@@ -1,3 +1,4 @@
+import type { DeckId } from "./ids";
 import type { Pool } from "./types";
 
 /**
@@ -10,7 +11,7 @@ import type { Pool } from "./types";
  * `deckIds` is an array rather than a Set because display order matters and a
  * Set does not survive JSON serialization, which persistence and export rely on.
  */
-export function addDeckToPool(pool: Pool, deckId: string): Pool {
+export function addDeckToPool(pool: Pool, deckId: DeckId): Pool {
   if (pool.deckIds.includes(deckId)) {
     return pool;
   }
@@ -24,7 +25,7 @@ export function addDeckToPool(pool: Pool, deckId: string): Pool {
  * `drawnDeckIds ⊆ deckIds` invariant, and the damage would only surface later:
  * adding that deck back would bring it in already flagged as drawn.
  */
-export function removeDeckFromPool(pool: Pool, deckId: string): Pool {
+export function removeDeckFromPool(pool: Pool, deckId: DeckId): Pool {
   if (!pool.deckIds.includes(deckId)) {
     return pool;
   }

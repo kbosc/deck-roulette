@@ -1,4 +1,5 @@
 import { removeDeckFromPool } from "./pool";
+import type { DeckId } from "./ids";
 import type { Deck, Pool } from "./types";
 
 /**
@@ -24,7 +25,7 @@ export type Library = {
  * Pools that did not hold the deck keep their identity, so their subscribers are
  * left alone even though the surrounding array is new.
  */
-export function deleteDeck(library: Library, deckId: string): Library {
+export function deleteDeck(library: Library, deckId: DeckId): Library {
   const decks = library.decks.filter((deck) => deck.id !== deckId);
 
   if (decks.length === library.decks.length) {

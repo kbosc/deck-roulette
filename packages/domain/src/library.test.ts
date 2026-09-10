@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { deleteDeck } from "./library";
 import type { Library } from "./library";
+import { toDeckId } from "./ids";
 import { makeDeck, makePool } from "./test-utils";
 
 function makeLibrary(): Library {
@@ -16,19 +17,19 @@ function makeLibrary(): Library {
 
 describe("deleteDeck", () => {
   it("drops the deck from the deck list", () => {
-    const library = deleteDeck(makeLibrary(), "a");
+    const library = deleteDeck(makeLibrary(), toDeckId("a"));
 
     expect(library.decks.map((deck) => deck.id)).toEqual(["b", "c"]);
   });
 
   it("drops the deck from every pool holding it", () => {
-    const library = deleteDeck(makeLibrary(), "a");
+    const library = deleteDeck(makeLibrary(), toDeckId("a"));
 
     expect(library.pools.map((pool) => pool.deckIds)).toEqual([["b"], ["c"], ["c"]]);
   });
 
   it("drops the deck from the decks already drawn too", () => {
-    const library = deleteDeck(makeLibrary(), "a");
+    const library = deleteDeck(makeLibrary(), toDeckId("a"));
 
     expect(library.pools[0]?.drawnDeckIds).toEqual([]);
   });
@@ -36,7 +37,7 @@ describe("deleteDeck", () => {
   it("leaves untouched pools with their identity, so they do not re-render", () => {
     const before = makeLibrary();
 
-    const after = deleteDeck(before, "a");
+    const after = deleteDeck(before, toDeckId("a"));
 
     // "cedh" never held deck "a".
     expect(after.pools[2]).toBe(before.pools[2]);
@@ -46,19 +47,19 @@ describe("deleteDeck", () => {
   it("returns the same reference when the deck does not exist", () => {
     const library = makeLibrary();
 
-    expect(deleteDeck(library, "zzz")).toBe(library);
+    expect(deleteDeck(library, toDeckId("zzz"))).toBe(library);
   });
 
   it("does not mutate the given library", () => {
     const library = makeLibrary();
 
-    deleteDeck(library, "a");
+    deleteDeck(library, toDeckId("a"));
 
     expect(library).toEqual(makeLibrary());
   });
 
   it("empties a pool whose only deck is deleted", () => {
-    const library = deleteDeck(makeLibrary(), "c");
+    const library = deleteDeck(makeLibrary(), toDeckId("c"));
 
     expect(library.pools[2]?.deckIds).toEqual([]);
   });

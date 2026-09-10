@@ -1,3 +1,5 @@
+export type { DeckId, PoolId } from "./ids";
+export { toDeckId, toPoolId } from "./ids";
 export type { Library } from "./library";
 export { deleteDeck } from "./library";
 export type { Color, ColorIdentity, Bracket, Commanders, Deck, Pool } from "./types";

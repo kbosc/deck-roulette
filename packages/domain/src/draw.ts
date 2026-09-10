@@ -1,3 +1,4 @@
+import type { DeckId } from "./ids";
 import type { Pool } from "./types";
 
 /**
@@ -25,12 +26,12 @@ export type PoolDrawState = "ready" | "empty" | "exhausted";
  * over, start a new one?").
  */
 export type DrawResult =
-  | { readonly status: "drawn"; readonly deckId: string; readonly pool: Pool }
+  | { readonly status: "drawn"; readonly deckId: DeckId; readonly pool: Pool }
   | { readonly status: "empty" }
   | { readonly status: "exhausted" };
 
 /** The decks that have not been drawn yet during the current cycle. */
-export function getRemainingDeckIds(pool: Pool): readonly string[] {
+export function getRemainingDeckIds(pool: Pool): readonly DeckId[] {
   // A Set is used for constant-time lookups: `filter` + `includes` would be
   // quadratic, since `includes` walks the array on every iteration.
   const drawn = new Set(pool.drawnDeckIds);
