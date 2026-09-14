@@ -1,3 +1,4 @@
+export { mergeColorIdentities } from "./colors";
 export type { IdFactory, Clock, CreationDeps, DeckInput } from "./creation";
 export { createDeck, createPool } from "./creation";
 export type { DeckId, PoolId } from "./ids";
