@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { drawDeck, getPoolDrawState, getRemainingDeckIds, resetPool } from "./draw";
+import {
+  drawDeck,
+  getPoolDrawState,
+  getRemainingDeckIds,
+  resetPool,
+  returnDeckToPool,
+} from "./draw";
+import { toDeckId } from "./ids";
 import { makePool } from "./test-utils";
 
 describe("getRemainingDeckIds", () => {
@@ -155,5 +162,54 @@ describe("resetPool", () => {
 
   it("leaves an empty pool empty", () => {
     expect(getPoolDrawState(resetPool(makePool()))).toBe("empty");
+  });
+});
+
+describe("returnDeckToPool", () => {
+  it("makes the deck drawable again", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(getRemainingDeckIds(returnDeckToPool(pool, toDeckId("a")))).toEqual(["a", "b"]);
+  });
+
+  it("leaves the pool membership alone", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(returnDeckToPool(pool, toDeckId("a")).deckIds).toEqual(["a", "b"]);
+  });
+
+  it("keeps the other draws of the cycle", () => {
+    const pool = makePool({ deckIds: ["a", "b", "c"], drawnDeckIds: ["a", "b"] });
+
+    expect(returnDeckToPool(pool, toDeckId("a")).drawnDeckIds).toEqual(["b"]);
+  });
+
+  it("brings an exhausted pool back to ready", () => {
+    const pool = makePool({ deckIds: ["a"], drawnDeckIds: ["a"] });
+
+    expect(getPoolDrawState(returnDeckToPool(pool, toDeckId("a")))).toBe("ready");
+  });
+
+  it("returns the same reference when the deck was not drawn", () => {
+    const pool = makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] });
+
+    expect(returnDeckToPool(pool, toDeckId("b"))).toBe(pool);
+  });
+
+  it("does not mutate the given pool", () => {
+    const pool = makePool({ deckIds: ["a"], drawnDeckIds: ["a"] });
+
+    returnDeckToPool(pool, toDeckId("a"));
+
+    expect(pool.drawnDeckIds).toEqual(["a"]);
+  });
+
+  it("cancels an actual draw", () => {
+    const pool = makePool({ deckIds: ["a", "b"] });
+
+    const result = drawDeck(pool, () => 0);
+    if (result.status !== "drawn") throw new Error(result.status);
+
+    expect(returnDeckToPool(result.pool, result.deckId)).toEqual(pool);
   });
 });

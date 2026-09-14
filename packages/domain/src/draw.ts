@@ -104,3 +104,20 @@ export function resetPool(pool: Pool): Pool {
   }
   return { ...pool, drawnDeckIds: [] };
 }
+
+/**
+ * Cancels a draw: the deck becomes drawable again during the current cycle.
+ *
+ * Only touches `drawnDeckIds` — the deck never left the pool, it was merely
+ * flagged as already drawn. A deck that was not drawn is left alone, same
+ * reference included.
+ */
+export function returnDeckToPool(pool: Pool, deckId: DeckId): Pool {
+  if (!pool.drawnDeckIds.includes(deckId)) {
+    return pool;
+  }
+  return {
+    ...pool,
+    drawnDeckIds: pool.drawnDeckIds.filter((id) => id !== deckId),
+  };
+}

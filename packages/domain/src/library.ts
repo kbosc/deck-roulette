@@ -1,5 +1,5 @@
 import { removeDeckFromPool } from "./pool";
-import type { DeckId } from "./ids";
+import type { DeckId, PoolId } from "./ids";
 import type { Deck, Pool } from "./types";
 
 /**
@@ -36,4 +36,31 @@ export function deleteDeck(library: Library, deckId: DeckId): Library {
     decks,
     pools: library.pools.map((pool) => removeDeckFromPool(pool, deckId)),
   };
+}
+
+/**
+ * Adds a deck to the library, without putting it in any pool.
+ *
+ * Creating a deck and deciding where to draw it from are two separate user
+ * actions, so they are two separate functions.
+ */
+export function addDeck(library: Library, deck: Deck): Library {
+  return { ...library, decks: [...library.decks, deck] };
+}
+
+/**
+ * Deletes a pool, and only the pool.
+ *
+ * Deliberately **not** the mirror image of `deleteDeck`: a pool references decks,
+ * it does not own them. The same deck usually sits in several pools, so wiping
+ * them along with the pool would be irreversible data loss.
+ */
+export function deletePool(library: Library, poolId: PoolId): Library {
+  const pools = library.pools.filter((pool) => pool.id !== poolId);
+
+  if (pools.length === library.pools.length) {
+    return library;
+  }
+
+  return { ...library, pools };
 }
