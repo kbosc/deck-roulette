@@ -1,3 +1,5 @@
+export type { IdFactory, Clock, CreationDeps, DeckInput } from "./creation";
+export { createDeck, createPool } from "./creation";
 export type { DeckId, PoolId } from "./ids";
 export { toDeckId, toPoolId } from "./ids";
 export type { Library } from "./library";
