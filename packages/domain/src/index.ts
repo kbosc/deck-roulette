@@ -1,3 +1,11 @@
+export type { PersistedLibrary, Migration } from "./persistence";
+export {
+  CURRENT_SCHEMA_VERSION,
+  migrations,
+  toPersisted,
+  applyMigrations,
+  readPersisted,
+} from "./persistence";
 export { mergeColorIdentities } from "./colors";
 export type { IdFactory, Clock, CreationDeps, DeckInput } from "./creation";
 export { createDeck, createPool } from "./creation";
