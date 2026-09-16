@@ -1,6 +1,10 @@
 {
   "$description": "Raw color values. No component may reference these directly: they carry a hue, never a role. Roles live in semantic/.",
   "color": {
+    "base": {
+      "white": { "$type": "color", "$value": "#ffffff" },
+      "black": { "$type": "color", "$value": "#000000" }
+    },
     "neutral": {
       "50":  { "$type": "color", "$value": "#f8f8fa" },
       "100": { "$type": "color", "$value": "#eeeef2" },
