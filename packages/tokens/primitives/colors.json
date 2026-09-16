@@ -1,0 +1,70 @@
+{
+  "$description": "Raw color values. No component may reference these directly: they carry a hue, never a role. Roles live in semantic/.",
+  "color": {
+    "neutral": {
+      "50":  { "$type": "color", "$value": "#f8f8fa" },
+      "100": { "$type": "color", "$value": "#eeeef2" },
+      "200": { "$type": "color", "$value": "#dcdce4" },
+      "300": { "$type": "color", "$value": "#bcbcca" },
+      "400": { "$type": "color", "$value": "#8e8ea3" },
+      "500": { "$type": "color", "$value": "#6b6b82" },
+      "600": { "$type": "color", "$value": "#535368" },
+      "700": { "$type": "color", "$value": "#3f3f52" },
+      "800": { "$type": "color", "$value": "#2a2a38" },
+      "900": { "$type": "color", "$value": "#1a1a24" },
+      "950": { "$type": "color", "$value": "#101017" }
+    },
+    "violet": {
+      "50":  { "$type": "color", "$value": "#f5f2ff" },
+      "100": { "$type": "color", "$value": "#ebe4ff" },
+      "200": { "$type": "color", "$value": "#d9ceff" },
+      "300": { "$type": "color", "$value": "#bda6ff" },
+      "400": { "$type": "color", "$value": "#9b76ff" },
+      "500": { "$type": "color", "$value": "#7c4dff" },
+      "600": { "$type": "color", "$value": "#6631f5" },
+      "700": { "$type": "color", "$value": "#5623d4" },
+      "800": { "$type": "color", "$value": "#461fab" },
+      "900": { "$type": "color", "$value": "#3a1d88" },
+      "950": { "$type": "color", "$value": "#220f57" }
+    },
+    "red": {
+      "50":  { "$type": "color", "$value": "#fff1f1" },
+      "100": { "$type": "color", "$value": "#ffe0e0" },
+      "200": { "$type": "color", "$value": "#ffc6c6" },
+      "300": { "$type": "color", "$value": "#ff9d9d" },
+      "400": { "$type": "color", "$value": "#fb6464" },
+      "500": { "$type": "color", "$value": "#ef3a3a" },
+      "600": { "$type": "color", "$value": "#dc1d1d" },
+      "700": { "$type": "color", "$value": "#b91515" },
+      "800": { "$type": "color", "$value": "#991515" },
+      "900": { "$type": "color", "$value": "#7f1818" },
+      "950": { "$type": "color", "$value": "#450707" }
+    },
+    "amber": {
+      "50":  { "$type": "color", "$value": "#fffbeb" },
+      "100": { "$type": "color", "$value": "#fef3c7" },
+      "200": { "$type": "color", "$value": "#fde68a" },
+      "300": { "$type": "color", "$value": "#fcd34d" },
+      "400": { "$type": "color", "$value": "#fbbf24" },
+      "500": { "$type": "color", "$value": "#f59e0b" },
+      "600": { "$type": "color", "$value": "#d97706" },
+      "700": { "$type": "color", "$value": "#b45309" },
+      "800": { "$type": "color", "$value": "#92400e" },
+      "900": { "$type": "color", "$value": "#78350f" },
+      "950": { "$type": "color", "$value": "#451a03" }
+    },
+    "green": {
+      "50":  { "$type": "color", "$value": "#f0fdf4" },
+      "100": { "$type": "color", "$value": "#dcfce7" },
+      "200": { "$type": "color", "$value": "#bbf7d0" },
+      "300": { "$type": "color", "$value": "#86efac" },
+      "400": { "$type": "color", "$value": "#4ade80" },
+      "500": { "$type": "color", "$value": "#22c55e" },
+      "600": { "$type": "color", "$value": "#16a34a" },
+      "700": { "$type": "color", "$value": "#15803d" },
+      "800": { "$type": "color", "$value": "#166534" },
+      "900": { "$type": "color", "$value": "#14532d" },
+      "950": { "$type": "color", "$value": "#052e16" }
+    }
+  }
+}

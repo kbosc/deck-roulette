@@ -1,0 +1,15 @@
+{
+  "$description": "Every duration here must be ignorable: any component using one has to honour prefers-reduced-motion. The draw animation is the core of the app, and also the one most likely to make someone sick.",
+  "duration": {
+    "instant": { "$type": "duration", "$value": "0ms" },
+    "fast":    { "$type": "duration", "$value": "120ms" },
+    "normal":  { "$type": "duration", "$value": "220ms" },
+    "slow":    { "$type": "duration", "$value": "400ms" },
+    "draw":    { "$type": "duration", "$value": "1200ms" }
+  },
+  "easing": {
+    "standard":  { "$type": "cubicBezier", "$value": "cubic-bezier(0.2, 0, 0, 1)" },
+    "decelerate":{ "$type": "cubicBezier", "$value": "cubic-bezier(0, 0, 0, 1)" },
+    "accelerate":{ "$type": "cubicBezier", "$value": "cubic-bezier(0.3, 0, 1, 1)" }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$description": "Shadows are declared in neutral-950 with an alpha channel rather than pure black, so they sit on the page instead of dirtying it.",
+  "shadow": {
+    "sm": { "$type": "shadow", "$value": "0 1px 2px 0 rgb(16 16 23 / 0.06)" },
+    "md": { "$type": "shadow", "$value": "0 4px 12px -2px rgb(16 16 23 / 0.10)" },
+    "lg": { "$type": "shadow", "$value": "0 12px 28px -6px rgb(16 16 23 / 0.18)" }
+  }
+}

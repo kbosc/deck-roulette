@@ -1,0 +1,11 @@
+{
+  "$description": "The five Magic colors, plus colorless. These are domain values, not UI values: they mean something in the game and are not ours to rethemify. They never take part in the light/dark switch, and no interface role should ever point at them.",
+  "mana": {
+    "white":     { "$type": "color", "$value": "#fffbd5" },
+    "blue":      { "$type": "color", "$value": "#aae0fa" },
+    "black":     { "$type": "color", "$value": "#cbc2bf" },
+    "red":       { "$type": "color", "$value": "#f9aa8f" },
+    "green":     { "$type": "color", "$value": "#9bd3ae" },
+    "colorless": { "$type": "color", "$value": "#cac5c0" }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@deck-roulette/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": ["primitives", "semantic"],
+  "exports": {
+    "./primitives/*": "./primitives/*",
+    "./semantic/*": "./semantic/*"
+  }
+}

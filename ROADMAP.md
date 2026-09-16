@@ -39,14 +39,27 @@ graphe de tâches et cache de Turborepo · dépendance interne déclarée avec `
 **Objectif pédagogique :** écrire du **TypeScript sérieux** sur du code sans UI —
 la meilleure porte d'entrée, parce que rien ne cache les types derrière du JSX.
 
-- [ ] Types `Deck`, `Pool`, `ColorIdentity`, `Bracket`
-- [ ] `commanders` modélisé comme une liste de 1 à 2 éléments, jamais une chaîne
-- [ ] Dérivation de l'identité colorée d'un deck : union des identités de ses commandants
-- [ ] Fonctions pures : `drawDeck`, `resetPool`, `addDeck`, `removeDeck`, `returnDeckToPool`
-- [ ] Faire respecter l'invariant `drawnDeckIds ⊆ deckIds` par le type autant que possible
-- [ ] Tests Vitest, dont le cas « pool épuisé » et la suppression d'un deck présent dans plusieurs pools
-- [ ] Vérifier l'uniformité réelle du tirage (attention aux biais d'un shuffle maison)
-- [ ] Schéma versionné dès maintenant (`version` + fonction `migrate`), y compris pour la future entité `Match`
+- [x] Types `Deck`, `Pool`, `ColorIdentity`, `Bracket`
+- [x] `commanders` modélisé comme une liste de 1 à 2 éléments, jamais une chaîne
+- [x] Dérivation de l'identité colorée d'un deck : union des identités de ses commandants
+- [x] Fonctions pures : `drawDeck`, `resetPool`, `addDeck`, `removeDeck`, `returnDeckToPool`
+- [x] Faire respecter l'invariant `drawnDeckIds ⊆ deckIds` par le type autant que possible
+- [x] Tests Vitest, dont le cas « pool épuisé » et la suppression d'un deck présent dans plusieurs pools
+- [x] Vérifier l'uniformité réelle du tirage (attention aux biais d'un shuffle maison)
+- [x] Schéma versionné dès maintenant (`version` + fonction `migrate`), y compris pour la future entité `Match`
+
+> **Notes de fin de phase.**
+> - L'invariant `drawnDeckIds ⊆ deckIds` n'est finalement pas exprimable dans le type sans
+>   rendre le modèle pénible à manipuler. Il est tenu autrement : `removeDeckFromPool` est le
+>   **seul** endroit qui touche aux deux tableaux, et `deleteDeck` lui délègue au lieu de
+>   refiltrer. Un invariant tenu en un seul point vaut mieux qu'un type acrobatique.
+> - L'uniformité du tirage est vérifiée par un test **déterministe** des bornes de l'intervalle
+>   (`0.249` / `0.25`…) plutôt que par un comptage statistique sur 4000 tirages. Même propriété
+>   prouvée, aucun aléatoire, et les erreurs d'index sont attrapées au lieu d'être noyées dans
+>   la moyenne.
+> - Les branded types (`DeckId`, `PoolId`) sont arrivés en cours de phase, après un vrai bug
+>   d'inversion d'arguments.
+> - 86 tests, `tsc --noEmit` vert.
 
 **Concepts :** `type` vs `interface` · unions et unions discriminées · `unknown` plutôt que `any` ·
 génériques (première approche) · types utilitaires (`Omit`, `Pick`, `Readonly`) · immutabilité ·
