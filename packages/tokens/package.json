@@ -3,9 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "files": ["primitives", "semantic"],
+  "files": [
+    "primitives",
+    "semantic"
+  ],
   "exports": {
     "./primitives/*": "./primitives/*",
     "./semantic/*": "./semantic/*"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@deck-roulette/tsconfig": "workspace:*",
+    "@types/node": "^22.20.3",
+    "typescript": "~5.9.0",
+    "vitest": "^5.0.0"
   }
 }
