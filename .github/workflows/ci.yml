@@ -39,3 +39,7 @@ jobs:
       - run: pnpm typecheck
 
       - run: pnpm test
+
+      # The stylesheet is generated, never committed. Building it here proves
+      # the generator still runs against the JSON as it stands.
+      - run: pnpm build

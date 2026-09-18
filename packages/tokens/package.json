@@ -5,13 +5,16 @@
   "type": "module",
   "files": [
     "primitives",
-    "semantic"
+    "semantic",
+    "dist"
   ],
   "exports": {
     "./primitives/*": "./primitives/*",
-    "./semantic/*": "./semantic/*"
+    "./semantic/*": "./semantic/*",
+    "./tokens.css": "./dist/tokens.css"
   },
   "scripts": {
+    "build": "node --experimental-strip-types src/build.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

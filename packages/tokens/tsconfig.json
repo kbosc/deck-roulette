@@ -1,4 +1,10 @@
 {
   "extends": "@deck-roulette/tsconfig/base.json",
+  "compilerOptions": {
+    // The build script runs straight through Node, which resolves ESM imports
+    // with their real extension. Only this package needs it: everything else is
+    // consumed by a bundler.
+    "allowImportingTsExtensions": true
+  },
   "include": ["src"]
 }
