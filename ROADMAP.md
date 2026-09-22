@@ -72,11 +72,25 @@ fonction pure et testabilité sans navigateur.
 **Objectif pédagogique :** comprendre pourquoi une couleur ne s'écrit jamais dans un composant,
 et ce que veut dire « source de vérité partagée avec l'UX/UI ».
 
-- [ ] Tokens en JSON : couleurs, espacements, typo, rayons, ombres, durées d'animation
-- [ ] Distinguer tokens **primitifs** (`blue-500`) et **sémantiques** (`color-surface-danger`)
-- [ ] Thème clair et thème sombre définis dès le départ
-- [ ] Génération des variables CSS à partir du JSON
-- [ ] Brancher Tailwind 4 sur ces variables
+- [x] Tokens en JSON : couleurs, espacements, typo, rayons, ombres, durées d'animation
+- [x] Distinguer tokens **primitifs** (`blue-500`) et **sémantiques** (`color-surface-danger`)
+- [x] Thème clair et thème sombre définis dès le départ
+- [x] Génération des variables CSS à partir du JSON
+- [x] Brancher Tailwind 4 sur ces variables
+
+> **Notes de fin de phase.**
+> - Les couleurs de mana sont dans un fichier à part : valeurs du domaine imposées par le jeu,
+>   qui ne basculent pas avec le thème et ne doivent jamais servir de rôle d'interface.
+> - Les contrastes WCAG AA sont vérifiés par un test, pas par une intention : 34 paires,
+>   les deux thèmes. Un échec réel a été trouvé et corrigé (`border-strong` en sombre, 2,53).
+> - Les tokens sémantiques ne portent pas le préfixe `color-` — c'est celui que Tailwind
+>   réserve à son espace de noms, et une variable ne peut pas se définir par elle-même.
+>   `@theme inline` fait le pont, et `--color-*: initial` neutralise la palette par défaut
+>   pour qu'un `bg-red-500` égaré ne compile pas.
+> - La feuille générée n'est pas versionnée. La CI la construit pour prouver que le
+>   générateur tourne encore.
+> - Le générateur est écrit en TypeScript exécuté directement par Node 22
+>   (`--experimental-strip-types`) : pas de bundler ni de `tsx` pour un script de 40 lignes.
 
 **Concepts :** primitif vs sémantique (la distinction qui fait tout) · thématisation par
 variables CSS · pourquoi le JSON plutôt qu'un fichier TS (l'UX/UI doit pouvoir le lire) ·

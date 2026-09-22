@@ -115,6 +115,54 @@ ${declarations(dark, "  ")}
 }
 
 /**
+ * Our primitive names, mapped onto the namespaces Tailwind derives utilities
+ * from. Longest prefix first: `--font-size-` must win over `--font-`.
+ *
+ * Anything absent from this table stays a plain custom property, usable in
+ * hand-written CSS but producing no utility class. That is the case for the
+ * mana colors and the animation durations: neither belongs in a `bg-*` or a
+ * `p-*`.
+ */
+const NAMESPACES: ReadonlyArray<readonly [ours: string, tailwind: string]> = [
+  ["--font-line-height-", "--leading-"],
+  ["--font-family-", "--font-"],
+  ["--font-weight-", "--font-weight-"],
+  ["--font-size-", "--text-"],
+  ["--space-", "--spacing-"],
+  ["--radius-", "--radius-"],
+  ["--shadow-", "--shadow-"],
+  ["--easing-", "--ease-"],
+];
+
+/**
+ * The namespaces we take over entirely.
+ *
+ * `--spacing` on its own is Tailwind's dynamic multiplier: leaving it in place
+ * would keep `p-7` compiling out of a scale that deliberately has no 7.
+ */
+const CLEARED: readonly string[] = [
+  "--color-*",
+  "--spacing-*",
+  "--spacing",
+  "--radius-*",
+  "--text-*",
+  "--font-*",
+  "--font-weight-*",
+  "--leading-*",
+  "--shadow-*",
+  "--ease-*",
+];
+
+function toTailwindName(name: string): string | undefined {
+  for (const [ours, tailwind] of NAMESPACES) {
+    if (name.startsWith(ours)) {
+      return `${tailwind}${name.slice(ours.length)}`;
+    }
+  }
+  return undefined;
+}
+
+/**
  * Maps our semantic roles onto the names Tailwind expects.
  *
  * Tailwind 4 is configured in CSS: a variable declared in `@theme` under its
@@ -130,17 +178,32 @@ ${declarations(dark, "  ")}
  * `--color-*: initial` first clears Tailwind's built-in palette: the design
  * system owns the colors, and a stray `bg-red-500` should not compile.
  */
-export function buildTailwindTheme(roles: readonly string[]): string {
-  const mapped = roles.map((role) => `  --color-${role}: var(--${role});`).join("\n");
+export function buildTailwindTheme(
+  primitives: readonly TokenTree[],
+  roles: readonly string[],
+): string {
+  const cleared = CLEARED.map((namespace) => `  ${namespace}: initial;`).join("\n");
+
+  const mapped = primitives
+    .flatMap((tree) => flatten(tree))
+    .flatMap(({ name, value }) => {
+      const tailwind = toTailwindName(name);
+      return tailwind === undefined ? [] : [`  ${tailwind}: ${value};`];
+    })
+    .join("\n");
+
+  const themed = roles.map((role) => `  --color-${role}: var(--${role});`).join("\n");
 
   return `/* Generated from the JSON in packages/tokens. Do not edit by hand. */
 
 @theme {
-  --color-*: initial;
+${cleared}
+
+${mapped}
 }
 
 @theme inline {
-${mapped}
+${themed}
 }
 `;
 }

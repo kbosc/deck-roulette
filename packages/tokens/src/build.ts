@@ -19,18 +19,17 @@ function read(path: string): TokenTree {
 const light = read("semantic/light.json");
 const dark = read("semantic/dark.json");
 
-const css = buildCss(
-  [
-    read("primitives/colors.json"),
-    read("primitives/mana.json"),
-    read("primitives/spacing.json"),
-    read("primitives/typography.json"),
-    read("primitives/radius.json"),
-    read("primitives/shadow.json"),
-    read("primitives/motion.json"),
-  ],
-  { light, dark },
-);
+const primitives = [
+  read("primitives/colors.json"),
+  read("primitives/mana.json"),
+  read("primitives/spacing.json"),
+  read("primitives/typography.json"),
+  read("primitives/radius.json"),
+  read("primitives/shadow.json"),
+  read("primitives/motion.json"),
+];
+
+const css = buildCss(primitives, { light, dark });
 
 function write(path: string, contents: string): void {
   const target = fileURLToPath(new URL(path, packageRoot));
@@ -40,4 +39,4 @@ function write(path: string, contents: string): void {
 }
 
 write("dist/tokens.css", css);
-write("dist/theme.css", buildTailwindTheme(roleNames(light)));
+write("dist/theme.css", buildTailwindTheme(primitives, roleNames(light)));

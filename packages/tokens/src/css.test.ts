@@ -92,20 +92,48 @@ describe("roleNames", () => {
 });
 
 describe("buildTailwindTheme", () => {
-  const css = buildTailwindTheme(["surface", "text-muted"]);
+  const primitives = [
+    { space: { "4": { $value: "1rem" } } },
+    { radius: { md: { $value: "0.5rem" } } },
+    { font: { size: { base: { $value: "1rem" } }, family: { sans: { $value: "system-ui" } } } },
+    { mana: { white: { $value: "#fffbd5" } } },
+  ];
+  const css = buildTailwindTheme(primitives, ["surface", "text-muted"]);
 
-  it("maps each role onto the name Tailwind expects", () => {
+  it("maps each themed role onto the name Tailwind expects", () => {
     // `--color-surface` is what produces bg-surface, text-surface, border-surface.
     expect(css).toContain("--color-surface: var(--surface);");
     expect(css).toContain("--color-text-muted: var(--text-muted);");
   });
 
-  it("clears the built-in palette so a stray bg-red-500 does not compile", () => {
-    expect(css).toContain("--color-*: initial;");
-  });
-
-  it("uses @theme inline so utilities follow the active theme", () => {
+  it("uses @theme inline for themed roles so utilities follow the active theme", () => {
     // A plain @theme would freeze the light value into every utility.
     expect(css).toContain("@theme inline {");
+  });
+
+  it("renames a primitive into the namespace its utilities come from", () => {
+    expect(css).toContain("--spacing-4: 1rem;");
+    expect(css).toContain("--text-base: 1rem;");
+    expect(css).toContain("--font-sans: system-ui;");
+  });
+
+  it("keeps a primitive whose name already matches", () => {
+    expect(css).toContain("--radius-md: 0.5rem;");
+  });
+
+  it("leaves out primitives that no utility should expose", () => {
+    // Mana colors belong to the game, not to a bg-* class.
+    expect(css).not.toContain("mana");
+  });
+
+  it("takes over every namespace it declares values in", () => {
+    for (const namespace of ["--color-*", "--spacing-*", "--radius-*", "--text-*", "--shadow-*"]) {
+      expect(css).toContain(`${namespace}: initial;`);
+    }
+  });
+
+  it("clears the dynamic spacing multiplier", () => {
+    // Left in place, `p-7` would still compile out of a scale that has no 7.
+    expect(css).toContain("--spacing: initial;");
   });
 });

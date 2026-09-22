@@ -27,7 +27,7 @@
       "semibold": { "$type": "fontWeight", "$value": 600 },
       "bold":     { "$type": "fontWeight", "$value": 700 }
     },
-    "lineHeight": {
+    "line-height": {
       "tight":   { "$type": "number", "$value": 1.2 },
       "normal":  { "$type": "number", "$value": 1.5 },
       "relaxed": { "$type": "number", "$value": 1.75 }
