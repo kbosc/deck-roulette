@@ -1,40 +1,38 @@
 {
   "$description": "Light theme. Every token here names a ROLE and points at a primitive. Components only ever use these. Adding a role is cheap; teaching a component about a hue is not.",
-  "color": {
-    "surface":          { "$type": "color", "$value": "{color.neutral.50}" },
-    "surface-raised":   { "$type": "color", "$value": "{color.base.white}" },
-    "surface-sunken":   { "$type": "color", "$value": "{color.neutral.100}" },
-    "surface-hover":    { "$type": "color", "$value": "{color.neutral.100}" },
+  "surface":          { "$type": "color", "$value": "{color.neutral.50}" },
+  "surface-raised":   { "$type": "color", "$value": "{color.base.white}" },
+  "surface-sunken":   { "$type": "color", "$value": "{color.neutral.100}" },
+  "surface-hover":    { "$type": "color", "$value": "{color.neutral.100}" },
 
-    "border":           { "$type": "color", "$value": "{color.neutral.200}" },
-    "border-strong":    { "$type": "color", "$value": "{color.neutral.400}" },
+  "border":           { "$type": "color", "$value": "{color.neutral.200}" },
+  "border-strong":    { "$type": "color", "$value": "{color.neutral.400}" },
 
-    "text":             { "$type": "color", "$value": "{color.neutral.900}" },
-    "text-muted":       { "$type": "color", "$value": "{color.neutral.600}" },
-    "text-inverted":    { "$type": "color", "$value": "{color.base.white}" },
+  "text":             { "$type": "color", "$value": "{color.neutral.900}" },
+  "text-muted":       { "$type": "color", "$value": "{color.neutral.600}" },
+  "text-inverted":    { "$type": "color", "$value": "{color.base.white}" },
 
-    "action":           { "$type": "color", "$value": "{color.violet.600}" },
-    "action-hover":     { "$type": "color", "$value": "{color.violet.700}" },
-    "action-active":    { "$type": "color", "$value": "{color.violet.800}" },
-    "text-on-action":   { "$type": "color", "$value": "{color.base.white}" },
-    "text-action":      { "$type": "color", "$value": "{color.violet.700}" },
+  "action":           { "$type": "color", "$value": "{color.violet.600}" },
+  "action-hover":     { "$type": "color", "$value": "{color.violet.700}" },
+  "action-active":    { "$type": "color", "$value": "{color.violet.800}" },
+  "text-on-action":   { "$type": "color", "$value": "{color.base.white}" },
+  "text-action":      { "$type": "color", "$value": "{color.violet.700}" },
 
-    "danger":           { "$type": "color", "$value": "{color.red.600}" },
-    "danger-hover":     { "$type": "color", "$value": "{color.red.700}" },
-    "text-on-danger":   { "$type": "color", "$value": "{color.base.white}" },
-    "text-danger":      { "$type": "color", "$value": "{color.red.700}" },
-    "surface-danger":   { "$type": "color", "$value": "{color.red.50}" },
-    "border-danger":    { "$type": "color", "$value": "{color.red.200}" },
+  "danger":           { "$type": "color", "$value": "{color.red.600}" },
+  "danger-hover":     { "$type": "color", "$value": "{color.red.700}" },
+  "text-on-danger":   { "$type": "color", "$value": "{color.base.white}" },
+  "text-danger":      { "$type": "color", "$value": "{color.red.700}" },
+  "surface-danger":   { "$type": "color", "$value": "{color.red.50}" },
+  "border-danger":    { "$type": "color", "$value": "{color.red.200}" },
 
-    "text-success":     { "$type": "color", "$value": "{color.green.700}" },
-    "surface-success":  { "$type": "color", "$value": "{color.green.50}" },
-    "border-success":   { "$type": "color", "$value": "{color.green.200}" },
+  "text-success":     { "$type": "color", "$value": "{color.green.700}" },
+  "surface-success":  { "$type": "color", "$value": "{color.green.50}" },
+  "border-success":   { "$type": "color", "$value": "{color.green.200}" },
 
-    "text-warning":     { "$type": "color", "$value": "{color.amber.700}" },
-    "surface-warning":  { "$type": "color", "$value": "{color.amber.50}" },
-    "border-warning":   { "$type": "color", "$value": "{color.amber.200}" },
+  "text-warning":     { "$type": "color", "$value": "{color.amber.700}" },
+  "surface-warning":  { "$type": "color", "$value": "{color.amber.50}" },
+  "border-warning":   { "$type": "color", "$value": "{color.amber.200}" },
 
-    "focus-ring":       { "$type": "color", "$value": "{color.violet.600}" },
-    "overlay":          { "$type": "color", "$value": "rgb(16 16 23 / 0.5)" }
-  }
+  "focus-ring":       { "$type": "color", "$value": "{color.violet.600}" },
+  "overlay":          { "$type": "color", "$value": "rgb(16 16 23 / 0.5)" }
 }

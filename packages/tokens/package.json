@@ -11,7 +11,8 @@
   "exports": {
     "./primitives/*": "./primitives/*",
     "./semantic/*": "./semantic/*",
-    "./tokens.css": "./dist/tokens.css"
+    "./tokens.css": "./dist/tokens.css",
+    "./theme.css": "./dist/theme.css"
   },
   "scripts": {
     "build": "node --experimental-strip-types src/build.ts",

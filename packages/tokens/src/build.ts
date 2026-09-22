@@ -8,13 +8,16 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { TokenTree } from "./css.ts";
-import { buildCss } from "./css.ts";
+import { buildCss, buildTailwindTheme, roleNames } from "./css.ts";
 
 const packageRoot = new URL("../", import.meta.url);
 
 function read(path: string): TokenTree {
   return JSON.parse(readFileSync(fileURLToPath(new URL(path, packageRoot)), "utf8")) as TokenTree;
 }
+
+const light = read("semantic/light.json");
+const dark = read("semantic/dark.json");
 
 const css = buildCss(
   [
@@ -26,14 +29,15 @@ const css = buildCss(
     read("primitives/shadow.json"),
     read("primitives/motion.json"),
   ],
-  {
-    light: read("semantic/light.json"),
-    dark: read("semantic/dark.json"),
-  },
+  { light, dark },
 );
 
-const output = fileURLToPath(new URL("dist/tokens.css", packageRoot));
-mkdirSync(dirname(output), { recursive: true });
-writeFileSync(output, css, "utf8");
+function write(path: string, contents: string): void {
+  const target = fileURLToPath(new URL(path, packageRoot));
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, contents, "utf8");
+  console.log(`wrote ${target}`);
+}
 
-console.log(`wrote ${output}`);
+write("dist/tokens.css", css);
+write("dist/theme.css", buildTailwindTheme(roleNames(light)));

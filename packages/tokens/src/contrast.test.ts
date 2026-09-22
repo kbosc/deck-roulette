@@ -12,8 +12,8 @@ function readTokens(path: string): Record<string, unknown> {
 const primitives = readTokens("primitives/colors.json")["color"] as PrimitiveGroup;
 
 const themes = {
-  light: readTokens("semantic/light.json")["color"] as TokenGroup,
-  dark: readTokens("semantic/dark.json")["color"] as TokenGroup,
+  light: readTokens("semantic/light.json") as TokenGroup,
+  dark: readTokens("semantic/dark.json") as TokenGroup,
 } as const;
 
 /**
@@ -105,6 +105,8 @@ describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
 describe("the two themes", () => {
   it("declare exactly the same roles", () => {
     // A role present in one theme only is a component that breaks on the other.
-    expect(Object.keys(themes.dark).toSorted()).toEqual(Object.keys(themes.light).toSorted());
+    const roles = (theme: TokenGroup) => Object.keys(theme).filter((k) => !k.startsWith("$")).toSorted();
+
+    expect(roles(themes.dark)).toEqual(roles(themes.light));
   });
 });

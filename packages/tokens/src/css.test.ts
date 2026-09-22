@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCss, flatten, toCssValue } from "./css";
+import { buildCss, buildTailwindTheme, flatten, roleNames, toCssValue } from "./css";
 
 describe("flatten", () => {
   it("names a variable after its path in the tree", () => {
@@ -80,5 +80,32 @@ describe("buildCss", () => {
   it("announces the color scheme so native controls follow the theme", () => {
     expect(css).toContain("color-scheme: light;");
     expect(css.match(/color-scheme: dark;/g)).toHaveLength(2);
+  });
+});
+
+describe("roleNames", () => {
+  it("lists the roles a theme declares", () => {
+    expect(roleNames({ $description: "x", surface: { $value: "a" }, text: { $value: "b" } })).toEqual(
+      ["surface", "text"],
+    );
+  });
+});
+
+describe("buildTailwindTheme", () => {
+  const css = buildTailwindTheme(["surface", "text-muted"]);
+
+  it("maps each role onto the name Tailwind expects", () => {
+    // `--color-surface` is what produces bg-surface, text-surface, border-surface.
+    expect(css).toContain("--color-surface: var(--surface);");
+    expect(css).toContain("--color-text-muted: var(--text-muted);");
+  });
+
+  it("clears the built-in palette so a stray bg-red-500 does not compile", () => {
+    expect(css).toContain("--color-*: initial;");
+  });
+
+  it("uses @theme inline so utilities follow the active theme", () => {
+    // A plain @theme would freeze the light value into every utility.
+    expect(css).toContain("@theme inline {");
   });
 });

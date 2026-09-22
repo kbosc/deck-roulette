@@ -113,3 +113,39 @@ ${declarations(dark, "  ")}
 }
 `;
 }
+
+/**
+ * Maps our semantic roles onto the names Tailwind expects.
+ *
+ * Tailwind 4 is configured in CSS: a variable declared in `@theme` under its
+ * `--color-*` namespace produces the matching `bg-*`, `text-*` and `border-*`
+ * utilities. Our own tokens deliberately avoid that prefix — `--surface` rather
+ * than `--color-surface` — because a variable cannot be defined in terms of
+ * itself.
+ *
+ * `@theme inline` is what makes the themes work: it inlines the reference, so a
+ * utility resolves to `var(--surface)` at use time and follows whichever theme
+ * is active. A plain `@theme` would freeze the light value into the utility.
+ *
+ * `--color-*: initial` first clears Tailwind's built-in palette: the design
+ * system owns the colors, and a stray `bg-red-500` should not compile.
+ */
+export function buildTailwindTheme(roles: readonly string[]): string {
+  const mapped = roles.map((role) => `  --color-${role}: var(--${role});`).join("\n");
+
+  return `/* Generated from the JSON in packages/tokens. Do not edit by hand. */
+
+@theme {
+  --color-*: initial;
+}
+
+@theme inline {
+${mapped}
+}
+`;
+}
+
+/** The role names a theme declares, metadata aside. */
+export function roleNames(theme: TokenTree): readonly string[] {
+  return Object.keys(theme).filter((key) => !key.startsWith("$"));
+}
