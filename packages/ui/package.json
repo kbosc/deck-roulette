@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@deck-roulette/tokens": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-slot": "^1.3.3"
   },
   "peerDependencies": {

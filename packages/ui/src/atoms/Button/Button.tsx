@@ -1,10 +1,18 @@
 import { Slot } from "@radix-ui/react-slot";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+/**
+ * `ComponentPropsWithRef` rather than `ButtonHTMLAttributes`: the latter leaves
+ * out `ref`, which Radix needs whenever it wraps this component with `asChild`
+ * — a Dialog.Close has to reach the real DOM node to focus and close it.
+ *
+ * Since React 19 a function component takes `ref` as an ordinary prop, so it
+ * travels in `...props` and lands on the element. No `forwardRef` needed.
+ */
+export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly variant?: ButtonVariant;
   readonly size?: ButtonSize;
   /**
