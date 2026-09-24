@@ -122,6 +122,10 @@ d'une entité `Match` séparée (voir ROADMAP phase 8), à prévoir dès le vers
 - **Design tokens d'abord.** Aucune couleur, aucun espacement en dur dans un composant.
   Rétro-ajouter des tokens coûte 10× plus cher que les poser au départ.
 - **Une story Storybook par composant**, écrite en même temps que le composant, pas après.
+  Une story par *variante* n'a en revanche pas d'intérêt : les contrôles y donnent accès, et
+  une story qui rend toutes les variantes d'un coup suffit à ce que la vérification
+  d'accessibilité les couvre. Une story nommée se justifie quand elle capture un état qui
+  se régresse facilement (désactivé, vide, en erreur) ou une composition non triviale.
 - **Accessibilité** : Radix fournit le comportement, pas le reste. Chaque interactif a un
   nom accessible explicite (« Tirer un deck au hasard », pas « bouton »), cible ≥ 44×44 px,
   navigation clavier complète, focus visible et géré à l'ouverture des dialogues.

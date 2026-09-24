@@ -6,6 +6,7 @@
       "outputs": ["dist/**", "storybook-static/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
