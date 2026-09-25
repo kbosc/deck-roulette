@@ -53,6 +53,10 @@ const SIZES: Readonly<Record<ButtonSize, string>> = {
 const BASE = [
   "inline-flex items-center justify-center",
   "rounded-md font-medium",
+  // Tailwind 4 no longer sets this in its preflight, and a native button has
+  // never had a pointer cursor: it is a convention borrowed from links, and one
+  // people now rely on to tell what is clickable.
+  "cursor-pointer",
   "transition-colors ease-standard",
   // The focus ring is never removed, only restyled: outline-none on its own is
   // the single most common way to make an interface unusable by keyboard.

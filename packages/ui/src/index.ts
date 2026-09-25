@@ -1,3 +1,5 @@
+export type { BadgeProps, BadgeTone } from "./atoms/Badge";
+export { Badge } from "./atoms/Badge";
 export type { ManaIdentityProps, ManaIdentitySize } from "./atoms/ManaIdentity";
 export { ManaIdentity } from "./atoms/ManaIdentity";
 export type { InputProps } from "./atoms/Input";
@@ -8,3 +10,5 @@ export type { ConfirmDialogProps } from "./molecules/ConfirmDialog";
 export { ConfirmDialog } from "./molecules/ConfirmDialog";
 export type { FieldProps, FieldControlProps } from "./molecules/Field";
 export { Field } from "./molecules/Field";
+export type { DeckCardProps } from "./molecules/DeckCard";
+export { DeckCard } from "./molecules/DeckCard";
