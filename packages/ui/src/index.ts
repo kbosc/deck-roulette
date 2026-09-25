@@ -1,3 +1,5 @@
+export type { ManaIdentityProps, ManaIdentitySize } from "./atoms/ManaIdentity";
+export { ManaIdentity } from "./atoms/ManaIdentity";
 export type { InputProps } from "./atoms/Input";
 export { Input } from "./atoms/Input";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./atoms/Button";

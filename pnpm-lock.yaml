@@ -46,6 +46,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@deck-roulette/domain':
+        specifier: workspace:*
+        version: link:../domain
       '@deck-roulette/tokens':
         specifier: workspace:*
         version: link:../tokens
