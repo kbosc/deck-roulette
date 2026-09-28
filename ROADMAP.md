@@ -103,14 +103,28 @@ contraste AA vérifié dès la définition des couleurs.
 **Objectif pédagogique :** l'atomic design appliqué pour de vrai, et la découverte de ce que
 Radix apporte — et surtout de ce qu'il n'apporte pas.
 
-- [ ] Storybook installé sur le package
-- [ ] **Atomes** : Button, Input, Text, Badge, Icon
-- [ ] **Molécules** : Field (label + input + erreur), DeckCard, EmptyState
-- [ ] **Organismes** : DeckList, PoolCard
-- [ ] Primitives Radix stylées via les tokens : Dialog, DropdownMenu, Toast, Tooltip
-- [ ] Une story par composant, avec ses variantes et ses états
-- [ ] Passe d'accessibilité : navigation clavier complète, focus visible, noms accessibles
-- [ ] Bascule clair / sombre testée dans Storybook
+- [x] Storybook installé sur le package
+- [x] **Atomes** : Button, Input, Badge, ManaIdentity
+- [x] **Molécules** : Field (label + input + erreur), DeckCard, EmptyState, ConfirmDialog
+- [x] **Organismes** : DeckList, PoolCard
+- [x] Primitives Radix stylées via les tokens : Dialog
+- [x] Une story par composant, avec ses variantes et ses états
+- [x] Passe d'accessibilité : navigation clavier complète, focus visible, noms accessibles
+- [x] Bascule clair / sombre testée dans Storybook
+
+> **Notes de fin de phase.**
+> - Les atomes prévus `Text` et `Icon` n'ont pas été créés : aucun composant n'en a eu
+>   besoin. `Text` aurait dupliqué les utilitaires de typographie, et une icône se passe
+>   très bien d'une enveloppe tant qu'on en a deux. À créer le jour où un vrai besoin
+>   apparaît, pas avant.
+> - Radix n'a servi que pour `Dialog`. `DropdownMenu`, `Toast` et `Tooltip` viendront avec
+>   les écrans qui les réclament. Installer une primitive sans écran pour la recevoir
+>   produit un composant qu'on conçoit à l'aveugle.
+> - Chaque story passe l'audit axe, configuré en `error` et non en avertissement.
+> - Deux défauts trouvés par Kévin en relisant, tous deux réels : les stories redondantes
+>   avec les contrôles, et l'absence de `cursor-pointer` — que Tailwind 4 ne pose plus et
+>   qu'aucun test unitaire ne pouvait attraper, jsdom ne calculant pas de styles.
+> - 55 tests sur le package.
 
 **Concepts :** atomes / molécules / organismes, et où s'arrête chacun · composant *headless* ·
 composition plutôt qu'une prop booléenne de plus (le piège des 15 drapeaux) · API de variantes ·
