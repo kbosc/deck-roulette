@@ -1,0 +1,60 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import { Button } from "../../atoms/Button";
+import { EmptyState } from "./EmptyState";
+
+describe("EmptyState", () => {
+  it("states what is missing as a heading", () => {
+    render(<EmptyState title="No deck yet" description="Add your first deck to start drawing." />);
+
+    // A heading, so the screen keeps an outline someone can navigate. A styled
+    // paragraph would look the same and be invisible to that navigation.
+    expect(screen.getByRole("heading", { name: "No deck yet" })).toBeDefined();
+  });
+
+  it("uses a level 2 heading by default", () => {
+    render(<EmptyState title="No deck yet" description="Add your first deck." />);
+
+    expect(screen.getByRole("heading", { level: 2 })).toBeDefined();
+  });
+
+  it("can sit under an existing section without skipping a level", () => {
+    render(<EmptyState title="No deck yet" description="Add your first deck." headingLevel={3} />);
+
+    // Skipping from h2 to h4 leaves someone navigating by headings unsure
+    // whether they missed a section.
+    expect(screen.getByRole("heading", { level: 3 })).toBeDefined();
+  });
+
+  it("offers the way out it is given", () => {
+    render(
+      <EmptyState
+        title="No deck yet"
+        description="Add your first deck to start drawing."
+        action={<Button>Add a deck</Button>}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Add a deck" })).toBeDefined();
+  });
+
+  it("hides the illustration from assistive technology", () => {
+    const { container } = render(
+      <EmptyState
+        title="No deck yet"
+        description="Add your first deck."
+        illustration={<svg data-testid="art" />}
+      />,
+    );
+
+    // Decoration announced as an image is noise between the heading and the
+    // sentence that actually helps.
+    expect(container.querySelector("[aria-hidden='true']")).not.toBeNull();
+  });
+
+  it("renders without an action, for screens whose way out lives elsewhere", () => {
+    render(<EmptyState title="No match" description="No deck matches this filter." />);
+
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+});

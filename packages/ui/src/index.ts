@@ -12,3 +12,5 @@ export type { FieldProps, FieldControlProps } from "./molecules/Field";
 export { Field } from "./molecules/Field";
 export type { DeckCardProps } from "./molecules/DeckCard";
 export { DeckCard } from "./molecules/DeckCard";
+export type { EmptyStateProps, HeadingLevel } from "./molecules/EmptyState";
+export { EmptyState } from "./molecules/EmptyState";
