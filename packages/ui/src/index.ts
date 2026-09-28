@@ -14,3 +14,5 @@ export type { DeckCardProps } from "./molecules/DeckCard";
 export { DeckCard } from "./molecules/DeckCard";
 export type { EmptyStateProps, HeadingLevel } from "./molecules/EmptyState";
 export { EmptyState } from "./molecules/EmptyState";
+export type { DeckListProps } from "./organisms/DeckList";
+export { DeckList } from "./organisms/DeckList";
