@@ -49,6 +49,7 @@ la meilleure porte d'entrée, parce que rien ne cache les types derrière du JSX
 - [x] Schéma versionné dès maintenant (`version` + fonction `migrate`), y compris pour la future entité `Match`
 
 > **Notes de fin de phase.**
+>
 > - L'invariant `drawnDeckIds ⊆ deckIds` n'est finalement pas exprimable dans le type sans
 >   rendre le modèle pénible à manipuler. Il est tenu autrement : `removeDeckFromPool` est le
 >   **seul** endroit qui touche aux deux tableaux, et `deleteDeck` lui délègue au lieu de
@@ -79,6 +80,7 @@ et ce que veut dire « source de vérité partagée avec l'UX/UI ».
 - [x] Brancher Tailwind 4 sur ces variables
 
 > **Notes de fin de phase.**
+>
 > - Les couleurs de mana sont dans un fichier à part : valeurs du domaine imposées par le jeu,
 >   qui ne basculent pas avec le thème et ne doivent jamais servir de rôle d'interface.
 > - Les contrastes WCAG AA sont vérifiés par un test, pas par une intention : 34 paires,
@@ -113,6 +115,7 @@ Radix apporte — et surtout de ce qu'il n'apporte pas.
 - [x] Bascule clair / sombre testée dans Storybook
 
 > **Notes de fin de phase.**
+>
 > - Les atomes prévus `Text` et `Icon` n'ont pas été créés : aucun composant n'en a eu
 >   besoin. `Text` aurait dupliqué les utilitaires de typographie, et une icône se passe
 >   très bien d'une enveloppe tant qu'on en a deux. À créer le jour où un vrai besoin
@@ -126,7 +129,7 @@ Radix apporte — et surtout de ce qu'il n'apporte pas.
 >   qu'aucun test unitaire ne pouvait attraper, jsdom ne calculant pas de styles.
 > - 55 tests sur le package.
 
-**Concepts :** atomes / molécules / organismes, et où s'arrête chacun · composant *headless* ·
+**Concepts :** atomes / molécules / organismes, et où s'arrête chacun · composant _headless_ ·
 composition plutôt qu'une prop booléenne de plus (le piège des 15 drapeaux) · API de variantes ·
 ce que Radix gère (focus trap, ARIA, clavier) et ce qu'il laisse à ta charge (tout le style).
 
@@ -221,7 +224,7 @@ Plus crédible qu'une carte de joueurs, et ça donne des données à modéliser.
 - [ ] Type `Event` (lieu, date, récurrence, format, organisateur) + validation Zod
 - [ ] Carte maplibre-gl intégrée dans un composant React (cycle de vie, nettoyage)
 - [ ] Marqueurs d'événements, popup au clic
-- [ ] Regroupement (*clustering*) quand les points se densifient
+- [ ] Regroupement (_clustering_) quand les points se densifient
 - [ ] Mode offline : tuiles embarquées et stockage local
 - [ ] Comportement dégradé propre quand le réseau tombe
 - [ ] Accessibilité : la carte n'est pas la seule voie d'accès à l'information
@@ -249,11 +252,11 @@ Après un tirage, noter le résultat de la partie → winrate par deck. Nécessi
 ```ts
 type Match = {
   id: string;
-  deckId: string;        // référence la bibliothèque
-  poolId?: string;       // dans quel contexte / bracket
-  result: 'win' | 'loss' | 'draw';
-  playedAt: string;      // ISO
-  playerCount?: number;  // 4 joueurs par défaut en Commander
+  deckId: string; // référence la bibliothèque
+  poolId?: string; // dans quel contexte / bracket
+  result: "win" | "loss" | "draw";
+  playedAt: string; // ISO
+  playerCount?: number; // 4 joueurs par défaut en Commander
   notes?: string;
 };
 ```
@@ -278,7 +281,7 @@ c'est toute la raison d'être du monorepo.
 > 🩹 **Incident Expo, pour mémoire (août 2026).** Projet généré en SDK 57, refusé par
 > Expo Go bloqué en SDK 54 : « project is incompatible with this version of Expo Go ».
 > Pas un problème d'iOS. Leçon : avec Expo Go, **c'est Expo Go qui dicte le SDK**.
-> Vérifier la version supportée *avant* de générer le projet.
+> Vérifier la version supportée _avant_ de générer le projet.
 
 ---
 

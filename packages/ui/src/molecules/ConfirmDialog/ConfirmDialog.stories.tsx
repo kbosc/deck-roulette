@@ -9,8 +9,7 @@ const meta = {
   component: ConfirmDialog,
   args: {
     title: "Delete this deck?",
-    description:
-      "Atraxa will be removed from every pool it belongs to. This cannot be undone.",
+    description: "Atraxa will be removed from every pool it belongs to. This cannot be undone.",
     confirmLabel: "Delete",
     // `fn()` is a spy: the Actions panel then reports what the dialog called,
     // which is how a story stays useful for checking behaviour and not only

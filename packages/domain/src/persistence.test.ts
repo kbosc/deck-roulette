@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Migration } from "./persistence";
-import {
-  CURRENT_SCHEMA_VERSION,
-  applyMigrations,
-  readPersisted,
-  toPersisted,
-} from "./persistence";
+import { CURRENT_SCHEMA_VERSION, applyMigrations, readPersisted, toPersisted } from "./persistence";
 import { makeDeck, makePool } from "./test-utils";
 
 function makeStored(overrides: Record<string, unknown> = {}): unknown {
@@ -52,9 +47,7 @@ describe("applyMigrations", () => {
   });
 
   it("refuses to skip a missing step rather than guessing", () => {
-    expect(() => applyMigrations("v1", 1, 3, { 1: steps[1] as Migration })).toThrow(
-      RangeError,
-    );
+    expect(() => applyMigrations("v1", 1, 3, { 1: steps[1] as Migration })).toThrow(RangeError);
   });
 });
 

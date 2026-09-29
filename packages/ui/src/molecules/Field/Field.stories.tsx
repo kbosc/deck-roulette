@@ -49,6 +49,8 @@ export const PlaceholderIsNotALabel: Story = {
   args: {
     label: "Archidekt URL",
     hint: "Optional. Only used to reopen the list, never fetched.",
-    children: (props) => <Input {...props} type="url" placeholder="https://archidekt.com/decks/…" />,
+    children: (props) => (
+      <Input {...props} type="url" placeholder="https://archidekt.com/decks/…" />
+    ),
   },
 };

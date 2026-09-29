@@ -75,9 +75,7 @@ describe("removeDeckFromPool", () => {
 
     removeDeckFromPool(pool, toDeckId("a"));
 
-    expect(pool).toEqual(
-      makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] }),
-    );
+    expect(pool).toEqual(makePool({ deckIds: ["a", "b"], drawnDeckIds: ["a"] }));
   });
 
   it("empties the pool when its last deck is removed", () => {

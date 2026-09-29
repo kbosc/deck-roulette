@@ -56,7 +56,14 @@ export const WithIllustration: Story = {
   args: {
     action: <Button>Add a deck</Button>,
     illustration: (
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
         <rect x="3" y="5" width="12" height="16" rx="2" />
         <path d="M9 5V3h12v16h-2" />
       </svg>

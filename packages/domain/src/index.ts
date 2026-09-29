@@ -15,5 +15,11 @@ export type { Library } from "./library";
 export { deleteDeck, addDeck, deletePool } from "./library";
 export type { Color, ColorIdentity, Bracket, Commanders, Deck, Pool } from "./types";
 export type { Random, PoolDrawState, DrawResult } from "./draw";
-export { getRemainingDeckIds, getPoolDrawState, drawDeck, resetPool, returnDeckToPool } from "./draw";
+export {
+  getRemainingDeckIds,
+  getPoolDrawState,
+  drawDeck,
+  resetPool,
+  returnDeckToPool,
+} from "./draw";
 export { addDeckToPool, removeDeckFromPool } from "./pool";

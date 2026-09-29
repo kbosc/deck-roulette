@@ -102,7 +102,11 @@ export function readPersisted(raw: unknown): Library {
 
   const migrated = applyMigrations(raw, version, CURRENT_SCHEMA_VERSION);
 
-  if (!isRecord(migrated) || !Array.isArray(migrated["decks"]) || !Array.isArray(migrated["pools"])) {
+  if (
+    !isRecord(migrated) ||
+    !Array.isArray(migrated["decks"]) ||
+    !Array.isArray(migrated["pools"])
+  ) {
     throw new TypeError("stored data has no decks or no pools");
   }
 

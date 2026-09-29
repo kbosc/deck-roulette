@@ -30,13 +30,7 @@ describe("mergeColorIdentities", () => {
   });
 
   it("handles the five-color case", () => {
-    expect(mergeColorIdentities(["G", "R", "B", "U", "W"])).toEqual([
-      "W",
-      "U",
-      "B",
-      "R",
-      "G",
-    ]);
+    expect(mergeColorIdentities(["G", "R", "B", "U", "W"])).toEqual(["W", "U", "B", "R", "G"]);
   });
 
   it("does not mutate the given identities", () => {

@@ -47,7 +47,9 @@ describe("toCssValue", () => {
 });
 
 describe("buildCss", () => {
-  const primitives = [{ color: { neutral: { "50": { $value: "#fff" }, "950": { $value: "#000" } } } }];
+  const primitives = [
+    { color: { neutral: { "50": { $value: "#fff" }, "950": { $value: "#000" } } } },
+  ];
   const themes = {
     light: { color: { surface: { $value: "{color.neutral.50}" } } },
     dark: { color: { surface: { $value: "{color.neutral.950}" } } },
@@ -63,7 +65,9 @@ describe("buildCss", () => {
   });
 
   it("lets the system preference apply unless light was explicitly chosen", () => {
-    expect(css).toContain('@media (prefers-color-scheme: dark) {\n  :root:not([data-theme="light"])');
+    expect(css).toContain(
+      '@media (prefers-color-scheme: dark) {\n  :root:not([data-theme="light"])',
+    );
   });
 
   it("lets an explicit dark choice win over a light system", () => {
@@ -85,9 +89,9 @@ describe("buildCss", () => {
 
 describe("roleNames", () => {
   it("lists the roles a theme declares", () => {
-    expect(roleNames({ $description: "x", surface: { $value: "a" }, text: { $value: "b" } })).toEqual(
-      ["surface", "text"],
-    );
+    expect(
+      roleNames({ $description: "x", surface: { $value: "a" }, text: { $value: "b" } }),
+    ).toEqual(["surface", "text"]);
   });
 });
 

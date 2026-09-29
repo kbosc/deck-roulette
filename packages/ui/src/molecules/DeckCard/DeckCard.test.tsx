@@ -22,7 +22,9 @@ describe("DeckCard", () => {
   });
 
   it("joins two commanders rather than printing an array", () => {
-    render(<DeckCard deck={makeDeck({ commanders: ["Tana, the Bloodsower", "Tymna the Weaver"] })} />);
+    render(
+      <DeckCard deck={makeDeck({ commanders: ["Tana, the Bloodsower", "Tymna the Weaver"] })} />,
+    );
 
     expect(screen.getByText("Tana, the Bloodsower // Tymna the Weaver")).toBeDefined();
   });

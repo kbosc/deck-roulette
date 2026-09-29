@@ -31,8 +31,7 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
  */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   primary: "bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
-  secondary:
-    "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
+  secondary: "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
   ghost: "bg-transparent text-text hover:bg-surface-hover",
   danger: "bg-danger text-text-on-danger hover:bg-danger-hover",
 };

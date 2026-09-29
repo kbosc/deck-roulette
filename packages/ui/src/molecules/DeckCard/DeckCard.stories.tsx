@@ -51,8 +51,12 @@ export const WithActions: Story = {
   args: {
     actions: (
       <>
-        <Button size="sm" variant="ghost">Edit</Button>
-        <Button size="sm" variant="danger">Delete</Button>
+        <Button size="sm" variant="ghost">
+          Edit
+        </Button>
+        <Button size="sm" variant="danger">
+          Delete
+        </Button>
       </>
     ),
   },
@@ -68,6 +72,10 @@ export const LongName: Story = {
       ...atraxa,
       name: "Kotori, Pilot Prodigy and the very long list of vehicles she crews",
     },
-    actions: <Button size="sm" variant="danger">Delete</Button>,
+    actions: (
+      <Button size="sm" variant="danger">
+        Delete
+      </Button>
+    ),
   },
 };

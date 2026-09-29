@@ -64,10 +64,7 @@ describe("contrastRatio", () => {
   });
 
   it("does not depend on the order of its arguments", () => {
-    expect(contrastRatio("#101017", "#f8f8fa")).toBeCloseTo(
-      contrastRatio("#f8f8fa", "#101017"),
-      5,
-    );
+    expect(contrastRatio("#101017", "#f8f8fa")).toBeCloseTo(contrastRatio("#f8f8fa", "#101017"), 5);
   });
 });
 
@@ -105,7 +102,10 @@ describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
 describe("the two themes", () => {
   it("declare exactly the same roles", () => {
     // A role present in one theme only is a component that breaks on the other.
-    const roles = (theme: TokenGroup) => Object.keys(theme).filter((k) => !k.startsWith("$")).toSorted();
+    const roles = (theme: TokenGroup) =>
+      Object.keys(theme)
+        .filter((k) => !k.startsWith("$"))
+        .toSorted();
 
     expect(roles(themes.dark)).toEqual(roles(themes.light));
   });

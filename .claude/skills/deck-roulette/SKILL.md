@@ -14,7 +14,7 @@ retirer deux fois le même tant que la liste n'est pas épuisée.
 ## Principes de travail
 
 - **Une étape = un concept.** Ne jamais générer dix fichiers d'un coup.
-- À chaque choix : expliquer *pourquoi*, quelles alternatives, quel piège on évite.
+- À chaque choix : expliquer _pourquoi_, quelles alternatives, quel piège on évite.
 - Ce projet est autant un support d'apprentissage qu'un produit. Quand une décision oppose
   « le plus rapide à livrer » et « celui qui fait comprendre », **choisir le second**.
   On n'installe pas une lib pour éviter de comprendre un problème.
@@ -25,20 +25,20 @@ retirer deux fois le même tant que la liste n'est pas épuisée.
 
 ## Décisions actées (ne pas re-débattre sans raison)
 
-| Sujet | Choix | Pourquoi |
-|---|---|---|
-| Cible | **Web d'abord**, mobile plus tard | La stack à apprendre (Radix, Tailwind, Storybook, maplibre-gl) est une stack web. React Native viendra dans `apps/mobile` en réutilisant `packages/domain`. |
-| Structure | **Monorepo pnpm workspaces + Turborepo** | Justifié par le partage réel du domaine entre web et mobile, et par l'extraction du design system en package. Pas un exercice artificiel. |
-| Package manager | **pnpm** | Dépendances déclarées et isolées par package, pas de hoisting sauvage. |
-| Build app | **Vite + React 19 + TypeScript strict** | Standard 2026. |
-| Styling | **Tailwind 4 + design tokens** | Les tokens sont la source de vérité, Tailwind les consomme. Jamais de valeur en dur dans un composant. |
-| Primitives UI | **Radix** | Comportement et accessibilité fournis, style entièrement à nous via les tokens. |
-| Documentation UI | **Storybook**, découpage **atomic design** | Une story par composant, dès sa création. |
-| État client | **Zustand** + `persist` sur localStorage | Ce qui appartient à l'app : pools, decks, tirage en cours. |
-| État serveur | **TanStack Query** | Ce qui vient d'ailleurs : Scryfall. Ne jamais mettre de données serveur dans Zustand. |
-| Cartographie | **maplibre-gl** | Carte des événements Magic. La lib est montée de zéro : sources, couches, cycle de vie dans React, offline. |
-| Tests | **Vitest** + Testing Library | `packages/domain` testé en priorité — logique pure, aucun pixel. |
-| Validation externe | **Zod** | Tout JSON venant du dehors (import de fichier, réponse Scryfall) est validé. |
+| Sujet              | Choix                                      | Pourquoi                                                                                                                                                    |
+| ------------------ | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cible              | **Web d'abord**, mobile plus tard          | La stack à apprendre (Radix, Tailwind, Storybook, maplibre-gl) est une stack web. React Native viendra dans `apps/mobile` en réutilisant `packages/domain`. |
+| Structure          | **Monorepo pnpm workspaces + Turborepo**   | Justifié par le partage réel du domaine entre web et mobile, et par l'extraction du design system en package. Pas un exercice artificiel.                   |
+| Package manager    | **pnpm**                                   | Dépendances déclarées et isolées par package, pas de hoisting sauvage.                                                                                      |
+| Build app          | **Vite + React 19 + TypeScript strict**    | Standard 2026.                                                                                                                                              |
+| Styling            | **Tailwind 4 + design tokens**             | Les tokens sont la source de vérité, Tailwind les consomme. Jamais de valeur en dur dans un composant.                                                      |
+| Primitives UI      | **Radix**                                  | Comportement et accessibilité fournis, style entièrement à nous via les tokens.                                                                             |
+| Documentation UI   | **Storybook**, découpage **atomic design** | Une story par composant, dès sa création.                                                                                                                   |
+| État client        | **Zustand** + `persist` sur localStorage   | Ce qui appartient à l'app : pools, decks, tirage en cours.                                                                                                  |
+| État serveur       | **TanStack Query**                         | Ce qui vient d'ailleurs : Scryfall. Ne jamais mettre de données serveur dans Zustand.                                                                       |
+| Cartographie       | **maplibre-gl**                            | Carte des événements Magic. La lib est montée de zéro : sources, couches, cycle de vie dans React, offline.                                                 |
+| Tests              | **Vitest** + Testing Library               | `packages/domain` testé en priorité — logique pure, aucun pixel.                                                                                            |
+| Validation externe | **Zod**                                    | Tout JSON venant du dehors (import de fichier, réponse Scryfall) est validé.                                                                                |
 
 ### Décisions abandonnées (pour mémoire)
 
@@ -73,20 +73,20 @@ Decks et pools sont **séparés** : un même deck peut appartenir à plusieurs p
 
 ```ts
 type Deck = {
-  id: string;               // crypto.randomUUID()
+  id: string; // crypto.randomUUID()
   name: string;
-  commanders?: string[];    // 1 ou 2 — voir note ci-dessous
+  commanders?: string[]; // 1 ou 2 — voir note ci-dessous
   colors?: ColorIdentity[]; // 'W' | 'U' | 'B' | 'R' | 'G' | 'C'
   bracket?: 1 | 2 | 3 | 4 | 5; // brackets officiels Commander
-  url?: string;             // Moxfield / Archidekt — futur
-  createdAt: string;        // ISO
+  url?: string; // Moxfield / Archidekt — futur
+  createdAt: string; // ISO
 };
 
 type Pool = {
   id: string;
   name: string;
   deckIds: string[];
-  drawnDeckIds: string[];   // sous-ensemble de deckIds déjà sortis ce cycle
+  drawnDeckIds: string[]; // sous-ensemble de deckIds déjà sortis ce cycle
   createdAt: string;
 };
 ```
@@ -113,8 +113,8 @@ d'une entité `Match` séparée (voir ROADMAP phase 8), à prévoir dès le vers
 - **Tout le code est en anglais** : noms, commentaires, messages d'erreur, libellés de
   tests. Seuls les documents de suivi (ce guide, la roadmap, le journal) sont en français.
   Un dépôt public bilingue se lit deux fois moins bien qu'un dépôt monolingue.
-- **Lecture et action séparées.** Une fonction qui *interroge* l'état (`getPoolDrawState`)
-  se tient à côté de celle qui *le modifie* (`drawDeck`), pour que l'UI puisse désactiver
+- **Lecture et action séparées.** Une fonction qui _interroge_ l'état (`getPoolDrawState`)
+  se tient à côté de celle qui _le modifie_ (`drawDeck`), pour que l'UI puisse désactiver
   un bouton sans avoir à tenter l'action. La fonction d'action garde malgré tout ses cas
   d'échec : le domaine ne fait jamais confiance à son appelant.
 - **TypeScript strict, jamais de `any`.** Quand le type est réellement inconnu (JSON externe),
@@ -122,7 +122,7 @@ d'une entité `Match` séparée (voir ROADMAP phase 8), à prévoir dès le vers
 - **Design tokens d'abord.** Aucune couleur, aucun espacement en dur dans un composant.
   Rétro-ajouter des tokens coûte 10× plus cher que les poser au départ.
 - **Une story Storybook par composant**, écrite en même temps que le composant, pas après.
-  Une story par *variante* n'a en revanche pas d'intérêt : les contrôles y donnent accès, et
+  Une story par _variante_ n'a en revanche pas d'intérêt : les contrôles y donnent accès, et
   une story qui rend toutes les variantes d'un coup suffit à ce que la vérification
   d'accessibilité les couvre. Une story nommée se justifie quand elle capture un état qui
   se régresse facilement (désactivé, vide, en erreur) ou une composition non triviale.

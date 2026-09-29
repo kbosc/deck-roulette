@@ -35,9 +35,7 @@ export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
 
           {/* Spelled out rather than "3/8": read aloud, a slash is noise. */}
           <p className="text-sm text-text-muted">
-            {total === 0
-              ? "No deck in this pool"
-              : `${drawn} of ${total} drawn, ${remaining} left`}
+            {total === 0 ? "No deck in this pool" : `${drawn} of ${total} drawn, ${remaining} left`}
           </p>
         </div>
 
@@ -47,9 +45,7 @@ export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
         </div>
       </div>
 
-      {state === "ready" ? (
-        <Button onClick={onDraw}>Draw a deck</Button>
-      ) : null}
+      {state === "ready" ? <Button onClick={onDraw}>Draw a deck</Button> : null}
 
       {state === "exhausted" ? (
         <div className="flex flex-col gap-2">

@@ -15,9 +15,7 @@ const WUBRG: readonly Color[] = ["W", "U", "B", "R", "G"];
  * once. `C` is not a sixth color but the absence of any, so it only shows up
  * when nothing else does.
  */
-export function mergeColorIdentities(
-  ...identities: readonly ColorIdentity[]
-): ColorIdentity {
+export function mergeColorIdentities(...identities: readonly ColorIdentity[]): ColorIdentity {
   const colors = new Set(identities.flat());
   const merged = WUBRG.filter((color) => colors.has(color));
 

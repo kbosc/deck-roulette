@@ -42,9 +42,9 @@ describe("ConfirmDialog", () => {
     const describedBy = dialog.getAttribute("aria-describedby");
 
     expect(describedBy).not.toBeNull();
-    expect(describedBy === null ? null : document.getElementById(describedBy)?.textContent).toContain(
-      "removed from every pool",
-    );
+    expect(
+      describedBy === null ? null : document.getElementById(describedBy)?.textContent,
+    ).toContain("removed from every pool");
   });
 
   it("puts focus on the harmless button, not on the destructive one", async () => {

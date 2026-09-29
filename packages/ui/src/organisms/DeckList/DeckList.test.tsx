@@ -37,12 +37,7 @@ describe("DeckList", () => {
 
   it("marks only the deck that was drawn", () => {
     render(
-      <DeckList
-        decks={decks}
-        empty={empty}
-        label="Decks"
-        highlightedDeckId={toDeckId("d2")}
-      />,
+      <DeckList decks={decks} empty={empty} label="Decks" highlightedDeckId={toDeckId("d2")} />,
     );
 
     expect(screen.getAllByText("Just drawn")).toHaveLength(1);

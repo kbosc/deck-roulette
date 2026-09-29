@@ -55,7 +55,8 @@ const SIZES: Readonly<Record<ManaIdentitySize, string>> = {
  */
 export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
   const ordered = WUBRG.filter((color) => colors.includes(color));
-  const label = ordered.length === 0 ? "No color identity" : ordered.map((c) => NAMES[c]).join(", ");
+  const label =
+    ordered.length === 0 ? "No color identity" : ordered.map((c) => NAMES[c]).join(", ");
 
   return (
     <span className="inline-flex items-center gap-1">

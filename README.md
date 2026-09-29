@@ -10,18 +10,18 @@ Projet en cours de construction. Voir [`ROADMAP.md`](./ROADMAP.md) pour le déta
 
 ## Stack
 
-| | |
-|---|---|
-| Langage | TypeScript strict |
-| App | React 19 + Vite |
-| Monorepo | pnpm workspaces + Turborepo |
-| Style | Tailwind 4, pilotée par des design tokens |
-| Composants | Radix (primitives non stylées) + Storybook, découpage atomic design |
-| État client | Zustand |
-| État serveur | TanStack Query (API [Scryfall](https://scryfall.com/docs/api)) |
-| Validation | Zod |
-| Cartographie | maplibre-gl |
-| Tests | Vitest, Playwright |
+|              |                                                                     |
+| ------------ | ------------------------------------------------------------------- |
+| Langage      | TypeScript strict                                                   |
+| App          | React 19 + Vite                                                     |
+| Monorepo     | pnpm workspaces + Turborepo                                         |
+| Style        | Tailwind 4, pilotée par des design tokens                           |
+| Composants   | Radix (primitives non stylées) + Storybook, découpage atomic design |
+| État client  | Zustand                                                             |
+| État serveur | TanStack Query (API [Scryfall](https://scryfall.com/docs/api))      |
+| Validation   | Zod                                                                 |
+| Cartographie | maplibre-gl                                                         |
+| Tests        | Vitest, Playwright                                                  |
 
 ## Structure
 

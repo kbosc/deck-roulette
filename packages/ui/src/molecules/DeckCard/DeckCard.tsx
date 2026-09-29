@@ -67,7 +67,9 @@ export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) 
         </div>
       </div>
 
-      {actions === undefined ? null : <div className="flex items-center gap-2 shrink-0">{actions}</div>}
+      {actions === undefined ? null : (
+        <div className="flex items-center gap-2 shrink-0">{actions}</div>
+      )}
     </article>
   );
 }

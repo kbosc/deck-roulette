@@ -17,11 +17,21 @@ export const Default: Story = {};
 export const AllTones: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      <Badge {...args} tone="neutral">Neutral</Badge>
-      <Badge {...args} tone="info">Bracket 3</Badge>
-      <Badge {...args} tone="success">Just drawn</Badge>
-      <Badge {...args} tone="warning">Never played</Badge>
-      <Badge {...args} tone="danger">Missing cards</Badge>
+      <Badge {...args} tone="neutral">
+        Neutral
+      </Badge>
+      <Badge {...args} tone="info">
+        Bracket 3
+      </Badge>
+      <Badge {...args} tone="success">
+        Just drawn
+      </Badge>
+      <Badge {...args} tone="warning">
+        Never played
+      </Badge>
+      <Badge {...args} tone="danger">
+        Missing cards
+      </Badge>
     </div>
   ),
 };

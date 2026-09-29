@@ -49,8 +49,12 @@ export const WithActions: Story = {
   args: {
     actions: (
       <>
-        <Button size="sm" variant="ghost">Rename</Button>
-        <Button size="sm" variant="danger">Delete</Button>
+        <Button size="sm" variant="ghost">
+          Rename
+        </Button>
+        <Button size="sm" variant="danger">
+          Delete
+        </Button>
       </>
     ),
   },

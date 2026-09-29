@@ -42,7 +42,10 @@ export function Field({ label, hint, error, required = false, children }: FieldP
 
   // Order matters: assistive technology reads these in the order given, and the
   // error is what the person needs first.
-  const describedBy = [error === undefined ? undefined : errorId, hint === undefined ? undefined : hintId]
+  const describedBy = [
+    error === undefined ? undefined : errorId,
+    hint === undefined ? undefined : hintId,
+  ]
     .filter(Boolean)
     .join(" ");
 
