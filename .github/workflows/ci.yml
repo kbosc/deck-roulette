@@ -36,6 +36,12 @@ jobs:
       # added without committing the lockfile must not slip through.
       - run: pnpm install --frozen-lockfile
 
+      # Formatting first: it is the cheapest check, and a failure here says
+      # "run pnpm format", which needs no thought.
+      - run: pnpm format:check
+
+      - run: pnpm lint
+
       - run: pnpm typecheck
 
       - run: pnpm test

@@ -1,4 +1,4 @@
 {
   "extends": "@deck-roulette/tsconfig/react-library.json",
-  "include": ["src", ".storybook"]
+  "include": ["src", ".storybook/**/*.ts", "*.config.ts"]
 }

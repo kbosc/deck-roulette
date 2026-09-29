@@ -50,7 +50,7 @@ describe("Button", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it("keeps the anchor when asChild is used", async () => {
+  it("keeps the anchor when asChild is used", () => {
     render(
       <Button asChild>
         <a href="https://scryfall.com">Open Scryfall</a>
