@@ -121,6 +121,11 @@ d'une entité `Match` séparée (voir ROADMAP phase 8), à prévoir dès le vers
   c'est `unknown` puis un narrowing — ou Zod.
 - **Design tokens d'abord.** Aucune couleur, aucun espacement en dur dans un composant.
   Rétro-ajouter des tokens coûte 10× plus cher que les poser au départ.
+- **Les tests vivent à côté de ce qu'ils testent**, jamais dans une arborescence parallèle :
+  celle-ci se désynchronise, laisse des tests orphelins et allonge les imports. Dès qu'une
+  unité compte plus d'un fichier, elle prend un dossier à son nom, avec un `index.ts` qui
+  masque sa structure interne — on peut alors la réorganiser sans toucher aux appelants.
+  Un dossier sans `.test.tsx` se remarque immédiatement.
 - **Une story Storybook par composant**, écrite en même temps que le composant, pas après.
   Une story par _variante_ n'a en revanche pas d'intérêt : les contrôles y donnent accès, et
   une story qui rend toutes les variantes d'un coup suffit à ce que la vérification
