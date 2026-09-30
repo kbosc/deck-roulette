@@ -1,0 +1,9 @@
+/*
+ * The app adds nothing of its own: it consumes the design system's stylesheet,
+ * which already carries Tailwind, the tokens and the theme mapping.
+ *
+ * `@source` is needed because Tailwind only scans the files it is told about,
+ * and the components live in another package.
+ */
+@import "@deck-roulette/ui/styles.css";
+@source "../../../packages/ui/src";
