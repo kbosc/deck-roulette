@@ -56,17 +56,28 @@ export default tseslint.config(
     },
   },
 
+  // Every package that renders React: the design system and the app alike. An
+  // accessibility rule that stops at the package boundary is an accessibility
+  // rule the app does not have.
   {
-    files: ["packages/ui/**/*.{ts,tsx}"],
+    files: ["packages/ui/**/*.{ts,tsx}", "apps/*/src/**/*.{ts,tsx}"],
     extends: [reactHooks.configs.flat["recommended-latest"], jsxA11y.flatConfigs.recommended],
     languageOptions: { globals: globals.browser },
-    settings: {
-      // The plugin resolves Tailwind from `cwd`, and Tailwind is a dependency
-      // of the ui package rather than of the root. Without it, every Tailwind
-      // rule silently disables itself.
-      "better-tailwindcss": { entryPoint: "src/styles.css", cwd: "packages/ui" },
-    },
+  },
+
+  // The Tailwind rules need the compiled stylesheet, which differs per package,
+  // hence one block each rather than a single shared one.
+  ...[
+    { files: ["packages/ui/**/*.{ts,tsx}"], cwd: "packages/ui" },
+    { files: ["apps/web/**/*.{ts,tsx}"], cwd: "apps/web" },
+  ].map(({ files, cwd }) => ({
+    files,
     plugins: { "better-tailwindcss": betterTailwind },
+    settings: {
+      // The plugin resolves Tailwind from `cwd`. Without it, every Tailwind
+      // rule silently disables itself.
+      "better-tailwindcss": { entryPoint: "src/styles.css", cwd },
+    },
     rules: {
       // The last hole in the closed design system: an arbitrary value bypasses
       // the tokens entirely. `bg-[#ff0000]` is valid Tailwind and no amount of
@@ -91,7 +102,7 @@ export default tseslint.config(
       // in the attribute.
       "better-tailwindcss/no-conflicting-classes": "error",
     },
-  },
+  })),
 
   {
     files: ["**/*.stories.tsx"],
