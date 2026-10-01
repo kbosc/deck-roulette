@@ -3,7 +3,10 @@
   "display": "React library",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    // ES2023 must match base.json: `lib` is replaced, not merged, so listing
+    // an older version here would silently take away toSorted and friends from
+    // every package that renders React.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx"
   }
 }
