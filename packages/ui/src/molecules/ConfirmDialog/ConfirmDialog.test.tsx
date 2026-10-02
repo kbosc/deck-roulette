@@ -6,13 +6,20 @@ import { Button } from "../../atoms/Button";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 /** A host that owns the open state, the way a real screen would. */
-function Harness({ onConfirm = vi.fn() }: { readonly onConfirm?: () => void }) {
+function Harness({
+  onConfirm = vi.fn(),
+  onConfirmedFocus,
+}: {
+  readonly onConfirm?: () => void;
+  readonly onConfirmedFocus?: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={setOpen}
+      {...(onConfirmedFocus === undefined ? {} : { onConfirmedFocus })}
       title="Delete this deck?"
       description="Atraxa will be removed from every pool it belongs to. This cannot be undone."
       confirmLabel="Delete"
@@ -123,5 +130,66 @@ describe("ConfirmDialog", () => {
     await user.tab();
 
     expect(dialog.contains(document.activeElement)).toBe(true);
+  });
+
+  it("sends focus where it is told once the action is confirmed", async () => {
+    const onConfirmedFocus = vi.fn();
+    const user = userEvent.setup();
+    render(<Harness onConfirmedFocus={onConfirmedFocus} />);
+
+    await user.click(screen.getByRole("button", { name: "Delete deck" }));
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+
+    // The control that opened the dialog is usually gone by now — it was the
+    // row being deleted — so Radix would drop focus on the document body.
+    expect(onConfirmedFocus).toHaveBeenCalledOnce();
+  });
+
+  it("returns focus to the trigger when the question is cancelled", async () => {
+    const onConfirmedFocus = vi.fn();
+    const user = userEvent.setup();
+    render(<Harness onConfirmedFocus={onConfirmedFocus} />);
+
+    const trigger = screen.getByRole("button", { name: "Delete deck" });
+    await user.click(trigger);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    // Nothing was destroyed, so the default behaviour is the right one:
+    // someone who changed their mind lands back where they were.
+    expect(onConfirmedFocus).not.toHaveBeenCalled();
+    expect(trigger).toBe(document.activeElement);
+  });
+
+  it("restores focus even when the dialog has no Dialog.Trigger", async () => {
+    function WithoutTrigger() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>
+            Delete deck
+          </button>
+          <ConfirmDialog
+            open={open}
+            onOpenChange={setOpen}
+            title="Delete this deck?"
+            description="Gone for good."
+            confirmLabel="Delete"
+            onConfirm={vi.fn()}
+          />
+        </>
+      );
+    }
+
+    const user = userEvent.setup();
+    render(<WithoutTrigger />);
+
+    const opener = screen.getByRole("button", { name: "Delete deck" });
+    await user.click(opener);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    // One dialog serving a whole list is opened by ordinary buttons, so Radix
+    // has no trigger to hand focus back to and would drop it on the body.
+    expect(document.activeElement).toBe(opener);
   });
 });

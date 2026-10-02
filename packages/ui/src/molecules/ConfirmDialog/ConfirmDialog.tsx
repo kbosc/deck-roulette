@@ -21,6 +21,18 @@ export type ConfirmDialogProps = {
   readonly onConfirm: () => void;
   /** What opens the dialog. Rendered as-is, so it keeps being a real control. */
   readonly trigger?: ReactNode;
+  /**
+   * Where focus goes after the dialog closes **on a confirmation**.
+   *
+   * The dialog hands focus back to whatever opened it, which is right every
+   * time but one: when confirming destroys that control — deleting the row its
+   * button lived in. Focus then falls to the document body and strands a
+   * keyboard user at the top of the page.
+   *
+   * Cancelling is deliberately left alone: the trigger is still there, and
+   * returning to it is exactly what someone who changed their mind expects.
+   */
+  readonly onConfirmedFocus?: () => void;
 };
 
 /**
@@ -44,8 +56,23 @@ export function ConfirmDialog({
   cancelLabel = "Cancel",
   onConfirm,
   trigger,
+  onConfirmedFocus,
 }: ConfirmDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  /**
+   * A ref and not state: it is read while the dialog closes, and writing it
+   * must not cause a render of its own.
+   */
+  const confirmed = useRef(false);
+  /**
+   * Whatever had focus when the dialog opened.
+   *
+   * Radix restores focus by itself only when the dialog carries a
+   * `Dialog.Trigger`. A single dialog serving a whole list has none — each row
+   * opens it with an ordinary button — so there is nothing for Radix to go
+   * back to, and focus would fall to the document body.
+   */
+  const opener = useRef<HTMLElement | null>(null);
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -59,8 +86,33 @@ export function ConfirmDialog({
           // otherwise focus the first focusable element, and someone confirming
           // a dialog reflexively with Enter would delete their deck.
           onOpenAutoFocus={(event) => {
+            // Read before focus moves: this handler runs while the opener still
+            // has it.
+            opener.current = document.activeElement as HTMLElement | null;
+
             event.preventDefault();
             cancelRef.current?.focus();
+          }}
+          // Radix restores focus as it closes, after any handler the confirm
+          // button ran. Moving focus from `onConfirm` would therefore be undone
+          // a moment later; it has to be done here instead.
+          onCloseAutoFocus={(event) => {
+            const wasConfirmed = confirmed.current;
+            confirmed.current = false;
+
+            if (wasConfirmed && onConfirmedFocus !== undefined) {
+              event.preventDefault();
+              onConfirmedFocus();
+              return;
+            }
+
+            // `document.contains` matters: the opener may have been removed
+            // while the dialog was up, and focusing a detached node does
+            // nothing at all — focus would silently stay on the body.
+            if (opener.current !== null && document.contains(opener.current)) {
+              event.preventDefault();
+              opener.current.focus();
+            }
           }}
           className={[
             "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
@@ -84,6 +136,7 @@ export function ConfirmDialog({
             <Button
               variant="danger"
               onClick={() => {
+                confirmed.current = true;
                 onConfirm();
                 onOpenChange(false);
               }}
