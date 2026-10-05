@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Button } from "../../atoms/Button";
 import { Input } from "../../atoms/Input";
 import { Field } from "./Field";
 
@@ -39,6 +40,26 @@ export const WithHintAndError: Story = {
     hint: "Shown on the draw screen.",
     error: "A deck with this name already exists.",
   },
+};
+
+/**
+ * Beside a button: the field adopts the rows of the form's grid, so the button
+ * stays level with the input when the error appears below it.
+ */
+export const InAFormRow: Story = {
+  args: {
+    layout: "subgrid",
+    required: true,
+    error: "Give the deck a name.",
+  },
+  render: (args) => (
+    <form className="grid grid-cols-1 gap-x-3 gap-y-2">
+      <Field {...args} />
+      <Button type="button" className="col-start-2 row-start-2">
+        Add
+      </Button>
+    </form>
+  ),
 };
 
 /**
