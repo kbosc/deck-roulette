@@ -7,8 +7,8 @@ export {
   readPersisted,
 } from "./persistence";
 export { mergeColorIdentities } from "./colors";
-export type { IdFactory, Clock, CreationDeps, DeckInput } from "./creation";
-export { createDeck, createPool } from "./creation";
+export type { IdFactory, Clock, CreationDeps, DeckInput, NameProblem } from "./creation";
+export { createDeck, createPool, validateName } from "./creation";
 export type { DeckId, PoolId } from "./ids";
 export { toDeckId, toPoolId } from "./ids";
 export type { Library } from "./library";

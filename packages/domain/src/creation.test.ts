@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createDeck, createPool } from "./creation";
+import { createDeck, createPool, validateName } from "./creation";
 import type { CreationDeps } from "./creation";
 import { getPoolDrawState } from "./draw";
 
@@ -15,6 +15,24 @@ function makeDeps(): CreationDeps {
     now: () => "2026-09-10T12:00:00.000Z",
   };
 }
+
+describe("validateName", () => {
+  it("accepts a name", () => {
+    expect(validateName("Atraxa")).toBeNull();
+  });
+
+  it("accepts a name surrounded by spaces, since creating it trims them", () => {
+    expect(validateName("  Krenko  ")).toBeNull();
+  });
+
+  it("reports an empty name", () => {
+    expect(validateName("")).toBe("empty");
+  });
+
+  it("reports a name made of spaces only as empty", () => {
+    expect(validateName("   ")).toBe("empty");
+  });
+});
 
 describe("createDeck", () => {
   it("fills in the identifier and the creation date", () => {

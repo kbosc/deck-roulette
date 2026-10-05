@@ -29,17 +29,39 @@ export type DeckInput = {
 };
 
 /**
+ * Why a name was refused.
+ *
+ * A code, not a sentence: the domain says *what* is wrong, the screen decides
+ * how to say it. A union rather than a plain string, so that the day a second
+ * problem appears (a maximum length, say), every screen mapping these codes to
+ * messages stops compiling until it handles the new one.
+ */
+export type NameProblem = "empty";
+
+/**
+ * Checks a deck or pool name against the naming rule.
+ *
+ * Exported so that a form can tell the user before trying to create anything:
+ * the rule lives here once, instead of being copied into every screen.
+ */
+export function validateName(name: string): NameProblem | null {
+  return name.trim() === "" ? "empty" : null;
+}
+
+/**
  * Creates a deck, trimming its name and rejecting an empty one.
  *
  * A nameless deck is unusable in a draw list — better to fail here than to let
  * a blank row reach the screen.
  */
 export function createDeck(input: DeckInput, deps: CreationDeps): Deck {
-  const name = input.name.trim();
-
-  if (name === "") {
+  // Still enforced here: a caller that skipped validateName must not be able
+  // to create a nameless deck. The form checks to inform, this checks to protect.
+  if (validateName(input.name) !== null) {
     throw new TypeError("a deck name cannot be empty");
   }
+
+  const name = input.name.trim();
 
   return {
     ...input,
@@ -51,11 +73,11 @@ export function createDeck(input: DeckInput, deps: CreationDeps): Deck {
 
 /** Creates an empty pool, under the same naming rule as decks. */
 export function createPool(name: string, deps: CreationDeps): Pool {
-  const trimmed = name.trim();
-
-  if (trimmed === "") {
+  if (validateName(name) !== null) {
     throw new TypeError("a pool name cannot be empty");
   }
+
+  const trimmed = name.trim();
 
   return {
     id: toPoolId(deps.newId()),
