@@ -4,8 +4,16 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { LibraryRoute } from "./LibraryRoute";
 import { useLibrary } from "../../store/library";
 
+/**
+ * The name field, found by what a screen reader announces: the label plus the
+ * hidden "(required)". The asterisk is aria-hidden, so it is not part of it.
+ */
+function nameField() {
+  return screen.getByRole("textbox", { name: "Deck name (required)" });
+}
+
 async function addDeck(user: ReturnType<typeof userEvent.setup>, name: string) {
-  await user.type(screen.getByLabelText("Deck name"), name);
+  await user.type(nameField(), name);
   await user.click(screen.getByRole("button", { name: "Add" }));
 }
 
@@ -30,7 +38,73 @@ describe("LibraryRoute", () => {
 
     await addDeck(user, "Atraxa");
 
-    expect(screen.getByLabelText("Deck name")).toHaveProperty("value", "");
+    expect(nameField()).toHaveProperty("value", "");
+  });
+
+  it("says nothing about the name before anything has been submitted", () => {
+    render(<LibraryRoute />);
+
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(nameField().getAttribute("aria-invalid")).toBeNull();
+  });
+
+  it("explains why an empty name is refused, instead of doing nothing", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(screen.getByRole("alert").textContent).toBe("Give the deck a name.");
+    expect(useLibrary.getState().decks).toHaveLength(0);
+  });
+
+  it("refuses a name made of spaces only, like an empty one", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await addDeck(user, "   ");
+
+    expect(screen.getByRole("alert").textContent).toBe("Give the deck a name.");
+  });
+
+  it("marks the field invalid and ties the message to it", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    const field = nameField();
+    expect(field.getAttribute("aria-invalid")).toBe("true");
+    expect(field.getAttribute("aria-describedby")).toBe(screen.getByRole("alert").id);
+  });
+
+  it("puts focus back in the field, ready to type the name", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(document.activeElement).toBe(nameField());
+  });
+
+  it("clears the message as soon as the name becomes valid", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    await user.type(nameField(), "A");
+
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("keeps the message while the name is still only spaces", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+    await user.type(nameField(), "  ");
+
+    expect(screen.getByRole("alert")).toBeDefined();
   });
 
   it("names the delete button after the deck it would delete", async () => {

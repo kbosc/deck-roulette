@@ -1,7 +1,18 @@
-import type { Deck } from "@deck-roulette/domain";
+import type { Deck, NameProblem } from "@deck-roulette/domain";
+import { validateName } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, DeckList, Field, Input } from "@deck-roulette/ui";
 import { useRef, useState } from "react";
 import { useLibrary } from "../../store/library";
+
+/**
+ * What to tell the user for each way a name can be refused.
+ *
+ * A Record over the domain's codes: if the domain adds one, this stops
+ * compiling until it has a message.
+ */
+const nameMessages: Record<NameProblem, string> = {
+  empty: "Give the deck a name.",
+};
 
 export function LibraryRoute() {
   const decks = useLibrary((state) => state.decks);
@@ -9,6 +20,12 @@ export function LibraryRoute() {
   const removeDeck = useLibrary((state) => state.removeDeck);
 
   const [name, setName] = useState("");
+  /**
+   * Set on submit only, never while typing: nobody should be told off before
+   * they have tried. Once shown, it is re-checked on every keystroke so that it
+   * goes away the moment the name is fixed.
+   */
+  const [nameProblem, setNameProblem] = useState<NameProblem | null>(null);
   /**
    * One dialog for the whole list, told which deck it is about.
    *
@@ -25,6 +42,7 @@ export function LibraryRoute() {
   const [lastDeleted, setLastDeleted] = useState<string | null>(null);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
 
   function askToDelete(deck: Deck) {
     setDeckToDelete(deck);
@@ -44,29 +62,58 @@ export function LibraryRoute() {
         Library
       </h1>
 
+      {/*
+        noValidate: the field is marked required for assistive technology, but
+        the browser's own bubble would take over the message, look different in
+        every browser, and accept a name made of spaces.
+      */}
       <form
-        className="mt-6 flex items-end gap-3"
+        noValidate
+        // Three rows (label, control, messages) that the field adopts through
+        // subgrid: the button sits in the control's row, level with the input
+        // whether or not an error appears below it.
+        // One explicit column that takes the free space; placing the button in
+        // a second one creates it implicitly, sized to the button.
+        className="mt-6 grid grid-cols-1 gap-x-3 gap-y-2"
         onSubmit={(event) => {
           event.preventDefault();
-          if (name.trim() === "") return;
-          addDeck(name.trim());
+
+          const problem = validateName(name);
+          if (problem !== null) {
+            setNameProblem(problem);
+            // Clicking "Add" left focus on the button; bring it back to where
+            // the fix has to be typed.
+            nameRef.current?.focus();
+            return;
+          }
+
+          addDeck(name);
           setName("");
           setLastDeleted(null);
         }}
       >
-        <div className="flex-1">
-          <Field label="Deck name">
-            {(props) => (
-              <Input
-                {...props}
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Atraxa, Praetors' Voice"
-              />
-            )}
-          </Field>
-        </div>
-        <Button type="submit">Add</Button>
+        <Field
+          layout="subgrid"
+          label="Deck name"
+          required
+          error={nameProblem === null ? undefined : nameMessages[nameProblem]}
+        >
+          {(props) => (
+            <Input
+              {...props}
+              ref={nameRef}
+              value={name}
+              onChange={(event) => {
+                setName(event.target.value);
+                if (nameProblem !== null) setNameProblem(validateName(event.target.value));
+              }}
+              placeholder="Atraxa, Praetors' Voice"
+            />
+          )}
+        </Field>
+        <Button type="submit" className="col-start-2 row-start-2">
+          Add
+        </Button>
       </form>
 
       {/*
