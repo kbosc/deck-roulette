@@ -32,6 +32,15 @@ export function addDeck(library: Library, deck: Deck): Library {
   return { ...library, decks: [...library.decks, deck] };
 }
 
+/** Pools have their own namespace: a pool may be named like a deck. */
+export function addPool(library: Library, pool: Pool): Library {
+  if (library.pools.some((existing) => isSameName(existing.name, pool.name))) {
+    throw new TypeError("a pool with this name already exists");
+  }
+
+  return { ...library, pools: [...library.pools, pool] };
+}
+
 /** Leaves the decks alone: a pool references them, it does not own them. */
 export function deletePool(library: Library, poolId: PoolId): Library {
   const pools = library.pools.filter((pool) => pool.id !== poolId);

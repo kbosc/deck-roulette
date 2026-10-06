@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDeck, deleteDeck, deletePool } from "./library";
+import { addDeck, addPool, deleteDeck, deletePool } from "./library";
 import type { Library } from "./library";
 import { toDeckId, toPoolId } from "./ids";
 import { makeDeck, makePool } from "./test-utils";
@@ -12,9 +12,9 @@ function makeLibrary(): Library {
       makeDeck({ id: "c", name: "Edgar" }),
     ],
     pools: [
-      makePool({ id: "chill", deckIds: ["a", "b"], drawnDeckIds: ["a"] }),
-      makePool({ id: "thursday", deckIds: ["a", "c"] }),
-      makePool({ id: "cedh", deckIds: ["c"] }),
+      makePool({ id: "chill", name: "Chill night", deckIds: ["a", "b"], drawnDeckIds: ["a"] }),
+      makePool({ id: "thursday", name: "Thursday table", deckIds: ["a", "c"] }),
+      makePool({ id: "cedh", name: "cEDH", deckIds: ["c"] }),
     ],
   };
 }
@@ -71,7 +71,9 @@ describe("deleteDeck", () => {
 
 describe("addDeck", () => {
   it("refuses a deck whose name is already taken, whatever its case", () => {
-    expect(() => addDeck(makeLibrary(), makeDeck({ id: "d", name: "kRENKO" }))).toThrow(TypeError);
+    expect(() => addDeck(makeLibrary(), makeDeck({ id: "d", name: "kRENKO" }))).toThrow(
+      "a deck with this name already exists",
+    );
   });
 
   it("appends the deck to the library", () => {
@@ -94,6 +96,26 @@ describe("addDeck", () => {
     addDeck(library, makeDeck({ id: "d" }));
 
     expect(library.decks).toHaveLength(3);
+  });
+});
+
+describe("addPool", () => {
+  it("appends the pool to the library", () => {
+    const library = addPool(makeLibrary(), makePool({ id: "new", name: "Sunday brunch" }));
+
+    expect(library.pools.map((pool) => pool.id)).toEqual(["chill", "thursday", "cedh", "new"]);
+  });
+
+  it("refuses a pool whose name is already taken, whatever its case", () => {
+    expect(() => addPool(makeLibrary(), makePool({ id: "new", name: "thursday TABLE" }))).toThrow(
+      "a pool with this name already exists",
+    );
+  });
+
+  it("accepts a pool named like a deck: the two never meet in a list", () => {
+    const library = addPool(makeLibrary(), makePool({ id: "new", name: "Krenko" }));
+
+    expect(library.pools).toHaveLength(4);
   });
 });
 
