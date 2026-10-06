@@ -29,6 +29,15 @@ describe("LibraryRoute", () => {
     expect(screen.getByRole("heading", { name: "Atraxa" })).toBeDefined();
   });
 
+  it("introduces the decks with a level 2 heading, so no level is skipped", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await addDeck(user, "Atraxa");
+
+    expect(screen.getByRole("heading", { level: 2, name: "Your decks" })).toBeDefined();
+  });
+
   it("empties the field after adding, ready for the next one", async () => {
     const user = userEvent.setup();
     render(<LibraryRoute />);

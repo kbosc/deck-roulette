@@ -61,6 +61,8 @@ export function LibraryRoute() {
       </p>
 
       <div className="mt-6">
+        {/* The empty state carries its own h2; the cards are h3. */}
+        {decks.length === 0 ? null : <h2 className="mb-3 text-lg font-semibold">Your decks</h2>}
         <DeckList
           decks={decks}
           label="Your decks"
