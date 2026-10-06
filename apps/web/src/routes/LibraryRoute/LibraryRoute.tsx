@@ -12,12 +12,16 @@ import { useLibrary } from "../../store/library";
  */
 const nameMessages: Record<NameProblem, string> = {
   empty: "Give the deck a name.",
+  duplicate: "A deck with this name is already in your library.",
 };
 
 export function LibraryRoute() {
   const decks = useLibrary((state) => state.decks);
   const addDeck = useLibrary((state) => state.addDeck);
   const removeDeck = useLibrary((state) => state.removeDeck);
+  // Derived on render rather than selected from the store: a selector returning
+  // a new array each time would make Zustand re-render on every store change.
+  const deckNames = decks.map((deck) => deck.name);
 
   const [name, setName] = useState("");
   /**
@@ -78,7 +82,7 @@ export function LibraryRoute() {
         onSubmit={(event) => {
           event.preventDefault();
 
-          const problem = validateName(name);
+          const problem = validateName(name, deckNames);
           if (problem !== null) {
             setNameProblem(problem);
             // Clicking "Add" left focus on the button; bring it back to where
@@ -105,7 +109,8 @@ export function LibraryRoute() {
               value={name}
               onChange={(event) => {
                 setName(event.target.value);
-                if (nameProblem !== null) setNameProblem(validateName(event.target.value));
+                if (nameProblem !== null)
+                  setNameProblem(validateName(event.target.value, deckNames));
               }}
               placeholder="Atraxa, Praetors' Voice"
             />

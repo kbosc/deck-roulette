@@ -78,6 +78,29 @@ describe("LibraryRoute", () => {
     expect(field.getAttribute("aria-describedby")).toBe(screen.getByRole("alert").id);
   });
 
+  it("refuses a name already in the library, whatever its case", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await addDeck(user, "Atraxa");
+    await addDeck(user, "atraxa");
+
+    expect(screen.getByRole("alert").textContent).toBe(
+      "A deck with this name is already in your library.",
+    );
+    expect(useLibrary.getState().decks).toHaveLength(1);
+  });
+
+  it("keeps the refused name in the field, so it can be corrected", async () => {
+    const user = userEvent.setup();
+    render(<LibraryRoute />);
+
+    await addDeck(user, "Atraxa");
+    await addDeck(user, "atraxa");
+
+    expect(nameField()).toHaveProperty("value", "atraxa");
+  });
+
   it("puts focus back in the field, ready to type the name", async () => {
     const user = userEvent.setup();
     render(<LibraryRoute />);
