@@ -21,7 +21,7 @@ On ne passe à la suivante que quand la précédente tourne.
 - [x] `package.json` racine : scripts qui délèguent à Turborepo, aucune dépendance applicative
 - [x] `turbo.json` : pipeline `build`, `dev`, `test`, `lint` avec ses dépendances
 - [x] TypeScript : une config de base partagée, étendue par chaque package (`packages/tsconfig`)
-- [ ] ESLint (flat config) + Prettier à la racine — **reporté** : on le branchera quand il y aura du code à linter
+- [x] ESLint (flat config) + Prettier à la racine — branché une fois le premier code écrit
 - [x] Premier commit de la nouvelle structure
 - [x] Dépôt GitHub public créé et poussé : https://github.com/kbosc/deck-roulette
 
@@ -140,12 +140,23 @@ ce que Radix gère (focus trap, ARIA, clavier) et ce qu'il laisse à ta charge (
 **Objectif pédagogique :** assembler. L'app ne contient que du routage, de la composition
 et du branchement — aucune logique métier, aucun style en dur.
 
-- [ ] Vite + React 19 + TypeScript strict
-- [ ] Routage : liste des pools · détail d'un pool · bibliothèque de decks · réglages
-- [ ] CRUD des decks avec formulaires validés (nom obligatoire, pas de doublon exact)
+- [x] Vite + React 19 + TypeScript strict
+- [ ] Routage : liste des pools · détail d'un pool · bibliothèque de decks · réglages — _bibliothèque et pools en place_
+- [ ] CRUD des decks avec formulaires validés (nom obligatoire, pas de doublon, casse ignorée) — _création et suppression faites, édition à venir_
 - [ ] Création et édition d'un pool, sélection des decks qui le composent
 - [ ] États vides travaillés partout
-- [ ] Confirmation sur les suppressions
+- [x] Confirmation sur les suppressions
+
+> **Point du 05/10/2026.** Bibliothèque : ajout, suppression confirmée, validation du nom.
+> La règle de nommage vit dans le domaine (`validateName` renvoie un code, l'UI le traduit
+> via un `Record<NameProblem, string>` qui casse la compilation si un code n'a pas de
+> message). Doublons comparés avec `Intl.Collator` (`sensitivity: "accent"`) : casse
+> ignorée, accents significatifs.
+>
+> **Incidents.** (1) Focus perdu sur `<body>` après suppression : Radix ne restaure le focus
+> que s'il a un `Dialog.Trigger` ; `ConfirmDialog` mémorise désormais l'ouvrant lui-même.
+> (2) Bouton « Add » décalé par l'apparition du message d'erreur : formulaire passé en grille,
+> `Field` s'y aligne via `subgrid`.
 
 **Concepts :** où vit l'état (le réflexe n°1 avant toute optimisation) · découpage
 page / conteneur / présentation · formulaires contrôlés vs non contrôlés.
@@ -156,10 +167,10 @@ page / conteneur / présentation · formulaires contrôlés vs non contrôlés.
 
 **Objectif pédagogique :** distinguer ce qui appartient à l'app de ce qui vient d'ailleurs.
 
-- [ ] Store Zustand pour pools, decks et tirage en cours
-- [ ] Middleware `persist` sur localStorage, avec `version` et `migrate`
-- [ ] Sélecteurs pour éviter les re-renders inutiles
-- [ ] Le store appelle `packages/domain` — il ne réimplémente aucune règle métier
+- [ ] Store Zustand pour pools, decks et tirage en cours — _decks et pools en place, actions de tirage à venir_
+- [x] Middleware `persist` sur localStorage, avec `version` et `migrate`
+- [x] Sélecteurs pour éviter les re-renders inutiles
+- [x] Le store appelle `packages/domain` — il ne réimplémente aucune règle métier
 
 **Concepts :** state client vs state serveur · sélecteur et re-render ciblé ·
 sérialisation et migration de schéma · pourquoi la logique métier ne vit pas dans le store.
@@ -237,7 +248,7 @@ tuiles vectorielles · stratégie de cache offline.
 ## Phase 10 — Qualité, CI/CD, déploiement
 
 - [ ] Tests e2e (Playwright — voisin de Cypress, déjà connu)
-- [ ] CI GitHub Actions : lint, types, tests, build, en tirant parti du cache Turborepo
+- [ ] CI GitHub Actions : lint, types, tests, build, en tirant parti du cache Turborepo — _en place, sans le cache Turborepo_
 - [ ] Déploiement de `apps/web` (Vercel ou Netlify)
 - [ ] Storybook déployé et partageable
 - [ ] Audit Lighthouse : performance et accessibilité
