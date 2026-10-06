@@ -1,4 +1,4 @@
-import type { DeckId, Library, PoolId } from "@deck-roulette/domain";
+import type { DeckId, DrawResult, Library, Pool, PoolId } from "@deck-roulette/domain";
 import {
   CURRENT_SCHEMA_VERSION,
   addDeck as addDeckToLibrary,
@@ -8,6 +8,8 @@ import {
   createPool,
   deleteDeck,
   deletePool,
+  drawDeck,
+  resetPool,
 } from "@deck-roulette/domain";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -17,12 +19,24 @@ type LibraryState = Library & {
   readonly removeDeck: (deckId: DeckId) => void;
   readonly addPool: (name: string) => void;
   readonly removePool: (poolId: PoolId) => void;
+  readonly drawFromPool: (poolId: PoolId) => DrawResult;
+  readonly resetPool: (poolId: PoolId) => void;
 };
 
 const deps = {
   newId: () => crypto.randomUUID(),
   now: () => new Date().toISOString(),
 };
+
+function replacePool(library: Library, pool: Pool): Library {
+  return { ...library, pools: library.pools.map((p) => (p.id === pool.id ? pool : p)) };
+}
+
+function findPool(library: Library, poolId: PoolId): Pool {
+  const pool = library.pools.find((p) => p.id === poolId);
+  if (pool === undefined) throw new RangeError(`no pool with id ${poolId}`);
+  return pool;
+}
 
 /** Changing it orphans everyone's data. */
 export const STORAGE_KEY = "deck-roulette";
@@ -41,7 +55,7 @@ function migrate(persisted: unknown, from: number): unknown {
 
 export const useLibrary = create<LibraryState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       decks: [],
       pools: [],
 
@@ -63,6 +77,16 @@ export const useLibrary = create<LibraryState>()(
 
       removePool: (poolId) => {
         set((state) => deletePool(state, poolId));
+      },
+
+      drawFromPool: (poolId) => {
+        const result = drawDeck(findPool(get(), poolId), Math.random);
+        if (result.status === "drawn") set((state) => replacePool(state, result.pool));
+        return result;
+      },
+
+      resetPool: (poolId) => {
+        set((state) => replacePool(state, resetPool(findPool(state, poolId))));
       },
     }),
     {

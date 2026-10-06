@@ -1,4 +1,4 @@
-import { CURRENT_SCHEMA_VERSION, toDeckId } from "@deck-roulette/domain";
+import { CURRENT_SCHEMA_VERSION, addDeckToPool, toDeckId } from "@deck-roulette/domain";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -17,6 +17,20 @@ function DeckCounter() {
       </button>
     </>
   );
+}
+
+/** A pool holding one deck, until the store can put decks in pools itself. */
+function poolWithOneDeck() {
+  useLibrary.getState().addDeck("Atraxa");
+  useLibrary.getState().addPool("Thursday table");
+  const { decks, pools } = useLibrary.getState();
+  const [deck] = decks;
+  const [pool] = pools;
+
+  if (deck === undefined || pool === undefined) throw new Error("setup failed");
+
+  useLibrary.setState({ pools: [addDeckToPool(pool, deck.id)] });
+  return { deckId: deck.id, poolId: pool.id };
 }
 
 function stored(): { state: Record<string, unknown>; version: number } {
@@ -91,6 +105,48 @@ describe("useLibrary", () => {
 
       expect(useLibrary.getState().pools).toHaveLength(0);
       expect(useLibrary.getState().decks).toHaveLength(1);
+    });
+  });
+
+  describe("drawing from a pool", () => {
+    it("returns the drawn deck and marks it as drawn", () => {
+      const { deckId, poolId } = poolWithOneDeck();
+
+      const result = useLibrary.getState().drawFromPool(poolId);
+
+      expect(result).toMatchObject({ status: "drawn", deckId });
+      expect(useLibrary.getState().pools[0]?.drawnDeckIds).toEqual([deckId]);
+    });
+
+    it("reports an empty pool without changing it", () => {
+      useLibrary.getState().addPool("Thursday table");
+      const before = useLibrary.getState().pools;
+      const [pool] = before;
+
+      if (pool === undefined) throw new Error("setup failed");
+
+      expect(useLibrary.getState().drawFromPool(pool.id)).toEqual({ status: "empty" });
+      expect(useLibrary.getState().pools).toBe(before);
+    });
+
+    it("reports an exhausted pool without changing it", () => {
+      const { poolId } = poolWithOneDeck();
+      useLibrary.getState().drawFromPool(poolId);
+      const before = useLibrary.getState().pools;
+
+      expect(useLibrary.getState().drawFromPool(poolId)).toEqual({ status: "exhausted" });
+      expect(useLibrary.getState().pools).toBe(before);
+    });
+  });
+
+  describe("starting a new cycle", () => {
+    it("makes every deck drawable again", () => {
+      const { poolId } = poolWithOneDeck();
+      useLibrary.getState().drawFromPool(poolId);
+
+      useLibrary.getState().resetPool(poolId);
+
+      expect(useLibrary.getState().pools[0]?.drawnDeckIds).toEqual([]);
     });
   });
 
