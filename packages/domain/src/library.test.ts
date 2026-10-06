@@ -6,7 +6,11 @@ import { makeDeck, makePool } from "./test-utils";
 
 function makeLibrary(): Library {
   return {
-    decks: [makeDeck({ id: "a" }), makeDeck({ id: "b" }), makeDeck({ id: "c" })],
+    decks: [
+      makeDeck({ id: "a", name: "Atraxa" }),
+      makeDeck({ id: "b", name: "Krenko" }),
+      makeDeck({ id: "c", name: "Edgar" }),
+    ],
     pools: [
       makePool({ id: "chill", deckIds: ["a", "b"], drawnDeckIds: ["a"] }),
       makePool({ id: "thursday", deckIds: ["a", "c"] }),
@@ -66,8 +70,12 @@ describe("deleteDeck", () => {
 });
 
 describe("addDeck", () => {
+  it("refuses a deck whose name is already taken, whatever its case", () => {
+    expect(() => addDeck(makeLibrary(), makeDeck({ id: "d", name: "kRENKO" }))).toThrow(TypeError);
+  });
+
   it("appends the deck to the library", () => {
-    const library = addDeck(makeLibrary(), makeDeck({ id: "d" }));
+    const library = addDeck(makeLibrary(), makeDeck({ id: "d", name: "Tymna" }));
 
     expect(library.decks.map((deck) => deck.id)).toEqual(["a", "b", "c", "d"]);
   });
@@ -75,7 +83,7 @@ describe("addDeck", () => {
   it("puts the deck in no pool at all", () => {
     const before = makeLibrary();
 
-    const after = addDeck(before, makeDeck({ id: "d" }));
+    const after = addDeck(before, makeDeck({ id: "d", name: "Tymna" }));
 
     expect(after.pools).toEqual(before.pools);
   });

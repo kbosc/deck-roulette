@@ -36,16 +36,41 @@ export type DeckInput = {
  * problem appears (a maximum length, say), every screen mapping these codes to
  * messages stops compiling until it handles the new one.
  */
-export type NameProblem = "empty";
+export type NameProblem = "empty" | "duplicate";
+
+function isBlank(name: string): boolean {
+  return name.trim() === "";
+}
 
 /**
- * Checks a deck or pool name against the naming rule.
+ * Compares names the way a person would: "atraxa" and "Atraxa" are the same
+ * deck, "Eowyn" and "Éowyn" are not.
+ *
+ * A collator rather than `toLowerCase()`: lowercasing gets some languages wrong
+ * (the German ß, the Turkish dotted i), whereas the collator applies Unicode's
+ * own rules. `sensitivity: "accent"` is what makes case irrelevant while
+ * keeping accents significant. Built once, since it is used on every keystroke.
+ */
+const nameCollator = new Intl.Collator(undefined, { sensitivity: "accent" });
+
+/** Whether two names designate the same thing, spaces around them aside. */
+export function isSameName(a: string, b: string): boolean {
+  return nameCollator.compare(a.trim(), b.trim()) === 0;
+}
+
+/**
+ * Checks a deck or pool name against the naming rules.
  *
  * Exported so that a form can tell the user before trying to create anything:
- * the rule lives here once, instead of being copied into every screen.
+ * the rules live here once, instead of being copied into every screen.
+ *
+ * `existingNames` is required, not optional: a caller who forgot it would get
+ * every duplicate through without a word.
  */
-export function validateName(name: string): NameProblem | null {
-  return name.trim() === "" ? "empty" : null;
+export function validateName(name: string, existingNames: readonly string[]): NameProblem | null {
+  if (isBlank(name)) return "empty";
+  if (existingNames.some((existing) => isSameName(existing, name))) return "duplicate";
+  return null;
 }
 
 /**
@@ -57,7 +82,7 @@ export function validateName(name: string): NameProblem | null {
 export function createDeck(input: DeckInput, deps: CreationDeps): Deck {
   // Still enforced here: a caller that skipped validateName must not be able
   // to create a nameless deck. The form checks to inform, this checks to protect.
-  if (validateName(input.name) !== null) {
+  if (isBlank(input.name)) {
     throw new TypeError("a deck name cannot be empty");
   }
 
@@ -73,7 +98,7 @@ export function createDeck(input: DeckInput, deps: CreationDeps): Deck {
 
 /** Creates an empty pool, under the same naming rule as decks. */
 export function createPool(name: string, deps: CreationDeps): Pool {
-  if (validateName(name) !== null) {
+  if (isBlank(name)) {
     throw new TypeError("a pool name cannot be empty");
   }
 

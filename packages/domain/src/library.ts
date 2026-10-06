@@ -1,3 +1,4 @@
+import { isSameName } from "./creation";
 import { removeDeckFromPool } from "./pool";
 import type { DeckId, PoolId } from "./ids";
 import type { Deck, Pool } from "./types";
@@ -43,8 +44,15 @@ export function deleteDeck(library: Library, deckId: DeckId): Library {
  *
  * Creating a deck and deciding where to draw it from are two separate user
  * actions, so they are two separate functions.
+ *
+ * Refuses a name already taken. `createDeck` cannot check it, since it does not
+ * see the library; this is the first place that does.
  */
 export function addDeck(library: Library, deck: Deck): Library {
+  if (library.decks.some((existing) => isSameName(existing.name, deck.name))) {
+    throw new TypeError("a deck with this name already exists");
+  }
+
   return { ...library, decks: [...library.decks, deck] };
 }
 

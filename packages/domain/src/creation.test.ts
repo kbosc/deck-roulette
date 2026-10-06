@@ -17,20 +17,38 @@ function makeDeps(): CreationDeps {
 }
 
 describe("validateName", () => {
-  it("accepts a name", () => {
-    expect(validateName("Atraxa")).toBeNull();
+  const existing = ["Atraxa", "Krenko"];
+
+  it("accepts a new name", () => {
+    expect(validateName("Edgar", existing)).toBeNull();
   });
 
   it("accepts a name surrounded by spaces, since creating it trims them", () => {
-    expect(validateName("  Krenko  ")).toBeNull();
+    expect(validateName("  Edgar  ", existing)).toBeNull();
   });
 
   it("reports an empty name", () => {
-    expect(validateName("")).toBe("empty");
+    expect(validateName("", existing)).toBe("empty");
   });
 
   it("reports a name made of spaces only as empty", () => {
-    expect(validateName("   ")).toBe("empty");
+    expect(validateName("   ", existing)).toBe("empty");
+  });
+
+  it("reports a name already taken", () => {
+    expect(validateName("Atraxa", existing)).toBe("duplicate");
+  });
+
+  it("ignores case: atraxa and Atraxa are the same deck", () => {
+    expect(validateName("aTRAXA", existing)).toBe("duplicate");
+  });
+
+  it("ignores the spaces around a taken name", () => {
+    expect(validateName("  Krenko ", existing)).toBe("duplicate");
+  });
+
+  it("keeps accents meaningful: Éowyn is not Eowyn", () => {
+    expect(validateName("Eowyn", ["Éowyn"])).toBeNull();
   });
 });
 
