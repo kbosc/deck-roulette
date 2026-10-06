@@ -1,10 +1,13 @@
-import type { DeckId, Library } from "@deck-roulette/domain";
+import type { DeckId, Library, PoolId } from "@deck-roulette/domain";
 import {
   CURRENT_SCHEMA_VERSION,
   addDeck as addDeckToLibrary,
+  addPool as addPoolToLibrary,
   applyMigrations,
   createDeck,
+  createPool,
   deleteDeck,
+  deletePool,
 } from "@deck-roulette/domain";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -12,6 +15,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 type LibraryState = Library & {
   readonly addDeck: (name: string) => void;
   readonly removeDeck: (deckId: DeckId) => void;
+  readonly addPool: (name: string) => void;
+  readonly removePool: (poolId: PoolId) => void;
 };
 
 const deps = {
@@ -49,6 +54,15 @@ export const useLibrary = create<LibraryState>()(
 
       removeDeck: (deckId) => {
         set((state) => deleteDeck(state, deckId));
+      },
+
+      addPool: (name) => {
+        const pool = createPool(name, deps);
+        set((state) => addPoolToLibrary(state, pool));
+      },
+
+      removePool: (poolId) => {
+        set((state) => deletePool(state, poolId));
       },
     }),
     {

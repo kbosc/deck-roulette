@@ -69,6 +69,31 @@ describe("useLibrary", () => {
     });
   });
 
+  describe("adding a pool", () => {
+    it("adds an empty pool to the library", () => {
+      useLibrary.getState().addPool("Thursday table");
+
+      expect(useLibrary.getState().pools).toMatchObject([
+        { name: "Thursday table", deckIds: [], drawnDeckIds: [] },
+      ]);
+    });
+  });
+
+  describe("removing a pool", () => {
+    it("takes the pool out and keeps its decks in the library", () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addPool("Thursday table");
+      const [pool] = useLibrary.getState().pools;
+
+      if (pool === undefined) throw new Error("the pool was not added");
+
+      useLibrary.getState().removePool(pool.id);
+
+      expect(useLibrary.getState().pools).toHaveLength(0);
+      expect(useLibrary.getState().decks).toHaveLength(1);
+    });
+  });
+
   describe("persistence", () => {
     it("writes the library to storage as soon as it changes", () => {
       useLibrary.getState().addDeck("Atraxa");
