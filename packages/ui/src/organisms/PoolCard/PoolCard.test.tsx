@@ -1,6 +1,8 @@
 import type { Pool } from "@deck-roulette/domain";
 import { toDeckId, toPoolId } from "@deck-roulette/domain";
+import { drawDeck, resetPool } from "@deck-roulette/domain";
 import { render, screen } from "@testing-library/react";
+import { useState } from "react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { PoolCard } from "./PoolCard";
@@ -16,7 +18,60 @@ function makePool(overrides: Partial<Pool> = {}): Pool {
   };
 }
 
+/** Plays the draws for real, so the card swaps its control as on screen. */
+function LivePoolCard({ initial }: { readonly initial: Pool }) {
+  const [pool, setPool] = useState(initial);
+
+  return (
+    <PoolCard
+      pool={pool}
+      onDraw={() => {
+        const result = drawDeck(pool, () => 0);
+        if (result.status === "drawn") setPool(result.pool);
+      }}
+      onReset={() => setPool(resetPool(pool))}
+    />
+  );
+}
+
 describe("PoolCard", () => {
+  it("keeps focus on the card's control when drawing the last deck swaps it", async () => {
+    const user = userEvent.setup();
+    render(<LivePoolCard initial={makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b")] })} />);
+
+    await user.click(screen.getByRole("button", { name: "Draw a deck" }));
+
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Start a new cycle" }));
+  });
+
+  it("keeps focus on the card's control when a new cycle swaps it back", async () => {
+    const user = userEvent.setup();
+    render(
+      <LivePoolCard
+        initial={makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b"), toDeckId("c")] })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Start a new cycle" }));
+
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Draw a deck" }));
+  });
+
+  it("leaves focus alone when the pool changes for another reason", () => {
+    const pool = makePool();
+    const { rerender } = render(<PoolCard pool={pool} onDraw={vi.fn()} onReset={vi.fn()} />);
+
+    rerender(
+      <PoolCard
+        pool={{ ...pool, drawnDeckIds: [...pool.deckIds] }}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    );
+
+    expect(document.activeElement).toBe(document.body);
+  });
+
   it("offers a draw while decks remain", async () => {
     const onDraw = vi.fn();
     const user = userEvent.setup();
