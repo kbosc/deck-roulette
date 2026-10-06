@@ -14,15 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * The playground: every prop is reachable from the controls panel. A story per
- * variant would add nothing, since `AllVariants` below already renders them all
- * and is what the accessibility check actually runs against.
- */
 export const Default: Story = {};
 
-/** Kept as its own story because the opacity and the blocked pointer are easy
- * to regress, and neither shows up in the variant grid. */
+/** Its own story: neither the opacity nor the blocked pointer shows in the grid. */
 export const Disabled: Story = { args: { disabled: true } };
 
 /** Every size side by side, to check they line up on a shared baseline. */
@@ -36,10 +30,7 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * A link that looks like a button. `asChild` keeps the anchor, so the browser
- * still offers "open in a new tab" and screen readers still announce a link.
- */
+/** `asChild` keeps the anchor: still announced and opened as a link. */
 export const AsLink: Story = {
   args: { asChild: true },
   render: (args) => (

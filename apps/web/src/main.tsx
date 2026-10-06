@@ -10,8 +10,6 @@ if (container === null) {
 }
 
 createRoot(container).render(
-  // StrictMode double-invokes renders and effects in development, which is how
-  // an effect that is not safe to run twice gets caught before production.
   <StrictMode>
     <App />
   </StrictMode>,

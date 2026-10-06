@@ -38,15 +38,12 @@ describe("DeckCard", () => {
   it("spells the bracket out instead of showing a bare number", () => {
     render(<DeckCard deck={makeDeck({ bracket: 3 })} />);
 
-    // "3" alone means nothing to someone meeting the scale for the first time.
     expect(screen.getByText("Bracket 3")).toBeDefined();
   });
 
   it("says in words that a deck has just been drawn", () => {
     render(<DeckCard deck={makeDeck()} highlighted />);
 
-    // The ring alone would be invisible to a screen reader and unreliable for
-    // anyone with a colour vision deficiency.
     expect(screen.getByText("Just drawn")).toBeDefined();
   });
 
@@ -66,8 +63,6 @@ describe("DeckCard", () => {
   it("is not itself a control", () => {
     render(<DeckCard deck={makeDeck()} actions={<Button variant="ghost">Delete</Button>} />);
 
-    // A card that is one big button cannot hold a button: nesting interactive
-    // elements is invalid, and the inner control becomes unreachable.
     expect(screen.getAllByRole("button")).toHaveLength(1);
   });
 });

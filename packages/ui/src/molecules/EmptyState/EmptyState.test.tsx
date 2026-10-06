@@ -7,8 +7,6 @@ describe("EmptyState", () => {
   it("states what is missing as a heading", () => {
     render(<EmptyState title="No deck yet" description="Add your first deck to start drawing." />);
 
-    // A heading, so the screen keeps an outline someone can navigate. A styled
-    // paragraph would look the same and be invisible to that navigation.
     expect(screen.getByRole("heading", { name: "No deck yet" })).toBeDefined();
   });
 
@@ -21,8 +19,6 @@ describe("EmptyState", () => {
   it("can sit under an existing section without skipping a level", () => {
     render(<EmptyState title="No deck yet" description="Add your first deck." headingLevel={3} />);
 
-    // Skipping from h2 to h4 leaves someone navigating by headings unsure
-    // whether they missed a section.
     expect(screen.getByRole("heading", { level: 3 })).toBeDefined();
   });
 
@@ -47,8 +43,6 @@ describe("EmptyState", () => {
       />,
     );
 
-    // Decoration announced as an image is noise between the heading and the
-    // sentence that actually helps.
     expect(container.querySelector("[aria-hidden='true']")).not.toBeNull();
   });
 

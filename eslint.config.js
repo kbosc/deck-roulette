@@ -7,12 +7,6 @@ import betterTailwind from "eslint-plugin-better-tailwindcss";
 import prettier from "eslint-config-prettier";
 import globals from "globals";
 
-/**
- * One flat config for the whole monorepo.
- *
- * Linting is fast enough that splitting it per package would buy nothing but
- * four copies of the same rules to keep in sync.
- */
 export default tseslint.config(
   {
     ignores: ["**/dist/**", "**/storybook-static/**", "**/node_modules/**", "**/.turbo/**"],
@@ -20,16 +14,12 @@ export default tseslint.config(
 
   js.configs.recommended,
 
-  // Type-aware linting: these rules read the actual types, which is what lets
-  // them catch a forgotten await or a condition that is always true. It costs a
-  // full typecheck per run, and is worth it.
+  // Type-aware: costs a typecheck per run, catches forgotten awaits and dead conditions.
   ...tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
-        // `allowDefaultProject` covers the handful of files no tsconfig owns —
-        // this config itself. Everything else must belong to a real project, so
-        // that type-aware rules actually see types.
+        // Only for files no tsconfig owns (this one): everything else must see real types.
         projectService: { allowDefaultProject: ["eslint.config.js"] },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -41,14 +31,12 @@ export default tseslint.config(
     rules: {
       // The project bans `any`; the recommended set only warns about it.
       "@typescript-eslint/no-explicit-any": "error",
-      // An unused variable is either a leftover or a mistake. `_` prefixed ones
-      // are the documented way to say "required by the signature, unused here".
+      // `_`-prefixed: required by the signature, unused here.
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-      // `import type` rather than a value import, so the import disappears from
-      // the bundle. Required anyway by verbatimModuleSyntax.
+      // Required by verbatimModuleSyntax.
       "@typescript-eslint/consistent-type-imports": [
         "error",
         { fixStyle: "separate-type-imports" },
@@ -56,17 +44,14 @@ export default tseslint.config(
     },
   },
 
-  // Every package that renders React: the design system and the app alike. An
-  // accessibility rule that stops at the package boundary is an accessibility
-  // rule the app does not have.
+  // The app too, not only the design system.
   {
     files: ["packages/ui/**/*.{ts,tsx}", "apps/*/src/**/*.{ts,tsx}"],
     extends: [reactHooks.configs.flat["recommended-latest"], jsxA11y.flatConfigs.recommended],
     languageOptions: { globals: globals.browser },
   },
 
-  // The Tailwind rules need the compiled stylesheet, which differs per package,
-  // hence one block each rather than a single shared one.
+  // One block per package: each has its own compiled stylesheet.
   ...[
     { files: ["packages/ui/**/*.{ts,tsx}"], cwd: "packages/ui" },
     { files: ["apps/web/**/*.{ts,tsx}"], cwd: "apps/web" },
@@ -74,14 +59,11 @@ export default tseslint.config(
     files,
     plugins: { "better-tailwindcss": betterTailwind },
     settings: {
-      // The plugin resolves Tailwind from `cwd`. Without it, every Tailwind
-      // rule silently disables itself.
+      // Without it, every Tailwind rule silently disables itself.
       "better-tailwindcss": { entryPoint: "src/styles.css", cwd },
     },
     rules: {
-      // The last hole in the closed design system: an arbitrary value bypasses
-      // the tokens entirely. `bg-[#ff0000]` is valid Tailwind and no amount of
-      // theme configuration can stop it — only a lint rule can.
+      // `bg-[#ff0000]` bypasses the tokens, and only a lint rule can stop it.
       "better-tailwindcss/no-restricted-classes": [
         "error",
         {
@@ -94,12 +76,8 @@ export default tseslint.config(
           ],
         },
       ],
-      // A class Tailwind cannot resolve is a typo: `bg-surfce` silently renders
-      // nothing at all.
       "better-tailwindcss/no-unknown-classes": "error",
-      // Catches `bg-surface bg-action` on the same element, where the winner is
-      // decided by the order of the rules in the stylesheet, not by the order
-      // in the attribute.
+      // With two conflicting classes, the stylesheet order decides, not the attribute's.
       "better-tailwindcss/no-conflicting-classes": "error",
     },
   })),
@@ -123,9 +101,7 @@ export default tseslint.config(
   },
 
   {
-    // This config file itself: several ESLint plugins ship no types, so every
-    // type-aware rule sees `any` and complains about code that is correct.
-    // Linting it without types still catches the mistakes that matter here.
+    // Several plugins ship no types: type-aware rules would flag correct code here.
     files: ["**/*.js"],
     extends: [tseslint.configs.disableTypeChecked],
   },

@@ -4,31 +4,15 @@ import type { ComponentPropsWithRef, ReactNode } from "react";
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
-/**
- * `ComponentPropsWithRef` rather than `ButtonHTMLAttributes`: the latter leaves
- * out `ref`, which Radix needs whenever it wraps this component with `asChild`
- * — a Dialog.Close has to reach the real DOM node to focus and close it.
- *
- * Since React 19 a function component takes `ref` as an ordinary prop, so it
- * travels in `...props` and lands on the element. No `forwardRef` needed.
- */
+/** WithRef: Radix's `asChild` (Dialog.Close) needs to reach the DOM node. */
 export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly variant?: ButtonVariant;
   readonly size?: ButtonSize;
-  /**
-   * Renders the single child instead of a `button`, keeping every style and
-   * prop. Used to make a link look like a button without lying about what it
-   * is: a thing that navigates must stay an `a`, or keyboard and screen-reader
-   * users lose the behaviour they expect.
-   */
+  /** Renders the child instead: something that navigates must stay an `a`. */
   readonly asChild?: boolean;
   readonly children: ReactNode;
 };
 
-/**
- * Every value below is a token. No hex, no pixel: rétro-fitting a token costs
- * ten times what declaring one does.
- */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   primary: "bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
   secondary: "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
@@ -36,13 +20,7 @@ const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   danger: "bg-danger text-text-on-danger hover:bg-danger-hover",
 };
 
-/**
- * Heights stop at the 44px step for `md` and `lg`.
- *
- * `sm` is deliberately shorter, and is only ever acceptable next to a larger
- * target or on a pointer-only surface — a 32px control is below the size a
- * finger can reliably hit.
- */
+/** `sm` is below a reliable touch target: only next to a larger one, or pointer-only. */
 const SIZES: Readonly<Record<ButtonSize, string>> = {
   sm: "h-8 px-3 text-sm gap-1",
   md: "h-11 px-4 text-base gap-2",
@@ -52,13 +30,9 @@ const SIZES: Readonly<Record<ButtonSize, string>> = {
 const BASE = [
   "inline-flex items-center justify-center",
   "rounded-md font-medium",
-  // Tailwind 4 no longer sets this in its preflight, and a native button has
-  // never had a pointer cursor: it is a convention borrowed from links, and one
-  // people now rely on to tell what is clickable.
+  // Tailwind 4's preflight no longer sets it.
   "cursor-pointer",
   "transition-colors ease-standard",
-  // The focus ring is never removed, only restyled: outline-none on its own is
-  // the single most common way to make an interface unusable by keyboard.
   "outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
   "focus-visible:ring-offset-surface",
   "disabled:opacity-50 disabled:pointer-events-none",
@@ -77,9 +51,7 @@ export function Button({
 
   return (
     <Component
-      // A button inside a form submits it unless told otherwise. Defaulting to
-      // "button" means a component never submits a form by accident; a real
-      // submit button asks for it explicitly.
+      // Never submits a form by accident: a submit button asks for it.
       type={asChild ? undefined : (type ?? "button")}
       className={[BASE, VARIANTS[variant], SIZES[size], className].filter(Boolean).join(" ")}
       {...props}

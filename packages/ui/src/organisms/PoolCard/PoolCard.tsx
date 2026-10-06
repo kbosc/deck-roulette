@@ -8,19 +8,10 @@ export type PoolCardProps = {
   readonly pool: Pool;
   readonly onDraw: () => void;
   readonly onReset: () => void;
-  /** Controls belonging to the pool itself — renaming it, deleting it. */
   readonly actions?: ReactNode;
 };
 
-/**
- * One pool, with whatever it currently allows.
- *
- * The state is read from the domain before anything is rendered, so the screen
- * never offers a draw that cannot happen. Rather than showing a disabled draw
- * button, each state renders the control that actually applies: a dead button
- * is a promise the interface does not keep, and a disabled one is skipped
- * outright by some screen-reader navigation, leaving no way to learn why.
- */
+/** Each state renders the control that applies, never a disabled draw button. */
 export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
   const state = getPoolDrawState(pool);
   const total = pool.deckIds.length;

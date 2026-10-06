@@ -2,13 +2,7 @@ import type { ComponentPropsWithRef } from "react";
 
 export type InputProps = ComponentPropsWithRef<"input">;
 
-/**
- * A bare text input, styled from the tokens and nothing else.
- *
- * It carries no label and no error message on purpose: those belong to `Field`,
- * which owns the identifiers tying them together. An input that labels itself
- * cannot be reused inside a different layout.
- */
+/** No label, no error: those belong to `Field`. */
 export function Input({ className, ...props }: InputProps) {
   return (
     <input
@@ -20,8 +14,7 @@ export function Input({ className, ...props }: InputProps) {
         "outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
         "focus-visible:ring-offset-surface",
         "disabled:opacity-50",
-        // Driven by aria-invalid rather than by a prop: the accessible state and
-        // the visual state can then never disagree.
+        // Driven by aria-invalid, so the visual and accessible states cannot disagree.
         "aria-invalid:border-danger aria-invalid:ring-danger",
         className,
       ]

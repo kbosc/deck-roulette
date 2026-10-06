@@ -4,10 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { LibraryRoute } from "./LibraryRoute";
 import { useLibrary } from "../../store/library";
 
-/**
- * The name field, found by what a screen reader announces: the label plus the
- * hidden "(required)". The asterisk is aria-hidden, so it is not part of it.
- */
+/** The asterisk is aria-hidden: the accessible name carries "(required)" instead. */
 function nameField() {
   return screen.getByRole("textbox", { name: "Deck name (required)" });
 }
@@ -136,7 +133,6 @@ describe("LibraryRoute", () => {
 
     await addDeck(user, "Atraxa");
 
-    // Heard out of context, three identical "Delete" buttons say nothing.
     expect(screen.getByRole("button", { name: "Delete Atraxa" })).toBeDefined();
   });
 
@@ -197,8 +193,6 @@ describe("LibraryRoute", () => {
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
     await user.click(screen.getByRole("button", { name: "Delete" }));
 
-    // The button the dialog came from no longer exists, so focus would fall to
-    // the document body and strand a keyboard user at the top of the page.
     expect(document.activeElement).toBe(screen.getByRole("heading", { level: 1 }));
   });
 
@@ -211,8 +205,6 @@ describe("LibraryRoute", () => {
     await user.click(trigger);
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
-    // Nothing was destroyed: landing back on the button is what someone who
-    // changed their mind expects.
     expect(document.activeElement).toBe(trigger);
   });
 

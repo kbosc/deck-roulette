@@ -16,12 +16,7 @@ const themes = {
   dark: readTokens("semantic/dark.json") as TokenGroup,
 } as const;
 
-/**
- * Foreground, background, and the ratio WCAG AA demands.
- *
- * 4.5 is the threshold for body text; 3 covers large text and non-text parts of
- * the interface — borders, the focus ring — which also have to be perceivable.
- */
+/** WCAG AA: 4.5 for body text, 3 for large text and non-text (borders, focus ring). */
 const PAIRS: ReadonlyArray<readonly [fg: string, bg: string, min: number]> = [
   ["text", "surface", 4.5],
   ["text", "surface-raised", 4.5],

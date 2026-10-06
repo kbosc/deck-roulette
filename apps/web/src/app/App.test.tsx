@@ -7,10 +7,6 @@ import { LibraryRoute } from "../routes/LibraryRoute";
 import { PoolsRoute } from "../routes/PoolsRoute";
 import { NotFoundRoute } from "../routes/NotFoundRoute";
 
-/**
- * A memory router rather than the browser one: the tests then drive navigation
- * without a real URL bar, and each test starts from wherever it wants.
- */
 function renderAt(path: string) {
   const router = createMemoryRouter(
     [
@@ -49,8 +45,6 @@ describe("App", () => {
   it("marks the current page for assistive technology", () => {
     renderAt("/pools");
 
-    // NavLink sets aria-current="page". Colour alone would leave someone unable
-    // to tell where they are.
     expect(screen.getByRole("link", { name: "Pools" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "Library" }).getAttribute("aria-current")).toBeNull();
   });
@@ -68,8 +62,6 @@ describe("App", () => {
 
     await user.tab();
 
-    // Without it, a keyboard user walks the whole navigation on every page
-    // before reaching the content.
     expect(document.activeElement?.textContent).toBe("Skip to content");
   });
 

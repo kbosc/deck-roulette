@@ -23,10 +23,7 @@ export const Small: Story = {
   args: { size: "sm" },
 };
 
-/**
- * The identities that actually turn up at a table, including the two pale ones
- * Magic puts next to each other — white and colorless.
- */
+/** Includes the two pale ones side by side: white and colorless. */
 const IDENTITIES: readonly ColorIdentity[] = [
   ["W"],
   ["U"],

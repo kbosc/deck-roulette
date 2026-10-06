@@ -17,7 +17,6 @@ describe("DeckList", () => {
   it("announces itself as a list with as many items as there are decks", () => {
     render(<DeckList decks={decks} empty={empty} label="Decks in Thursday table" />);
 
-    // A grid of divs looks identical and offers none of this.
     expect(screen.getByRole("list", { name: "Decks in Thursday table" })).toBeDefined();
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
@@ -56,8 +55,6 @@ describe("DeckList", () => {
       />,
     );
 
-    // Named per deck rather than three identical "Delete" buttons: heard out of
-    // context, "Delete" does not say what is about to go.
     expect(screen.getByRole("button", { name: "Delete Krenko" })).toBeDefined();
     expect(screen.getAllByRole("button")).toHaveLength(3);
   });

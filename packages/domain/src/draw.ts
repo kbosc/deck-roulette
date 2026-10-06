@@ -1,30 +1,12 @@
 import type { DeckId } from "./ids";
 import type { Pool } from "./types";
 
-/**
- * A source of randomness: returns a number in [0, 1), like `Math.random`.
- *
- * It is passed in rather than calling `Math.random` directly so that `drawDeck`
- * stays pure: same inputs, same output. That is what makes it testable — a test
- * can pass `() => 0` and assert an exact result.
- */
+/** Returns a number in [0, 1), like `Math.random`. Injected to keep `drawDeck` pure. */
 export type Random = () => number;
 
-/**
- * Whether a pool can currently be drawn from.
- *
- * The UI reads this to decide whether the draw button is enabled and which
- * message to show, so the user never has to click to find out.
- */
 export type PoolDrawState = "ready" | "empty" | "exhausted";
 
-/**
- * The outcome of a draw, as a union discriminated by `status`.
- *
- * `empty` and `exhausted` are kept apart on purpose: an empty pool and a fully
- * drawn one call for two different messages ("add some decks" vs "the cycle is
- * over, start a new one?").
- */
+/** `empty` and `exhausted` stay apart: they call for different messages. */
 export type DrawResult =
   | { readonly status: "drawn"; readonly deckId: DeckId; readonly pool: Pool }
   | { readonly status: "empty" }
@@ -32,18 +14,10 @@ export type DrawResult =
 
 /** The decks that have not been drawn yet during the current cycle. */
 export function getRemainingDeckIds(pool: Pool): readonly DeckId[] {
-  // A Set is used for constant-time lookups: `filter` + `includes` would be
-  // quadratic, since `includes` walks the array on every iteration.
   const drawn = new Set(pool.drawnDeckIds);
   return pool.deckIds.filter((id) => !drawn.has(id));
 }
 
-/**
- * Inspects a pool without drawing from it.
- *
- * This is the read-only counterpart of `drawDeck`: the UI calls it while
- * rendering, `drawDeck` only runs on user action.
- */
 export function getPoolDrawState(pool: Pool): PoolDrawState {
   if (pool.deckIds.length === 0) {
     return "empty";
@@ -52,14 +26,10 @@ export function getPoolDrawState(pool: Pool): PoolDrawState {
 }
 
 /**
- * Draws a random deck among those not yet drawn during the current cycle.
+ * Draws a deck not yet drawn in the current cycle.
  *
- * Never mutates the given pool: on success it returns a **new** pool whose
- * `drawnDeckIds` includes the drawn deck.
- *
- * The `empty` and `exhausted` statuses are still returned even though the UI is
- * expected to call `getPoolDrawState` first: the domain does not trust its
- * caller, and the pool may have changed between render and click.
+ * Still handles `empty` and `exhausted` although the UI checks first: the pool may
+ * have changed between render and click.
  */
 export function drawDeck(pool: Pool, random: Random): DrawResult {
   if (pool.deckIds.length === 0) {
@@ -75,9 +45,7 @@ export function drawDeck(pool: Pool, random: Random): DrawResult {
   const index = Math.floor(random() * remaining.length);
   const deckId = remaining[index];
 
-  // `noUncheckedIndexedAccess` forces this branch: TypeScript cannot know that
-  // `index` is in range. It can only happen with an out-of-contract `random`
-  // returning 1 or more.
+  // Only reachable with a `random` returning 1 or more.
   if (deckId === undefined) {
     throw new RangeError("random() must return a number in [0, 1)");
   }
@@ -89,15 +57,7 @@ export function drawDeck(pool: Pool, random: Random): DrawResult {
   };
 }
 
-/**
- * Starts a new cycle: every deck becomes drawable again.
- *
- * Resetting a pool that is not exhausted is allowed — the user may want to start
- * over mid-cycle. Warning them is the UI's job, not the domain's.
- *
- * Returns the very same pool when there is nothing to clear, so that a needless
- * reset does not produce a new reference and re-render everything for nothing.
- */
+/** Starts a new cycle. Returns the same reference when there is nothing to clear. */
 export function resetPool(pool: Pool): Pool {
   if (pool.drawnDeckIds.length === 0) {
     return pool;
@@ -105,13 +65,7 @@ export function resetPool(pool: Pool): Pool {
   return { ...pool, drawnDeckIds: [] };
 }
 
-/**
- * Cancels a draw: the deck becomes drawable again during the current cycle.
- *
- * Only touches `drawnDeckIds` — the deck never left the pool, it was merely
- * flagged as already drawn. A deck that was not drawn is left alone, same
- * reference included.
- */
+/** Cancels a draw: the deck becomes drawable again in the current cycle. */
 export function returnDeckToPool(pool: Pool, deckId: DeckId): Pool {
   if (!pool.drawnDeckIds.includes(deckId)) {
     return pool;

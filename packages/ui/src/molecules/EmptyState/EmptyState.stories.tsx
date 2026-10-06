@@ -15,17 +15,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** First use: nothing exists yet, and the way forward is to create something. */
+/** First use: nothing exists yet. */
 export const NothingCreatedYet: Story = {
   args: { action: <Button>Add a deck</Button> },
 };
 
-/**
- * Nothing matched a filter — a different situation entirely.
- *
- * Telling someone to "add a deck" when they own forty and mistyped a search is
- * worse than saying nothing: it suggests their decks are gone.
- */
+/** Nothing matched a filter: "add a deck" would suggest their decks are gone. */
 export const NothingMatched: Story = {
   args: {
     title: "No deck matches this filter",

@@ -155,8 +155,7 @@ describe("resetPool", () => {
   it("returns the same reference when there is nothing to clear", () => {
     const pool = makePool({ deckIds: ["a", "b"] });
 
-    // `toBe` is reference equality, unlike `toEqual` which compares content.
-    // A new object here would re-render every subscriber for no reason.
+    // Reference equality: a new object would re-render every subscriber.
     expect(resetPool(pool)).toBe(pool);
   });
 

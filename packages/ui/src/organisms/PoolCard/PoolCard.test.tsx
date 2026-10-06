@@ -46,7 +46,6 @@ describe("PoolCard", () => {
     const exhausted = makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b"), toDeckId("c")] });
     render(<PoolCard pool={exhausted} onDraw={vi.fn()} onReset={onReset} />);
 
-    // No dead button: the control on screen is the one that actually applies.
     expect(screen.queryByRole("button", { name: "Draw a deck" })).toBeNull();
 
     await user.click(screen.getByRole("button", { name: "Start a new cycle" }));
@@ -58,7 +57,6 @@ describe("PoolCard", () => {
     const exhausted = makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b"), toDeckId("c")] });
     render(<PoolCard pool={exhausted} onDraw={vi.fn()} onReset={vi.fn()} />);
 
-    // Finishing a full round is information the user is owed.
     expect(screen.getByText("Cycle over")).toBeDefined();
     expect(screen.getByText(/Every deck in this pool has come out/)).toBeDefined();
   });

@@ -15,13 +15,7 @@ const TONES: Readonly<Record<BadgeTone, string>> = {
   danger: "bg-surface-danger text-text-danger border-border-danger",
 };
 
-/**
- * A small, non-interactive label.
- *
- * A badge never carries information on its own: its tone is decoration on top
- * of text that already says everything. "Bracket 3" reads the same in grey as
- * in red.
- */
+/** The tone is decoration: the text must say everything on its own. */
 export function Badge({ tone = "neutral", className, children, ...props }: BadgeProps) {
   return (
     <span

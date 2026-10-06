@@ -5,20 +5,8 @@ import { ManaIdentity } from "../../atoms/ManaIdentity";
 
 export type DeckCardProps = {
   readonly deck: Deck;
-  /**
-   * Controls belonging to this deck — deleting it, opening its list.
-   *
-   * They are passed in rather than declared here so the card never has to grow
-   * a boolean per possible action. A screen that shows a deck without any
-   * control simply passes none.
-   */
   readonly actions?: ReactNode;
-  /**
-   * Marks the deck that has just been drawn.
-   *
-   * The ring is reinforcement, never the message: a badge says it in words, so
-   * the state survives a screen reader and a color vision deficiency alike.
-   */
+  /** Said by a badge, not only by the ring: color is never the only signal. */
   readonly highlighted?: boolean;
 };
 
@@ -27,14 +15,7 @@ function formatCommanders(deck: Deck): string | undefined {
   return deck.commanders?.join(" // ");
 }
 
-/**
- * One deck in a list.
- *
- * Rendered as an `article` with a heading rather than a clickable `div`: a card
- * that is one big button cannot hold a delete button inside it — nesting
- * interactive elements is invalid HTML, and keyboard users end up unable to
- * reach the inner control. Anything that navigates belongs on the title.
- */
+/** Not a clickable card: it holds buttons, and interactive elements cannot nest. */
 export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) {
   const commanders = formatCommanders(deck);
 
@@ -59,11 +40,7 @@ export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) 
 
           {deck.colors === undefined ? null : <ManaIdentity colors={deck.colors} size="sm" />}
 
-          {deck.bracket === undefined ? null : (
-            // The number is spelled out: "3" alone means nothing to someone
-            // meeting the scale for the first time, or hearing it read out.
-            <Badge tone="info">Bracket {deck.bracket}</Badge>
-          )}
+          {deck.bracket === undefined ? null : <Badge tone="info">Bracket {deck.bracket}</Badge>}
         </div>
       </div>
 

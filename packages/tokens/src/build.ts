@@ -1,9 +1,4 @@
-/**
- * Reads the token JSON and writes dist/tokens.css.
- *
- * The only part of the package that touches the disk: everything it needs is
- * computed by pure functions in css.ts, which the tests exercise directly.
- */
+/** The only part of the package that touches the disk. */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";

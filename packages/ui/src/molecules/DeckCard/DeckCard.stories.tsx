@@ -62,10 +62,7 @@ export const WithActions: Story = {
   },
 };
 
-/**
- * A name long enough to overflow, which is what real Magic names do. The card
- * must truncate rather than push the controls off the card.
- */
+/** Must truncate rather than push the controls off the card. */
 export const LongName: Story = {
   args: {
     deck: {

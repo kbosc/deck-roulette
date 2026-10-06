@@ -26,7 +26,6 @@ export const Required: Story = {
   args: { required: true },
 };
 
-/** The state that matters: invalid, described, and announced. */
 export const WithError: Story = {
   args: {
     error: "A deck with this name already exists.",
@@ -34,7 +33,7 @@ export const WithError: Story = {
   },
 };
 
-/** Both messages at once — the error is read first, the hint after. */
+/** The error is read first, the hint after. */
 export const WithHintAndError: Story = {
   args: {
     hint: "Shown on the draw screen.",
@@ -42,10 +41,7 @@ export const WithHintAndError: Story = {
   },
 };
 
-/**
- * Beside a button: the field adopts the rows of the form's grid, so the button
- * stays level with the input when the error appears below it.
- */
+/** `subgrid`: the button stays level with the input when the error appears. */
 export const InAFormRow: Story = {
   args: {
     layout: "subgrid",
@@ -62,10 +58,7 @@ export const InAFormRow: Story = {
   ),
 };
 
-/**
- * A placeholder is not a label: it vanishes as soon as someone types, and most
- * screen readers do not announce it as a name. It may only ever be an example.
- */
+/** A placeholder is only ever an example, never the label. */
 export const PlaceholderIsNotALabel: Story = {
   args: {
     label: "Archidekt URL",

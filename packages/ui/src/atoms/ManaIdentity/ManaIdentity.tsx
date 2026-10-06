@@ -7,12 +7,7 @@ export type ManaIdentityProps = {
   readonly size?: ManaIdentitySize;
 };
 
-/**
- * The colors in the order Magic always prints them: WUBRG.
- *
- * Sorting here rather than trusting the data means two decks with the same
- * identity always look the same, whatever order they were entered in.
- */
+/** Sorted here, not trusted from the data. */
 const WUBRG: readonly Color[] = ["W", "U", "B", "R", "G", "C"];
 
 const NAMES: Readonly<Record<Color, string>> = {
@@ -24,13 +19,7 @@ const NAMES: Readonly<Record<Color, string>> = {
   C: "Colorless",
 };
 
-/**
- * Mana colors are reached through their CSS variable, not through a utility
- * class, because they deliberately have none: they are values of the game, not
- * of the interface, and nothing should be able to paint a danger button red
- * with Magic's red. The cost is this one inline style; the benefit is that this
- * component is the only place in the codebase that can use them at all.
- */
+/** Mana colors have no utility class on purpose: this is the only place that uses them. */
 const PIPS: Readonly<Record<Color, string>> = {
   W: "var(--mana-white)",
   U: "var(--mana-blue)",
@@ -45,14 +34,6 @@ const SIZES: Readonly<Record<ManaIdentitySize, string>> = {
   md: "size-5",
 };
 
-/**
- * A deck's color identity, as pips.
- *
- * Color alone never carries the information: the identity is also written out
- * for assistive technology, and remains readable by anyone who cannot tell the
- * pips apart. Around 8% of men have some form of color vision deficiency, and
- * Magic's own palette puts a pale beige next to a pale grey.
- */
 export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
   const ordered = WUBRG.filter((color) => colors.includes(color));
   const label =
@@ -63,8 +44,7 @@ export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
       {ordered.map((color) => (
         <span
           key={color}
-          // Decorative: the whole identity is announced once, below, rather
-          // than pip by pip.
+          // Announced once below, not pip by pip.
           aria-hidden="true"
           style={{ backgroundColor: PIPS[color] }}
           className={[SIZES[size], "rounded-full border border-border shrink-0"]

@@ -75,9 +75,7 @@ describe("buildCss", () => {
   });
 
   it("declares the dark theme in both places", () => {
-    // Once for the system preference, once for the explicit choice. Declaring
-    // it only in the media query would make a light toggle useless on a dark
-    // system.
+    // Once for the system preference, once for the explicit choice.
     expect(css.match(/--color-surface: var\(--color-neutral-950\);/g)).toHaveLength(2);
   });
 

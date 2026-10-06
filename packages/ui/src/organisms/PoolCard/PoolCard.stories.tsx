@@ -32,10 +32,7 @@ export const PartwayThrough: Story = {
   args: { pool: { ...pool, drawnDeckIds: deckIds.slice(0, 5) } },
 };
 
-/**
- * The cycle is over. No disabled draw button: the control on screen is the one
- * that applies, and the end of a round is stated rather than passed over.
- */
+/** The cycle is over: no disabled draw button. */
 export const Exhausted: Story = {
   args: { pool: { ...pool, drawnDeckIds: deckIds } },
 };

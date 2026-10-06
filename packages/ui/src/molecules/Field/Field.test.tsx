@@ -16,8 +16,6 @@ describe("Field", () => {
   it("gives the control its accessible name", () => {
     renderField();
 
-    // getByLabelText only succeeds through a real label/for binding. A visual
-    // label sitting next to the input would not be found.
     expect(screen.getByLabelText("Deck name")).toBeDefined();
   });
 
@@ -56,8 +54,6 @@ describe("Field", () => {
     const ids = screen.getByLabelText("Deck name").getAttribute("aria-describedby")?.split(" ");
     const texts = ids?.map((id) => document.getElementById(id)?.textContent);
 
-    // What is wrong comes first: someone hearing the field announced needs the
-    // problem, not the help they already ignored.
     expect(texts).toEqual(["This name is already taken", "Shown on the draw screen"]);
   });
 
@@ -66,8 +62,7 @@ describe("Field", () => {
 
     const input = screen.getByLabelText("Deck name");
 
-    // aria-invalid="false" on an untouched field makes some screen readers
-    // announce "invalid entry, no". Absent is the correct state.
+    // aria-invalid="false" makes some screen readers say "invalid entry, no".
     expect(input.getAttribute("aria-invalid")).toBeNull();
     expect(input.getAttribute("aria-describedby")).toBeNull();
     expect(screen.queryByRole("alert")).toBeNull();

@@ -3,11 +3,7 @@ import { createDeck, createPool, validateName } from "./creation";
 import type { CreationDeps } from "./creation";
 import { getPoolDrawState } from "./draw";
 
-/**
- * Deterministic dependencies: ids are handed out in order, the clock is frozen.
- * This is exactly why they are injected — real `crypto.randomUUID` and `Date`
- * would make the expected values impossible to write down.
- */
+/** Ids handed out in order, clock frozen. */
 function makeDeps(): CreationDeps {
   let count = 0;
   return {

@@ -11,9 +11,6 @@ const meta = {
     title: "Delete this deck?",
     description: "Atraxa will be removed from every pool it belongs to. This cannot be undone.",
     confirmLabel: "Delete",
-    // `fn()` is a spy: the Actions panel then reports what the dialog called,
-    // which is how a story stays useful for checking behaviour and not only
-    // appearance.
     onConfirm: fn(),
     onOpenChange: fn(),
     open: false,
@@ -23,10 +20,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * The dialog is controlled: the parent owns `open`. A story therefore needs a
- * tiny host, which is also how a real screen will use it.
- */
+/** Controlled: the story needs a host that owns `open`. */
 function Controlled(args: React.ComponentProps<typeof ConfirmDialog>) {
   const [open, setOpen] = useState(false);
 
@@ -44,18 +38,12 @@ export const Default: Story = {
   render: (args) => <Controlled {...args} />,
 };
 
-/**
- * Opened on load, so the accessibility check runs against the dialog itself
- * rather than against the closed trigger.
- */
+/** Opened on load, so the accessibility check runs against the dialog itself. */
 export const Open: Story = {
   args: { open: true },
 };
 
-/**
- * A description long enough to wrap, next to a title that does not. Real data
- * is rarely as short as a placeholder.
- */
+/** A description long enough to wrap. */
 export const LongDescription: Story = {
   args: {
     title: "Delete this pool?",

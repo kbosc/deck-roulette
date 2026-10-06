@@ -7,8 +7,6 @@ describe("Button", () => {
   it("is reachable by its accessible name", () => {
     render(<Button>Draw a deck</Button>);
 
-    // getByRole is how assistive technology sees the page. Querying by class or
-    // by test id would pass on a div that no screen reader can announce.
     expect(screen.getByRole("button", { name: "Draw a deck" })).toBeDefined();
   });
 
@@ -57,8 +55,6 @@ describe("Button", () => {
       </Button>,
     );
 
-    // A link must stay a link: the browser offers "open in a new tab", and a
-    // screen reader announces navigation rather than an action.
     const link = screen.getByRole("link", { name: "Open Scryfall" });
 
     expect(link).toHaveProperty("tagName", "A");

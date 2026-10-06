@@ -11,7 +11,6 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <LibraryRoute /> },
       { path: "pools", element: <PoolsRoute /> },
-      // A wrong URL gets a real page rather than a blank screen.
       { path: "*", element: <NotFoundRoute /> },
     ],
   },
