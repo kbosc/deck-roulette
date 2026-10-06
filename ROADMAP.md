@@ -177,11 +177,27 @@ sérialisation et migration de schéma · pourquoi la logique métier ne vit pas
 
 ---
 
+## Phase 5 bis — Direction artistique
+
+**Objectif pédagogique :** sortir du style « généré par défaut » en ancrant l'identité
+visuelle dans l'univers de Magic, sans casser le design system.
+
+- [ ] Direction proposée avec le skill `frontend-design` (typographie, palette, matières, mouvement)
+- [ ] Traduite **en tokens** uniquement : aucune valeur en dur, le lint l'interdit déjà
+- [ ] Vérifiée dans Storybook, thèmes clair et sombre, contrastes WCAG toujours au vert
+
+---
+
 ## Phase 6 — Le tirage ⭐ cœur de l'app
+
+> **Décision du 06/10/2026.** On tire **depuis la carte du pool, dans la liste** (un clic à
+> la table), pas depuis un écran de détail. Le détail sert à choisir les decks, consulter
+> l'historique et remettre un deck. L'animation et le résultat vivent donc dans la carte
+> ou dans un dialogue au-dessus de la liste.
 
 **Objectif pédagogique :** transformer une fonction correcte en un moment qui fait plaisir.
 
-- [ ] Écran détail : gros bouton « Tirer un deck »
+- [ ] Tirage depuis la carte du pool — _branché, résultat affiché en texte en attendant l'animation_
 - [ ] Animation de résultat marquante, `prefers-reduced-motion` respecté
 - [ ] Section « déjà sortis » consultable
 - [ ] Fin de cycle : message clair, proposition de reset, jamais de reset silencieux
