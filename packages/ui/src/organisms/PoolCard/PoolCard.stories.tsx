@@ -61,3 +61,20 @@ export const WithActions: Story = {
 export const OneLeft: Story = {
   args: { pool: { ...pool, drawnDeckIds: deckIds.slice(0, 7) } },
 };
+
+/** The app passes its router's link; here a plain anchor stands in for it. */
+export const WithLinks: Story = {
+  args: {
+    pool: { ...pool, deckIds: [] },
+    renderTitle: (name) => (
+      <a href="#pool" className="underline underline-offset-4">
+        {name}
+      </a>
+    ),
+    emptyAction: (
+      <Button asChild size="sm">
+        <a href="#pool">Choose decks</a>
+      </Button>
+    ),
+  },
+};

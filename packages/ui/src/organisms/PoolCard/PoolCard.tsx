@@ -10,10 +10,21 @@ export type PoolCardProps = {
   readonly onDraw: () => void;
   readonly onReset: () => void;
   readonly actions?: ReactNode;
+  /** Lets the app make the name a link without the design system knowing its router. */
+  readonly renderTitle?: (name: string) => ReactNode;
+  /** Shown only while the pool is empty, when there is nothing else to do with it. */
+  readonly emptyAction?: ReactNode;
 };
 
 /** Each state renders the control that applies, never a disabled draw button. */
-export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
+export function PoolCard({
+  pool,
+  onDraw,
+  onReset,
+  actions,
+  renderTitle,
+  emptyAction,
+}: PoolCardProps) {
   const state = getPoolDrawState(pool);
   const total = pool.deckIds.length;
   const remaining = getRemainingDeckIds(pool).length;
@@ -34,7 +45,9 @@ export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
     <article className="flex flex-col gap-4 p-4 rounded-lg border border-border bg-surface-raised">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1 min-w-0">
-          <h3 className="font-semibold text-text truncate">{pool.name}</h3>
+          <h3 className="font-semibold text-text truncate">
+            {renderTitle === undefined ? pool.name : renderTitle(pool.name)}
+          </h3>
 
           {/* Spelled out rather than "3/8": read aloud, a slash is noise. */}
           <p className="text-sm text-text-muted">
@@ -79,9 +92,12 @@ export function PoolCard({ pool, onDraw, onReset, actions }: PoolCardProps) {
       ) : null}
 
       {state === "empty" ? (
-        <p className="text-sm text-text-muted">
-          Add decks from your library to draw from this pool.
-        </p>
+        <div className="flex flex-col items-start gap-2">
+          <p className="text-sm text-text-muted">
+            Add decks from your library to draw from this pool.
+          </p>
+          {emptyAction}
+        </div>
       ) : null}
     </article>
   );

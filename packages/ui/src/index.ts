@@ -2,6 +2,8 @@ export type { BadgeProps, BadgeTone } from "./atoms/Badge";
 export { Badge } from "./atoms/Badge";
 export type { ManaIdentityProps, ManaIdentitySize } from "./atoms/ManaIdentity";
 export { ManaIdentity } from "./atoms/ManaIdentity";
+export type { CheckboxProps } from "./atoms/Checkbox";
+export { Checkbox } from "./atoms/Checkbox";
 export type { InputProps } from "./atoms/Input";
 export { Input } from "./atoms/Input";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./atoms/Button";

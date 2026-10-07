@@ -132,6 +132,46 @@ describe("PoolCard", () => {
     expect(screen.queryByText("Cycle over")).toBeNull();
   });
 
+  it("lets the app turn the name into a link, still inside the heading", () => {
+    render(
+      <PoolCard
+        pool={makePool()}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+        renderTitle={(name) => <a href="/pools/p1">{name}</a>}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", { name: "Thursday table" });
+    expect(heading.querySelector("a")?.getAttribute("href")).toBe("/pools/p1");
+  });
+
+  it("offers the empty pool's way out", () => {
+    render(
+      <PoolCard
+        pool={makePool({ deckIds: [] })}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+        emptyAction={<a href="/pools/p1">Choose decks</a>}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Choose decks" })).toBeDefined();
+  });
+
+  it("keeps the empty pool's way out for empty pools only", () => {
+    render(
+      <PoolCard
+        pool={makePool()}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+        emptyAction={<a href="/pools/p1">Choose decks</a>}
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: "Choose decks" })).toBeNull();
+  });
+
   it("names the pool as a heading", () => {
     render(<PoolCard pool={makePool()} onDraw={vi.fn()} onReset={vi.fn()} />);
 
