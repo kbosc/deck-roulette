@@ -2,6 +2,7 @@ import type { DeckId, DrawResult, Library, Pool, PoolId } from "@deck-roulette/d
 import {
   CURRENT_SCHEMA_VERSION,
   addDeck as addDeckToLibrary,
+  addDeckToPool as poolWithDeck,
   addPool as addPoolToLibrary,
   applyMigrations,
   createDeck,
@@ -9,6 +10,7 @@ import {
   deleteDeck,
   deletePool,
   drawDeck,
+  removeDeckFromPool as poolWithoutDeck,
   resetPool,
 } from "@deck-roulette/domain";
 import { create } from "zustand";
@@ -19,6 +21,8 @@ type LibraryState = Library & {
   readonly removeDeck: (deckId: DeckId) => void;
   readonly addPool: (name: string) => void;
   readonly removePool: (poolId: PoolId) => void;
+  readonly addDeckToPool: (poolId: PoolId, deckId: DeckId) => void;
+  readonly removeDeckFromPool: (poolId: PoolId, deckId: DeckId) => void;
   readonly drawFromPool: (poolId: PoolId) => DrawResult;
   readonly resetPool: (poolId: PoolId) => void;
 };
@@ -77,6 +81,14 @@ export const useLibrary = create<LibraryState>()(
 
       removePool: (poolId) => {
         set((state) => deletePool(state, poolId));
+      },
+
+      addDeckToPool: (poolId, deckId) => {
+        set((state) => replacePool(state, poolWithDeck(findPool(state, poolId), deckId)));
+      },
+
+      removeDeckFromPool: (poolId, deckId) => {
+        set((state) => replacePool(state, poolWithoutDeck(findPool(state, poolId), deckId)));
       },
 
       drawFromPool: (poolId) => {

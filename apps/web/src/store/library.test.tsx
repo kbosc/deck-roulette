@@ -108,6 +108,23 @@ describe("useLibrary", () => {
     });
   });
 
+  describe("choosing a pool's decks", () => {
+    it("puts a deck in a pool, and takes it out again", () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addPool("Thursday table");
+      const [deck] = useLibrary.getState().decks;
+      const [pool] = useLibrary.getState().pools;
+
+      if (deck === undefined || pool === undefined) throw new Error("setup failed");
+
+      useLibrary.getState().addDeckToPool(pool.id, deck.id);
+      expect(useLibrary.getState().pools[0]?.deckIds).toEqual([deck.id]);
+
+      useLibrary.getState().removeDeckFromPool(pool.id, deck.id);
+      expect(useLibrary.getState().pools[0]?.deckIds).toEqual([]);
+    });
+  });
+
   describe("drawing from a pool", () => {
     it("returns the drawn deck and marks it as drawn", () => {
       const { deckId, poolId } = poolWithOneDeck();

@@ -1,6 +1,7 @@
 import type { NameProblem, Pool } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, EmptyState, PoolCard } from "@deck-roulette/ui";
 import { useId, useRef, useState } from "react";
+import { Link } from "react-router";
 import { NameForm } from "../../components/NameForm";
 import { useLibrary } from "../../store/library";
 
@@ -85,6 +86,24 @@ export function PoolsRoute() {
                 <li key={pool.id}>
                   <PoolCard
                     pool={pool}
+                    // Empty pool: "Choose decks" is the single way in, no second link.
+                    {...(pool.deckIds.length === 0
+                      ? {}
+                      : {
+                          renderTitle: (name: string) => (
+                            <Link
+                              to={`/pools/${pool.id}`}
+                              className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
+                            >
+                              {name}
+                            </Link>
+                          ),
+                        })}
+                    emptyAction={
+                      <Button asChild size="sm">
+                        <Link to={`/pools/${pool.id}`}>Choose decks</Link>
+                      </Button>
+                    }
                     onDraw={() => draw(pool)}
                     onReset={() => {
                       resetPool(pool.id);

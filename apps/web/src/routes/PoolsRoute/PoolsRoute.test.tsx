@@ -1,9 +1,15 @@
 import { addDeckToPool } from "@deck-roulette/domain";
 import { render, screen, within } from "@testing-library/react";
+import { createMemoryRouter, RouterProvider } from "react-router";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useLibrary } from "../../store/library";
-import { PoolsRoute } from "./PoolsRoute";
+import { routes } from "../../app/routes";
+
+function renderPools() {
+  const router = createMemoryRouter(routes, { initialEntries: ["/pools"] });
+  return render(<RouterProvider router={router} />);
+}
 
 function nameField() {
   return screen.getByRole("textbox", { name: "Pool name (required)" });
@@ -34,14 +40,14 @@ describe("PoolsRoute", () => {
   });
 
   it("says there is no pool yet, rather than showing a blank area", () => {
-    render(<PoolsRoute />);
+    renderPools();
 
     expect(screen.getByRole("heading", { name: "No pool yet" })).toBeDefined();
   });
 
   it("shows a pool once it has been added", async () => {
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await addPool(user, "Thursday table");
 
@@ -49,9 +55,32 @@ describe("PoolsRoute", () => {
     expect(within(list).getByRole("heading", { name: "Thursday table" })).toBeDefined();
   });
 
+  it("links the name of a pool that has decks to its page", () => {
+    seedPoolWithDeck("Thursday table", "Atraxa");
+    renderPools();
+
+    const pool = useLibrary.getState().pools[0];
+    expect(screen.getByRole("link", { name: "Thursday table" }).getAttribute("href")).toBe(
+      `/pools/${pool?.id ?? ""}`,
+    );
+  });
+
+  it("offers a single way to choose the decks of an empty pool", async () => {
+    const user = userEvent.setup();
+    renderPools();
+
+    await addPool(user, "Thursday table");
+
+    const pool = useLibrary.getState().pools[0];
+    expect(screen.getByRole("link", { name: "Choose decks" }).getAttribute("href")).toBe(
+      `/pools/${pool?.id ?? ""}`,
+    );
+    expect(screen.queryByRole("link", { name: "Thursday table" })).toBeNull();
+  });
+
   it("introduces the pools with a level 2 heading, so no level is skipped", async () => {
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await addPool(user, "Thursday table");
 
@@ -60,7 +89,7 @@ describe("PoolsRoute", () => {
 
   it("refuses a pool name already taken, whatever its case", async () => {
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await addPool(user, "Thursday table");
     await addPool(user, "thursday TABLE");
@@ -72,7 +101,7 @@ describe("PoolsRoute", () => {
   it("deletes a pool once confirmed, and keeps its decks in the library", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -85,7 +114,7 @@ describe("PoolsRoute", () => {
   it("says the decks survive, before asking to delete", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
 
@@ -97,7 +126,7 @@ describe("PoolsRoute", () => {
   it("keeps the pool and returns to its delete button when cancelled", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
     await user.click(screen.getByRole("button", { name: "Cancel" }));
@@ -111,7 +140,7 @@ describe("PoolsRoute", () => {
   it("puts focus on the page heading after a deletion", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -122,7 +151,7 @@ describe("PoolsRoute", () => {
   it("names the deck that was drawn", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Draw a deck" }));
 
@@ -132,7 +161,7 @@ describe("PoolsRoute", () => {
   it("offers a new cycle once every deck has come out, and makes them drawable again", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
-    render(<PoolsRoute />);
+    renderPools();
 
     await user.click(screen.getByRole("button", { name: "Draw a deck" }));
     await user.click(screen.getByRole("button", { name: "Start a new cycle" }));

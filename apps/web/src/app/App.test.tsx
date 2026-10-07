@@ -2,27 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { describe, expect, it } from "vitest";
-import { Layout } from "./Layout";
-import { LibraryRoute } from "../routes/LibraryRoute";
-import { PoolsRoute } from "../routes/PoolsRoute";
-import { NotFoundRoute } from "../routes/NotFoundRoute";
+import { routes } from "./routes";
 
 function renderAt(path: string) {
-  const router = createMemoryRouter(
-    [
-      {
-        path: "/",
-        element: <Layout />,
-        children: [
-          { index: true, element: <LibraryRoute /> },
-          { path: "pools", element: <PoolsRoute /> },
-          { path: "*", element: <NotFoundRoute /> },
-        ],
-      },
-    ],
-    { initialEntries: [path] },
-  );
-
+  const router = createMemoryRouter(routes, { initialEntries: [path] });
   return render(<RouterProvider router={router} />);
 }
 
