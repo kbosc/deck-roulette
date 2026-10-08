@@ -3,6 +3,7 @@ import { Button, ConfirmDialog, EmptyState, PoolCard } from "@deck-roulette/ui";
 import { useId, useRef, useState } from "react";
 import { Link } from "react-router";
 import { NameForm } from "../../components/NameForm";
+import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
 
 const nameMessages: Record<NameProblem, string> = {
@@ -45,9 +46,7 @@ export function PoolsRoute() {
 
   return (
     <>
-      <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold outline-none">
-        Pools
-      </h1>
+      <PageHeading ref={headingRef}>Pools</PageHeading>
       <p className="mt-2 text-text-muted">The sets of decks you draw from.</p>
 
       <div className="mt-6">

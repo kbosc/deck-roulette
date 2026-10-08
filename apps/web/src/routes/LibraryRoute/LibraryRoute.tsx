@@ -2,6 +2,7 @@ import type { Deck, NameProblem } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, DeckList } from "@deck-roulette/ui";
 import { useRef, useState } from "react";
 import { NameForm } from "../../components/NameForm";
+import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
 
 const nameMessages: Record<NameProblem, string> = {
@@ -38,9 +39,7 @@ export function LibraryRoute() {
 
   return (
     <>
-      <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold outline-none">
-        Library
-      </h1>
+      <PageHeading ref={headingRef}>Library</PageHeading>
 
       <div className="mt-6">
         <NameForm

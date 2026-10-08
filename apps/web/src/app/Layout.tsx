@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router";
+import { useEffect, useRef } from "react";
+import { NavLink, Outlet, useLocation } from "react-router";
 
 const LINKS = [
   { to: "/", label: "Library" },
@@ -6,6 +7,22 @@ const LINKS = [
 ] as const;
 
 export function Layout() {
+  const { pathname } = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+  // A path rather than a "first render" flag: StrictMode runs effects twice in
+  // dev, and a flag would already be spent on the second run.
+  const previousPathname = useRef(pathname);
+
+  // A client-side navigation does not reset focus like a page load does: without
+  // this, focus stays on the clicked link and screen readers announce nothing.
+  useEffect(() => {
+    if (previousPathname.current === pathname) return;
+    previousPathname.current = pathname;
+
+    const main = mainRef.current;
+    (main?.querySelector<HTMLElement>("h1[tabindex]") ?? main)?.focus();
+  }, [pathname]);
+
   return (
     <div className="min-h-screen bg-surface text-text">
       {/* Skip link: visible once focused, first thing Tab reaches. */}
@@ -41,7 +58,12 @@ export function Layout() {
       </header>
 
       {/* tabIndex -1 makes the skip link able to move focus here, not just scroll. */}
-      <main id="main" tabIndex={-1} className="mx-auto max-w-3xl px-4 py-6 outline-none">
+      <main
+        ref={mainRef}
+        id="main"
+        tabIndex={-1}
+        className="mx-auto max-w-3xl px-4 py-6 outline-none"
+      >
         <Outlet />
       </main>
     </div>

@@ -1,5 +1,6 @@
 import { Button, Checkbox, EmptyState } from "@deck-roulette/ui";
 import { Link, useParams } from "react-router";
+import { PageHeading, usePageTitle } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
 
 export function PoolDetailRoute() {
@@ -8,6 +9,8 @@ export function PoolDetailRoute() {
   const pool = useLibrary((state) => state.pools.find((p) => p.id === poolId));
   const addDeckToPool = useLibrary((state) => state.addDeckToPool);
   const removeDeckFromPool = useLibrary((state) => state.removeDeckFromPool);
+  // Called before the early return: hooks cannot be conditional.
+  usePageTitle(pool === undefined ? "Pool not found" : pool.name);
 
   // Also reached from a stale bookmark, or after a deletion in another tab.
   if (pool === undefined) {
@@ -33,7 +36,7 @@ export function PoolDetailRoute() {
       >
         All pools
       </Link>
-      <h1 className="text-2xl font-semibold">{pool.name}</h1>
+      <PageHeading>{pool.name}</PageHeading>
 
       <div className="mt-6">
         {decks.length === 0 ? (

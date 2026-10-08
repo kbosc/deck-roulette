@@ -1,8 +1,11 @@
 import { EmptyState } from "@deck-roulette/ui";
 import { Button } from "@deck-roulette/ui";
 import { Link } from "react-router";
+import { usePageTitle } from "../../components/PageHeading";
 
 export function NotFoundRoute() {
+  usePageTitle("Page not found");
+
   return (
     <EmptyState
       headingLevel={2}
