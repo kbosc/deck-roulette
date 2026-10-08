@@ -228,6 +228,40 @@ ne jamais afficher un message d'erreur brut venant du serveur.
 
 ---
 
+## Phase 7 bis — La carte du commandant en foil ✨
+
+**Objectif pédagogique :** un effet visuel qui ne ressemble à aucun site généré, et tout ce
+qu'il apprend : transformations 3D, `perspective`, modes de fusion, variables CSS pilotées par
+le pointeur, `requestAnimationFrame`, `prefers-reduced-motion`.
+
+Inspiration : [poke-holo.simey.me](https://poke-holo.simey.me/) — technique étudiée et
+**réécrite**, jamais copiée (vérifier la licence du dépôt avant toute lecture du code).
+
+- [ ] La carte s'incline sous le pointeur, le reflet suit l'angle
+- [ ] Le foil suit le **traitement réel de l'impression** : `finishes` et `promo_types` de
+      Scryfall (galaxy, surge, etched, halo…) → un effet par traitement, via un `Record` exhaustif
+- [ ] Traitement inconnu → foil classique, jamais d'erreur
+- [ ] Révélation du deck tiré sous la forme de son commandant (lien avec la phase 6)
+- [ ] Clavier et tactile : l'effet ne dépend pas que de la souris
+- [ ] `prefers-reduced-motion` : carte statique, reflet figé
+- [ ] Règles d'usage des images Scryfall / Fan Content Policy respectées (artiste et copyright visibles)
+
+---
+
+## Phase 7 ter — Personnalisation : ta table, tes sleeves
+
+**Objectif pédagogique :** thèmes pilotés par tokens, première vraie migration de schéma,
+stockage de fichiers dans le navigateur.
+
+- [ ] Choix du playmat parmi des teintes prédéfinies, chacune validée par les tests de contraste
+- [ ] Une couleur de sleeve **par deck** (mate, inspirée des sleeves du commerce, sans marque) →
+      nouveau champ sur `Deck`, donc **migration de schéma v1 → v2**
+- [ ] Dos de carte Magic : vérifier d'abord la Fan Content Policy de Wizards
+- [ ] Image personnelle sur le playmat : stockée dans **IndexedDB** (localStorage est trop petit),
+      voile sous le contenu pour garder le texte lisible
+
+---
+
 ## Phase 8 — Import / export JSON
 
 - [ ] Export du fichier de sauvegarde
