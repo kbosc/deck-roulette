@@ -7,6 +7,18 @@
 @import "tailwindcss";
 @import "@deck-roulette/tokens/tokens.css";
 @import "@deck-roulette/tokens/theme.css";
+/* Self-hosted: no request to a font CDN, nothing to leak about the visitor. */
+@import "@fontsource-variable/alegreya";
+@import "@fontsource-variable/atkinson-hyperlegible-next";
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  legend {
+    font-family: var(--font-display);
+  }
+}
 
 /*
  * Anyone who has asked their system to reduce motion gets no animation at all.
