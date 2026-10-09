@@ -13,6 +13,7 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly children: ReactNode;
 };
 
+/** `primary` (brass) is kept for drawing, or for the only way out of a dead end. */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   primary: "bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
   secondary: "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",

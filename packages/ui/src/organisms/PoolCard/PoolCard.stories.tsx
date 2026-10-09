@@ -72,7 +72,7 @@ export const WithLinks: Story = {
       </a>
     ),
     emptyAction: (
-      <Button asChild size="sm">
+      <Button asChild size="sm" variant="secondary">
         <a href="#pool">Choose decks</a>
       </Button>
     ),

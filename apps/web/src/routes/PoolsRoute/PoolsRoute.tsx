@@ -99,7 +99,7 @@ export function PoolsRoute() {
                           ),
                         })}
                     emptyAction={
-                      <Button asChild size="sm">
+                      <Button asChild size="sm" variant="secondary">
                         <Link to={`/pools/${pool.id}`}>Choose decks</Link>
                       </Button>
                     }

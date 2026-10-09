@@ -58,7 +58,7 @@ export function NameForm({ label, placeholder, existingNames, messages, onCreate
           />
         )}
       </Field>
-      <Button type="submit" className="col-start-2 row-start-2">
+      <Button type="submit" variant="secondary" className="col-start-2 row-start-2">
         Add
       </Button>
     </form>
