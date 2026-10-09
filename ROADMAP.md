@@ -185,6 +185,10 @@ visuelle dans l'univers de Magic, sans casser le design system.
 - [ ] Direction proposée avec le skill `frontend-design` (typographie, palette, matières, mouvement)
 - [ ] Traduite **en tokens** uniquement : aucune valeur en dur, le lint l'interdit déjà
 - [ ] Vérifiée dans Storybook, thèmes clair et sombre, contrastes WCAG toujours au vert
+- [ ] Hiérarchie des boutons : le laiton (`primary`) est réservé à l'action qui fait avancer l'écran
+- [ ] Decks et pools « posés sur le tapis » : proportions de carte, ombre et épaisseur **en tokens**
+- [ ] Sélecteur d'apparence Système / Clair / Sombre : choix persisté, pas de flash du mauvais
+      thème au chargement (script inline avant React), `prefers-color-scheme` respecté
 
 ---
 
@@ -253,6 +257,8 @@ Inspiration : [poke-holo.simey.me](https://poke-holo.simey.me/) — technique é
 **Objectif pédagogique :** thèmes pilotés par tokens, première vraie migration de schéma,
 stockage de fichiers dans le navigateur.
 
+- [ ] Réglage d'**ambiance** Sobre / Table de jeu, indépendant du clair / sombre : il ne change
+      que des tokens (texture du feutre, force des ombres, épaisseur des piles), jamais la structure
 - [ ] Choix du playmat parmi des teintes prédéfinies, chacune validée par les tests de contraste
 - [ ] Une couleur de sleeve **par deck** (mate, inspirée des sleeves du commerce, sans marque) →
       nouveau champ sur `Deck`, donc **migration de schéma v1 → v2**
@@ -343,6 +349,21 @@ c'est toute la raison d'être du monorepo.
 > Expo Go bloqué en SDK 54 : « project is incompatible with this version of Expo Go ».
 > Pas un problème d'iOS. Leçon : avec Expo Go, **c'est Expo Go qui dicte le SDK**.
 > Vérifier la version supportée _avant_ de générer le projet.
+
+---
+
+## Bonus final — L'interface « table de jeu » 🎲
+
+Une seconde interface, plus ludique, qui cohabite avec la première : les decks disposés sur le
+tapis plutôt qu'en liste, le tirage joué comme une vraie pioche.
+
+**Objectif pédagogique :** prouver l'architecture. Si le domaine et le store sont bien séparés
+de l'UI, une deuxième interface ne réécrit **aucune** règle métier.
+
+- [ ] Deux arbres de routes qui consomment le même store, jamais de `if (mode === "table")`
+      dispersé dans les composants
+- [ ] Les deux interfaces restent accessibles : la table aussi se joue au clavier et au lecteur d'écran
+- [ ] Bascule de l'une à l'autre sans perdre l'état
 
 ---
 
