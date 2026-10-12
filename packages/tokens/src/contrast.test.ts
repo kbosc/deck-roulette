@@ -16,6 +16,8 @@ const themes = {
   dark: readTokens("semantic/dark.json") as TokenGroup,
 } as const;
 
+const page = readTokens("semantic/page.json") as TokenGroup;
+
 /** WCAG AA: 4.5 for body text, 3 for large text and non-text (borders, focus ring). */
 const PAIRS: ReadonlyArray<readonly [fg: string, bg: string, min: number]> = [
   ["text", "surface", 4.5],
@@ -65,7 +67,7 @@ describe("contrastRatio", () => {
 
 describe("resolveColor", () => {
   it("follows an alias down to its primitive", () => {
-    expect(resolveColor("{color.violet.600}", primitives)).toBe("#6631f5");
+    expect(resolveColor("{color.seal.600}", primitives)).toBe("#9c2a22");
   });
 
   it("leaves a literal value alone", () => {
@@ -73,11 +75,12 @@ describe("resolveColor", () => {
   });
 
   it("refuses an alias pointing at a primitive that does not exist", () => {
-    expect(() => resolveColor("{color.violet.42}", primitives)).toThrow(ReferenceError);
+    expect(() => resolveColor("{color.seal.42}", primitives)).toThrow(ReferenceError);
   });
 });
 
-describe.each(Object.entries(themes))("%s theme", (_name, tokens) => {
+// A page is light in both themes: checked on its own, its roles cover every pair.
+describe.each(Object.entries({ ...themes, "page surface": page }))("%s", (_name, tokens) => {
   it("declares every role the pairs under test rely on", () => {
     const roles = new Set(PAIRS.flatMap(([fg, bg]) => [fg, bg]));
 
@@ -103,6 +106,15 @@ describe("the two themes", () => {
         .toSorted();
 
     expect(roles(themes.dark)).toEqual(roles(themes.light));
+  });
+
+  it("know every role a page redefines", () => {
+    // A typo in page.json would declare a variable no utility reads.
+    const known = new Set(Object.keys(themes.light));
+
+    for (const role of Object.keys(page).filter((k) => !k.startsWith("$"))) {
+      expect(known.has(role), `unknown role in page.json: ${role}`).toBe(true);
+    }
   });
 
   it("give each role the same type", () => {

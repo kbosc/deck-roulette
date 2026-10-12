@@ -57,52 +57,6 @@
         "$value": "#101017"
       }
     },
-    "violet": {
-      "50": {
-        "$type": "color",
-        "$value": "#f5f2ff"
-      },
-      "100": {
-        "$type": "color",
-        "$value": "#ebe4ff"
-      },
-      "200": {
-        "$type": "color",
-        "$value": "#d9ceff"
-      },
-      "300": {
-        "$type": "color",
-        "$value": "#bda6ff"
-      },
-      "400": {
-        "$type": "color",
-        "$value": "#9b76ff"
-      },
-      "500": {
-        "$type": "color",
-        "$value": "#7c4dff"
-      },
-      "600": {
-        "$type": "color",
-        "$value": "#6631f5"
-      },
-      "700": {
-        "$type": "color",
-        "$value": "#5623d4"
-      },
-      "800": {
-        "$type": "color",
-        "$value": "#461fab"
-      },
-      "900": {
-        "$type": "color",
-        "$value": "#3a1d88"
-      },
-      "950": {
-        "$type": "color",
-        "$value": "#220f57"
-      }
-    },
     "red": {
       "50": {
         "$type": "color",
@@ -241,90 +195,94 @@
         "$value": "#052e16"
       }
     },
-    "felt": {
-      "50": {
-        "$type": "color",
-        "$value": "#f4f6f3"
-      },
-      "100": {
-        "$type": "color",
-        "$value": "#e6ece8"
-      },
-      "200": {
-        "$type": "color",
-        "$value": "#dce4df"
-      },
-      "300": {
-        "$type": "color",
-        "$value": "#c9d5cf"
-      },
+    "leather": {
       "400": {
         "$type": "color",
-        "$value": "#b4c2bb"
-      },
-      "500": {
-        "$type": "color",
-        "$value": "#6f948a"
-      },
-      "600": {
-        "$type": "color",
-        "$value": "#677a73"
+        "$value": "#a6825f"
       },
       "700": {
         "$type": "color",
-        "$value": "#45554f"
+        "$value": "#4d2e22"
       },
       "800": {
         "$type": "color",
-        "$value": "#2a5047"
-      },
-      "850": {
-        "$type": "color",
-        "$value": "#21443d"
+        "$value": "#3a2219"
       },
       "900": {
         "$type": "color",
-        "$value": "#16302b"
+        "$value": "#2a1812"
       },
       "950": {
         "$type": "color",
-        "$value": "#0f231f"
-      },
-      "ink": {
-        "$type": "color",
-        "$value": "#17211e"
-      },
-      "shadow": {
-        "$type": "color",
-        "$value": "#030a08"
+        "$value": "#1a0e0a"
       }
     },
-    "brass": {
+    "vellum": {
+      "50": {
+        "$type": "color",
+        "$value": "#faf3e1"
+      },
+      "100": {
+        "$type": "color",
+        "$value": "#f2e6c9"
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#e6d5ae"
+      },
+      "300": {
+        "$type": "color",
+        "$value": "#d5bf92"
+      }
+    },
+    "parchment": {
+      "200": {
+        "$type": "color",
+        "$value": "#ecdcb6"
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#c9b38b"
+      }
+    },
+    "umber": {
+      "500": {
+        "$type": "color",
+        "$value": "#7d6141"
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#5a4330"
+      }
+    },
+    "ink": {
+      "900": {
+        "$type": "color",
+        "$value": "#2b1d12"
+      }
+    },
+    "seal": {
+      "50": {
+        "$type": "color",
+        "$value": "#fbefd9"
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#9c2a22"
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#7f1f19"
+      }
+    },
+    "gilt": {
       "300": {
         "$type": "color",
         "$value": "#e2c27a"
       },
       "500": {
         "$type": "color",
-        "$value": "#c9a24a"
-      },
-      "700": {
-        "$type": "color",
-        "$value": "#7a5c16"
-      },
-      "800": {
-        "$type": "color",
-        "$value": "#6b4f12"
-      }
-    },
-    "card": {
-      "stock": {
-        "$type": "color",
-        "$value": "#ede6d6"
-      },
-      "ink": {
-        "$type": "color",
-        "$value": "#1c1b19"
+        "$value": "#c8a24e"
       }
     }
   }

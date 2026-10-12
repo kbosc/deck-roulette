@@ -21,11 +21,13 @@ export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) 
 
   return (
     <article
+      data-surface="page"
       className={[
         "flex items-start justify-between gap-4",
         "p-4 rounded-lg border",
-        "bg-surface-raised shadow-elevation-rest",
-        highlighted ? "border-action ring-2 ring-action" : "border-border",
+        "bg-surface-raised text-text shadow-elevation-rest",
+        // Inset: drawn outside, the ring would sit on the leather, not on the page.
+        highlighted ? "border-action ring-2 ring-inset ring-action" : "border-border",
       ].join(" ")}
     >
       <div className="flex flex-col gap-2 min-w-0">

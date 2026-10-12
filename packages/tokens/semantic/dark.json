@@ -1,60 +1,60 @@
 {
-  "$description": "Dark theme. Same role names as light.json — that is the whole point: components never learn which theme is on. Only the primitive each role points at changes.",
+  "$description": "Grimoire by night: a leather binding lit by a candle. Same role names as light.json, so components never learn which theme is on.",
   "surface": {
     "$type": "color",
-    "$value": "{color.felt.900}"
+    "$value": "{color.leather.900}"
   },
   "surface-raised": {
     "$type": "color",
-    "$value": "{color.felt.850}"
+    "$value": "{color.leather.800}"
   },
   "surface-sunken": {
     "$type": "color",
-    "$value": "{color.felt.950}"
+    "$value": "{color.leather.950}"
   },
   "surface-hover": {
     "$type": "color",
-    "$value": "{color.felt.800}"
+    "$value": "{color.leather.700}"
   },
   "border": {
     "$type": "color",
-    "$value": "{color.felt.800}"
+    "$value": "{color.leather.700}"
   },
   "border-strong": {
     "$type": "color",
-    "$value": "{color.felt.500}"
+    "$value": "{color.leather.400}"
   },
   "text": {
     "$type": "color",
-    "$value": "{color.card.stock}"
+    "$value": "{color.parchment.200}"
   },
   "text-muted": {
     "$type": "color",
-    "$value": "{color.felt.400}"
+    "$value": "{color.parchment.400}"
   },
   "text-inverted": {
     "$type": "color",
-    "$value": "{color.felt.950}"
+    "$value": "{color.leather.950}"
   },
   "action": {
     "$type": "color",
-    "$value": "{color.brass.500}"
+    "$value": "{color.gilt.500}"
   },
   "action-hover": {
     "$type": "color",
-    "$value": "{color.brass.300}"
+    "$value": "{color.gilt.300}"
   },
   "action-active": {
     "$type": "color",
-    "$value": "{color.brass.300}"
+    "$value": "{color.gilt.300}"
   },
   "text-on-action": {
     "$type": "color",
-    "$value": "{color.card.ink}"
+    "$value": "{color.leather.950}"
   },
   "text-action": {
     "$type": "color",
-    "$value": "{color.brass.300}"
+    "$value": "{color.gilt.300}"
   },
   "danger": {
     "$type": "color",
@@ -106,15 +106,15 @@
   },
   "focus-ring": {
     "$type": "color",
-    "$value": "{color.brass.300}"
+    "$value": "{color.gilt.300}"
   },
   "overlay": {
     "$type": "color",
-    "$value": "rgb(0 0 0 / 0.7)"
+    "$value": "rgb(10 5 3 / 0.75)"
   },
   "elevation-rest": {
-    "$description": "An object lying on the playmat: a card-thick edge, then a short contact shadow.",
+    "$description": "A vellum page lying on the leather: three paper edges, then the candle's shadow.",
     "$type": "shadow",
-    "$value": "0 2px 0 0 {color.felt.950}, 0 8px 16px -4px color-mix(in srgb, {color.felt.shadow} 90%, transparent)"
+    "$value": "0 1px 0 0 {color.vellum.200}, 0 2px 0 0 {color.vellum.300}, 0 3px 0 0 {color.umber.500}, 0 14px 22px -8px color-mix(in srgb, {color.leather.950} 85%, transparent)"
   }
 }

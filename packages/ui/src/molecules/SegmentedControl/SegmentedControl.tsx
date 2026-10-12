@@ -34,7 +34,6 @@ export function SegmentedControl<T extends string>({
             "border border-transparent text-text-muted hover:text-text",
             // The fill alone is under 3:1 against the track: the border carries the state.
             "has-checked:border-border-strong has-checked:bg-surface-raised has-checked:text-text",
-            "has-checked:shadow-elevation-rest",
             // An outline rather than a ring: forced-colors mode keeps outlines, drops shadows.
             "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus-ring",
           ].join(" ")}

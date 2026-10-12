@@ -1,0 +1,112 @@
+{
+  "$description": "A vellum page: light in both themes, so a card on dark leather keeps dark ink. Applied with data-surface=\"page\"; only the roles that change are listed.",
+  "$color-scheme": "light",
+  "surface": {
+    "$type": "color",
+    "$value": "{color.vellum.50}"
+  },
+  "surface-raised": {
+    "$type": "color",
+    "$value": "{color.vellum.50}"
+  },
+  "surface-sunken": {
+    "$type": "color",
+    "$value": "{color.vellum.100}"
+  },
+  "surface-hover": {
+    "$type": "color",
+    "$value": "{color.vellum.100}"
+  },
+  "border": {
+    "$type": "color",
+    "$value": "{color.vellum.300}"
+  },
+  "text": {
+    "$type": "color",
+    "$value": "{color.ink.900}"
+  },
+  "text-muted": {
+    "$type": "color",
+    "$value": "{color.umber.700}"
+  },
+  "text-inverted": {
+    "$type": "color",
+    "$value": "{color.vellum.50}"
+  },
+  "border-strong": {
+    "$type": "color",
+    "$value": "{color.umber.500}"
+  },
+  "action": {
+    "$type": "color",
+    "$value": "{color.seal.600}"
+  },
+  "action-hover": {
+    "$type": "color",
+    "$value": "{color.seal.700}"
+  },
+  "action-active": {
+    "$type": "color",
+    "$value": "{color.seal.700}"
+  },
+  "text-on-action": {
+    "$type": "color",
+    "$value": "{color.seal.50}"
+  },
+  "text-action": {
+    "$type": "color",
+    "$value": "{color.seal.700}"
+  },
+  "focus-ring": {
+    "$type": "color",
+    "$value": "{color.seal.700}"
+  },
+  "danger": {
+    "$type": "color",
+    "$value": "{color.red.700}"
+  },
+  "danger-hover": {
+    "$type": "color",
+    "$value": "{color.red.800}"
+  },
+  "text-on-danger": {
+    "$type": "color",
+    "$value": "{color.base.white}"
+  },
+  "text-danger": {
+    "$type": "color",
+    "$value": "{color.red.800}"
+  },
+  "surface-danger": {
+    "$type": "color",
+    "$value": "{color.red.50}"
+  },
+  "border-danger": {
+    "$type": "color",
+    "$value": "{color.red.200}"
+  },
+  "text-success": {
+    "$type": "color",
+    "$value": "{color.green.700}"
+  },
+  "surface-success": {
+    "$type": "color",
+    "$value": "{color.green.50}"
+  },
+  "border-success": {
+    "$type": "color",
+    "$value": "{color.green.200}"
+  },
+  "text-warning": {
+    "$type": "color",
+    "$value": "{color.amber.700}"
+  },
+  "surface-warning": {
+    "$type": "color",
+    "$value": "{color.amber.50}"
+  },
+  "border-warning": {
+    "$type": "color",
+    "$value": "{color.amber.200}"
+  }
+}

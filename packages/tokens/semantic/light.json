@@ -1,68 +1,68 @@
 {
-  "$description": "Light theme. Every token here names a ROLE and points at a primitive. Components only ever use these. Adding a role is cheap; teaching a component about a hue is not.",
+  "$description": "Grimoire by day: the open book in daylight. Same role names as dark.json.",
   "surface": {
     "$type": "color",
-    "$value": "{color.felt.200}"
+    "$value": "{color.vellum.200}"
   },
   "surface-raised": {
     "$type": "color",
-    "$value": "{color.felt.50}"
+    "$value": "{color.vellum.50}"
   },
   "surface-sunken": {
     "$type": "color",
-    "$value": "{color.felt.300}"
+    "$value": "{color.vellum.300}"
   },
   "surface-hover": {
     "$type": "color",
-    "$value": "{color.felt.100}"
+    "$value": "{color.vellum.100}"
   },
   "border": {
     "$type": "color",
-    "$value": "{color.felt.300}"
+    "$value": "{color.vellum.300}"
   },
   "border-strong": {
     "$type": "color",
-    "$value": "{color.felt.600}"
+    "$value": "{color.umber.500}"
   },
   "text": {
     "$type": "color",
-    "$value": "{color.felt.ink}"
+    "$value": "{color.ink.900}"
   },
   "text-muted": {
     "$type": "color",
-    "$value": "{color.felt.700}"
+    "$value": "{color.umber.700}"
   },
   "text-inverted": {
     "$type": "color",
-    "$value": "{color.felt.50}"
+    "$value": "{color.vellum.50}"
   },
   "action": {
     "$type": "color",
-    "$value": "{color.brass.700}"
+    "$value": "{color.seal.600}"
   },
   "action-hover": {
     "$type": "color",
-    "$value": "{color.brass.800}"
+    "$value": "{color.seal.700}"
   },
   "action-active": {
     "$type": "color",
-    "$value": "{color.brass.800}"
+    "$value": "{color.seal.700}"
   },
   "text-on-action": {
     "$type": "color",
-    "$value": "{color.base.white}"
+    "$value": "{color.seal.50}"
   },
   "text-action": {
     "$type": "color",
-    "$value": "{color.brass.800}"
+    "$value": "{color.seal.700}"
   },
   "danger": {
     "$type": "color",
-    "$value": "{color.red.600}"
+    "$value": "{color.red.700}"
   },
   "danger-hover": {
     "$type": "color",
-    "$value": "{color.red.700}"
+    "$value": "{color.red.800}"
   },
   "text-on-danger": {
     "$type": "color",
@@ -70,7 +70,7 @@
   },
   "text-danger": {
     "$type": "color",
-    "$value": "{color.red.700}"
+    "$value": "{color.red.800}"
   },
   "surface-danger": {
     "$type": "color",
@@ -106,15 +106,15 @@
   },
   "focus-ring": {
     "$type": "color",
-    "$value": "{color.brass.700}"
+    "$value": "{color.seal.700}"
   },
   "overlay": {
     "$type": "color",
-    "$value": "rgb(16 16 23 / 0.5)"
+    "$value": "rgb(43 29 18 / 0.5)"
   },
   "elevation-rest": {
-    "$description": "An object lying on the playmat: a card-thick edge, then a short contact shadow.",
+    "$description": "A vellum page lying on the desk: three paper edges, then a soft shadow.",
     "$type": "shadow",
-    "$value": "0 2px 0 0 {color.felt.400}, 0 6px 12px -4px color-mix(in srgb, {color.felt.ink} 20%, transparent)"
+    "$value": "0 1px 0 0 {color.vellum.200}, 0 2px 0 0 {color.vellum.300}, 0 3px 0 0 {color.umber.500}, 0 10px 18px -8px color-mix(in srgb, {color.ink.900} 30%, transparent)"
   }
 }

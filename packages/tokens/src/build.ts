@@ -13,6 +13,7 @@ function read(path: string): TokenTree {
 
 const light = read("semantic/light.json");
 const dark = read("semantic/dark.json");
+const page = read("semantic/page.json");
 
 const primitives = [
   read("primitives/colors.json"),
@@ -24,7 +25,7 @@ const primitives = [
   read("primitives/motion.json"),
 ];
 
-const css = buildCss(primitives, { light, dark });
+const css = buildCss(primitives, { light, dark }, { page });
 
 function write(path: string, contents: string): void {
   const target = fileURLToPath(new URL(path, packageRoot));

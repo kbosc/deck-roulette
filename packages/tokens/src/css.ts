@@ -57,7 +57,11 @@ export type Themes = {
  * The dark theme is declared twice on purpose: in the media query (unless light
  * was picked) and under `[data-theme="dark"]`, so an explicit choice always wins.
  */
-export function buildCss(primitives: readonly TokenTree[], themes: Themes): string {
+export function buildCss(
+  primitives: readonly TokenTree[],
+  themes: Themes,
+  surfaces: Readonly<Record<string, TokenTree>> = {},
+): string {
   const primitiveVariables = primitives.flatMap((tree) => flatten(tree));
   const light = flatten(themes.light);
   const dark = flatten(themes.dark);
@@ -84,6 +88,24 @@ ${declarations(dark, "    ")}
   color-scheme: dark;
 
 ${declarations(dark, "  ")}
+}
+${Object.entries(surfaces)
+  .map(([name, tree]) => surfaceBlock(name, tree))
+  .join("")}`;
+}
+
+/**
+ * Same declarations whatever the theme: a vellum page stays light on dark leather.
+ * Inherited custom properties do the rest, but `color` is inherited already computed:
+ * the element carrying the surface must set its own text color.
+ */
+function surfaceBlock(name: string, tree: TokenTree): string {
+  const scheme = tree["$color-scheme"];
+  const schemeLine = typeof scheme === "string" ? `  color-scheme: ${scheme};\n\n` : "";
+
+  return `
+[data-surface="${name}"] {
+${schemeLine}${declarations(flatten(tree), "  ")}
 }
 `;
 }

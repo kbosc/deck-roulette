@@ -85,6 +85,31 @@ describe("buildCss", () => {
   });
 });
 
+describe("buildCss with surfaces", () => {
+  const primitives = [{ color: { ink: { $value: "#111" }, paper: { $value: "#eee" } } }];
+  const themes = {
+    light: { text: { $value: "{color.ink}" } },
+    dark: { text: { $value: "{color.paper}" } },
+  };
+  const css = buildCss(primitives, themes, {
+    page: { "$color-scheme": "light", text: { $value: "{color.ink}" } },
+  });
+
+  it("redefines the roles inside an element that declares the surface", () => {
+    // Custom properties inherit: everything inside the page reads the page's roles.
+    expect(css).toContain('[data-surface="page"] {');
+    expect(css).toMatch(/\[data-surface="page"\] \{[^}]*--text: var\(--color-ink\);/);
+  });
+
+  it("gives native controls on the surface its own color scheme", () => {
+    expect(css).toMatch(/\[data-surface="page"\] \{[^}]*color-scheme: light;/);
+  });
+
+  it("emits nothing for surfaces when there are none", () => {
+    expect(buildCss(primitives, themes)).not.toContain("data-surface");
+  });
+});
+
 describe("themedRoles", () => {
   it("lists the roles a theme declares, with their type", () => {
     expect(
