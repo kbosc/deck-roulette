@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCss, buildTailwindTheme, flatten, roleNames, toCssValue } from "./css";
+import { buildCss, buildTailwindTheme, flatten, themedRoles, toCssValue } from "./css";
 
 describe("flatten", () => {
   it("names a variable after its path in the tree", () => {
@@ -85,11 +85,32 @@ describe("buildCss", () => {
   });
 });
 
-describe("roleNames", () => {
-  it("lists the roles a theme declares", () => {
+describe("themedRoles", () => {
+  it("lists the roles a theme declares, with their type", () => {
     expect(
-      roleNames({ $description: "x", surface: { $value: "a" }, text: { $value: "b" } }),
-    ).toEqual(["surface", "text"]);
+      themedRoles({
+        $description: "x",
+        surface: { $type: "color", $value: "a" },
+        "elevation-rest": { $type: "shadow", $value: "b" },
+      }),
+    ).toEqual([
+      { name: "surface", type: "color" },
+      { name: "elevation-rest", type: "shadow" },
+    ]);
+  });
+
+  it("refuses a role named like the namespace it is exposed in", () => {
+    // `--shadow-sm` would overwrite the primitive of the same name.
+    expect(() => themedRoles({ "shadow-sm": { $type: "shadow", $value: "a" } })).toThrow(
+      /shadow-sm/,
+    );
+  });
+
+  it("refuses a type no utility namespace is mapped to", () => {
+    // Silently dropped, the role would exist in CSS with no class to use it.
+    expect(() => themedRoles({ gap: { $type: "dimension", $value: "1rem" } })).toThrow(
+      /gap.*dimension/,
+    );
   });
 });
 
@@ -100,12 +121,22 @@ describe("buildTailwindTheme", () => {
     { font: { size: { base: { $value: "1rem" } }, family: { sans: { $value: "system-ui" } } } },
     { mana: { white: { $value: "#fffbd5" } } },
   ];
-  const css = buildTailwindTheme(primitives, ["surface", "text-muted"]);
+  const css = buildTailwindTheme(primitives, [
+    { name: "surface", type: "color" },
+    { name: "text-muted", type: "color" },
+    { name: "elevation-rest", type: "shadow" },
+  ]);
 
-  it("maps each themed role onto the name Tailwind expects", () => {
+  it("maps each themed color onto the name Tailwind expects", () => {
     // `--color-surface` is what produces bg-surface, text-surface, border-surface.
     expect(css).toContain("--color-surface: var(--surface);");
     expect(css).toContain("--color-text-muted: var(--text-muted);");
+  });
+
+  it("maps a themed shadow into the shadow namespace", () => {
+    // `--shadow-elevation-rest` is what produces shadow-elevation-rest.
+    expect(css).toContain("--shadow-elevation-rest: var(--elevation-rest);");
+    expect(css).not.toContain("--color-elevation-rest");
   });
 
   it("uses @theme inline for themed roles so utilities follow the active theme", () => {

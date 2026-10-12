@@ -111,5 +111,10 @@
   "overlay": {
     "$type": "color",
     "$value": "rgb(0 0 0 / 0.7)"
+  },
+  "elevation-rest": {
+    "$description": "An object lying on the playmat: a card-thick edge, then a short contact shadow.",
+    "$type": "shadow",
+    "$value": "0 2px 0 0 {color.felt.950}, 0 8px 16px -4px color-mix(in srgb, {color.felt.shadow} 90%, transparent)"
   }
 }

@@ -24,7 +24,7 @@ export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) 
       className={[
         "flex items-start justify-between gap-4",
         "p-4 rounded-lg border",
-        "bg-surface-raised",
+        "bg-surface-raised shadow-elevation-rest",
         highlighted ? "border-action ring-2 ring-action" : "border-border",
       ].join(" ")}
     >

@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { TokenTree } from "./css.ts";
-import { buildCss, buildTailwindTheme, roleNames } from "./css.ts";
+import { buildCss, buildTailwindTheme, themedRoles } from "./css.ts";
 
 const packageRoot = new URL("../", import.meta.url);
 
@@ -34,4 +34,4 @@ function write(path: string, contents: string): void {
 }
 
 write("dist/tokens.css", css);
-write("dist/theme.css", buildTailwindTheme(primitives, roleNames(light)));
+write("dist/theme.css", buildTailwindTheme(primitives, themedRoles(light)));

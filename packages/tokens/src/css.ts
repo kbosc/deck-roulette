@@ -127,14 +127,15 @@ function toTailwindName(name: string): string | undefined {
 }
 
 /**
- * Our roles avoid the `--color-` prefix: a variable cannot be defined in terms of itself.
+ * Our roles avoid the `--color-` and `--shadow-` prefixes: a variable cannot be defined in
+ * terms of itself.
  * `@theme inline` keeps `var(--surface)` live so utilities follow the active theme;
  * a plain `@theme` would freeze the light value. `--color-*: initial` drops
  * Tailwind's palette, so a stray `bg-red-500` does not compile.
  */
 export function buildTailwindTheme(
   primitives: readonly TokenTree[],
-  roles: readonly string[],
+  roles: readonly ThemedRole[],
 ): string {
   const cleared = CLEARED.map((namespace) => `  ${namespace}: initial;`).join("\n");
 
@@ -146,7 +147,9 @@ export function buildTailwindTheme(
     })
     .join("\n");
 
-  const themed = roles.map((role) => `  --color-${role}: var(--${role});`).join("\n");
+  const themed = roles
+    .map(({ name, type }) => `  ${THEMED_NAMESPACES[type]}${name}: var(--${name});`)
+    .join("\n");
 
   return `/* Generated from the JSON in packages/tokens. Do not edit by hand. */
 
@@ -162,6 +165,34 @@ ${themed}
 `;
 }
 
-export function roleNames(theme: TokenTree): readonly string[] {
-  return Object.keys(theme).filter((key) => !key.startsWith("$"));
+const THEMED_NAMESPACES = {
+  color: "--color-",
+  shadow: "--shadow-",
+} as const;
+
+type ThemedType = keyof typeof THEMED_NAMESPACES;
+
+export type ThemedRole = { readonly name: string; readonly type: ThemedType };
+
+function isThemedType(type: unknown): type is ThemedType {
+  return typeof type === "string" && Object.hasOwn(THEMED_NAMESPACES, type);
+}
+
+export function themedRoles(theme: TokenTree): readonly ThemedRole[] {
+  return Object.entries(theme)
+    .filter(([key]) => !key.startsWith("$"))
+    .map(([name, node]) => {
+      const type =
+        typeof node === "object" && node !== null && "$type" in node ? node.$type : undefined;
+      if (!isThemedType(type)) {
+        throw new Error(
+          `Themed role "${name}" has type "${String(type)}", which maps to no utility`,
+        );
+      }
+      const namespace = THEMED_NAMESPACES[type].slice(2);
+      if (name.startsWith(namespace)) {
+        throw new Error(`Themed role "${name}" must not start with "${namespace}"`);
+      }
+      return { name, type };
+    });
 }

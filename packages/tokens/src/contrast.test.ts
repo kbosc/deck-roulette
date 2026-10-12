@@ -104,4 +104,16 @@ describe("the two themes", () => {
 
     expect(roles(themes.dark)).toEqual(roles(themes.light));
   });
+
+  it("give each role the same type", () => {
+    // The Tailwind namespace is picked from the light theme only.
+    const types = (theme: TokenGroup) =>
+      Object.fromEntries(
+        Object.entries(theme)
+          .filter(([role]) => !role.startsWith("$"))
+          .map(([role, token]) => [role, "$type" in token ? token.$type : undefined]),
+      );
+
+    expect(types(themes.dark)).toEqual(types(themes.light));
+  });
 });

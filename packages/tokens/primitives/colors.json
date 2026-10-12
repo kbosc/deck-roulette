@@ -293,6 +293,10 @@
       "ink": {
         "$type": "color",
         "$value": "#17211e"
+      },
+      "shadow": {
+        "$type": "color",
+        "$value": "#030a08"
       }
     },
     "brass": {
