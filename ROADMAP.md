@@ -185,10 +185,21 @@ visuelle dans l'univers de Magic, sans casser le design system.
 - [ ] Direction proposée avec le skill `frontend-design` (typographie, palette, matières, mouvement)
 - [ ] Traduite **en tokens** uniquement : aucune valeur en dur, le lint l'interdit déjà
 - [ ] Vérifiée dans Storybook, thèmes clair et sombre, contrastes WCAG toujours au vert
-- [ ] Hiérarchie des boutons : le laiton (`primary`) est réservé à l'action qui fait avancer l'écran
-- [ ] Decks et pools « posés sur le tapis » : proportions de carte, ombre et épaisseur **en tokens**
-- [ ] Sélecteur d'apparence Système / Clair / Sombre : choix persisté, pas de flash du mauvais
+- [x] Hiérarchie des boutons : `primary` réservé au tirage et à la seule sortie d'une impasse
+- [x] Élévation par thème en tokens (le générateur gère les ombres par thème)
+- [x] Sélecteur d'apparence Système / Clair / Sombre : choix persisté, pas de flash du mauvais
       thème au chargement (script inline avant React), `prefers-color-scheme` respecté
+
+> **Décision du 12/10/2026 : le Grimoire.** Trois directions maquettées (salon feutré,
+> grimoire, arène) ; Kévin choisit le grimoire. Nuit = reliure de cuir à la bougie, Jour = livre
+> ouvert en plein jour. Les cartes sont des **pages de vélin, claires dans les deux thèmes** :
+> d'où les surfaces contextuelles (`data-surface="page"`), qui redéfinissent les rôles localement.
+
+- [x] Palette Grimoire Nuit / Jour et surface « page », contrastes WCAG au vert partout
+- [ ] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
+- [ ] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
+- [ ] Le sceau de cire comme bouton de tirage
+- [ ] Decks déjà sortis barrés à l'encre rouge dans la page du pool
 
 ---
 
@@ -257,8 +268,10 @@ Inspiration : [poke-holo.simey.me](https://poke-holo.simey.me/) — technique é
 **Objectif pédagogique :** thèmes pilotés par tokens, première vraie migration de schéma,
 stockage de fichiers dans le navigateur.
 
-- [ ] Réglage d'**ambiance** Sobre / Table de jeu, indépendant du clair / sombre : il ne change
-      que des tokens (texture du feutre, force des ombres, épaisseur des piles), jamais la structure
+- [ ] Réglage d'**univers** (Grimoire, puis Arène), indépendant de la luminosité : `data-skin`
+      à côté de `data-theme`, contrastes testés pour chaque combinaison. Un univers ne change que
+      des tokens, jamais la structure ; il peut n'exister qu'en sombre. À faire **quand le
+      deuxième univers existe**, pas avant
 - [ ] Choix du playmat parmi des teintes prédéfinies, chacune validée par les tests de contraste
 - [ ] Une couleur de sleeve **par deck** (mate, inspirée des sleeves du commerce, sans marque) →
       nouveau champ sur `Deck`, donc **migration de schéma v1 → v2**
@@ -349,6 +362,16 @@ c'est toute la raison d'être du monorepo.
 > Expo Go bloqué en SDK 54 : « project is incompatible with this version of Expo Go ».
 > Pas un problème d'iOS. Leçon : avec Expo Go, **c'est Expo Go qui dicte le SDK**.
 > Vérifier la version supportée _avant_ de générer le projet.
+
+---
+
+## Bonus — L'univers Arène 🌌
+
+L'arène numérique de nuit (direction C des maquettes) : les cinq couleurs de mana comme sources
+de lumière, une bordure de pool aux couleurs de ses decks, un tirage qui brille. Sombre uniquement.
+
+- [ ] Verre et halos vérifiés en contraste malgré la transparence
+- [ ] Sélecteur de luminosité désactivé, avec une explication, quand l'univers est sombre uniquement
 
 ---
 
