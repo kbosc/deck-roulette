@@ -14,6 +14,7 @@ function renderAt(path: string) {
 describe("App", () => {
   beforeEach(() => {
     localStorage.clear();
+    document.documentElement.removeAttribute("data-theme");
     useLibrary.setState({ decks: [], pools: [] });
   });
 
@@ -124,5 +125,18 @@ describe("App", () => {
 
     expect(screen.getByRole("navigation", { name: "Main" })).toBeDefined();
     expect(screen.getByRole("main")).toBeDefined();
+  });
+
+  it("keeps the theme picked, across a reload", async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderAt("/");
+
+    await user.click(screen.getByRole("radio", { name: "Dark" }));
+    expect(document.documentElement.dataset["theme"]).toBe("dark");
+
+    unmount();
+    renderAt("/");
+
+    expect(screen.getByRole("radio", { name: "Dark" })).toHaveProperty("checked", true);
   });
 });

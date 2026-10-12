@@ -1,9 +1,17 @@
+import { SegmentedControl } from "@deck-roulette/ui";
 import { useEffect, useRef } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
+import { useThemePreference } from "../theme";
 
 const LINKS = [
   { to: "/", label: "Library" },
   { to: "/pools", label: "Pools" },
+] as const;
+
+const THEME_OPTIONS = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
 ] as const;
 
 export function Layout() {
@@ -12,6 +20,7 @@ export function Layout() {
   // A path rather than a "first render" flag: StrictMode runs effects twice in
   // dev, and a flag would already be spent on the second run.
   const previousPathname = useRef(pathname);
+  const [theme, setTheme] = useThemePreference();
 
   // A client-side navigation does not reset focus like a page load does: without
   // this, focus stays on the clicked link and screen readers announce nothing.
@@ -34,27 +43,35 @@ export function Layout() {
       </a>
 
       <header className="border-b border-border">
-        <nav aria-label="Main" className="mx-auto flex max-w-3xl gap-1 px-4 py-3">
-          {LINKS.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              className={({ isActive }) =>
-                [
-                  "rounded-md px-3 py-2 text-sm font-medium",
-                  "focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
-                  "focus-visible:ring-offset-surface outline-none",
-                  isActive
-                    ? "bg-surface-sunken text-text"
-                    : "text-text-muted hover:bg-surface-hover",
-                ].join(" ")
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-4 py-3">
+          <nav aria-label="Main" className="flex gap-1">
+            {LINKS.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === "/"}
+                className={({ isActive }) =>
+                  [
+                    "rounded-md px-3 py-2 text-sm font-medium",
+                    "focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
+                    "focus-visible:ring-offset-surface outline-none",
+                    isActive
+                      ? "bg-surface-sunken text-text"
+                      : "text-text-muted hover:bg-surface-hover",
+                  ].join(" ")
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+          <SegmentedControl
+            legend="Theme"
+            options={THEME_OPTIONS}
+            value={theme}
+            onChange={setTheme}
+          />
+        </div>
       </header>
 
       {/* tabIndex -1 makes the skip link able to move focus here, not just scroll. */}

@@ -35,3 +35,10 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Set while the theme changes, then removed: colors snap together instead of fading one by one. */
+[data-theme-switching] *,
+[data-theme-switching] *::before,
+[data-theme-switching] *::after {
+  transition: none !important;
+}

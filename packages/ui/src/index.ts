@@ -16,6 +16,8 @@ export type { DeckCardProps } from "./molecules/DeckCard";
 export { DeckCard } from "./molecules/DeckCard";
 export type { EmptyStateProps, HeadingLevel } from "./molecules/EmptyState";
 export { EmptyState } from "./molecules/EmptyState";
+export type { SegmentedControlOption, SegmentedControlProps } from "./molecules/SegmentedControl";
+export { SegmentedControl } from "./molecules/SegmentedControl";
 export type { DeckListProps } from "./organisms/DeckList";
 export { DeckList } from "./organisms/DeckList";
 export type { PoolCardProps } from "./organisms/PoolCard";
