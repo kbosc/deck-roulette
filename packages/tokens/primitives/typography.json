@@ -4,7 +4,13 @@
     "family": {
       "display": {
         "$type": "fontFamily",
-        "$value": "'Alegreya Variable', Georgia, serif"
+        "$value": "'Cinzel Variable', 'Trajan Pro', Georgia, serif",
+        "$description": "Capitals only: titles and short labels, never a deck name."
+      },
+      "book": {
+        "$type": "fontFamily",
+        "$value": "'Alegreya Variable', Georgia, serif",
+        "$description": "Names and prose that belong to the book: deck names, pool names in lists."
       },
       "sans": {
         "$type": "fontFamily",

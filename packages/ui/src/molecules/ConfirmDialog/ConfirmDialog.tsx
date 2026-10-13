@@ -73,7 +73,7 @@ export function ConfirmDialog({
             "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
             "w-[calc(100vw-2rem)] max-w-md",
             "bg-surface-raised text-text",
-            "rounded-lg border border-border shadow-lg",
+            "rounded-sm border border-border shadow-lg",
             "p-6 flex flex-col gap-4",
           ].join(" ")}
         >

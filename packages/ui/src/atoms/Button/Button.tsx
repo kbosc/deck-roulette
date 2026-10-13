@@ -15,7 +15,8 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 
 /** `primary` (gilt on leather, wax seal on a page) is kept for drawing, or for the only way out of a dead end. */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
-  primary: "bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
+  primary:
+    "font-display tracking-wide bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
   secondary: "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
   ghost: "bg-transparent text-text hover:bg-surface-hover",
   danger: "bg-danger text-text-on-danger hover:bg-danger-hover",

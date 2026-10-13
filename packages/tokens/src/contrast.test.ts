@@ -25,6 +25,7 @@ const PAIRS: ReadonlyArray<readonly [fg: string, bg: string, min: number]> = [
   ["text", "surface-sunken", 4.5],
   ["text-muted", "surface", 4.5],
   ["text-muted", "surface-raised", 4.5],
+  ["text-action", "surface", 4.5],
   ["text-action", "surface-raised", 4.5],
   ["text-on-action", "action", 4.5],
   ["text-on-danger", "danger", 4.5],

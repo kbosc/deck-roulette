@@ -124,6 +124,12 @@ describe("themedRoles", () => {
     ]);
   });
 
+  it("accepts an image, used by plain CSS rather than by a utility", () => {
+    expect(themedRoles({ grain: { $type: "image", $value: "url(x.svg)" } })).toEqual([
+      { name: "grain", type: "image" },
+    ]);
+  });
+
   it("refuses a role named like the namespace it is exposed in", () => {
     // `--shadow-sm` would overwrite the primitive of the same name.
     expect(() => themedRoles({ "shadow-sm": { $type: "shadow", $value: "a" } })).toThrow(
@@ -150,6 +156,7 @@ describe("buildTailwindTheme", () => {
     { name: "surface", type: "color" },
     { name: "text-muted", type: "color" },
     { name: "elevation-rest", type: "shadow" },
+    { name: "grain", type: "image" },
   ]);
 
   it("maps each themed color onto the name Tailwind expects", () => {
@@ -162,6 +169,10 @@ describe("buildTailwindTheme", () => {
     // `--shadow-elevation-rest` is what produces shadow-elevation-rest.
     expect(css).toContain("--shadow-elevation-rest: var(--elevation-rest);");
     expect(css).not.toContain("--color-elevation-rest");
+  });
+
+  it("exposes no utility for a themed image", () => {
+    expect(css).not.toContain("grain");
   });
 
   it("uses @theme inline for themed roles so utilities follow the active theme", () => {

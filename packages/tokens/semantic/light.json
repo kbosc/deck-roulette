@@ -116,5 +116,25 @@
     "$description": "A vellum page lying on the desk: three paper edges, then a soft shadow.",
     "$type": "shadow",
     "$value": "0 1px 0 0 {color.vellum.200}, 0 2px 0 0 {color.vellum.300}, 0 3px 0 0 {color.umber.500}, 0 10px 18px -8px color-mix(in srgb, {color.ink.900} 30%, transparent)"
+  },
+  "grain": {
+    "$description": "Paper fibres, tiled.",
+    "$type": "image",
+    "$value": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
+  },
+  "texture-surface": {
+    "$description": "Daylight on the open book.",
+    "$type": "image",
+    "$value": "radial-gradient(90vw 60vh at 50% 0%, color-mix(in srgb, {color.vellum.50} 50%, transparent), transparent 70%), radial-gradient(150vw 110vh at 50% 40%, transparent 55%, color-mix(in srgb, {color.umber.500} 18%, transparent))"
+  },
+  "texture-page": {
+    "$description": "Vellum darkening toward its edges.",
+    "$type": "image",
+    "$value": "radial-gradient(120% 90% at 50% 40%, transparent 60%, color-mix(in srgb, {color.umber.500} 22%, transparent))"
+  },
+  "frame": {
+    "$description": "The rule tooled into the binding. Decorative: carries no information.",
+    "$type": "color",
+    "$value": "color-mix(in srgb, {color.umber.500} 45%, transparent)"
   }
 }

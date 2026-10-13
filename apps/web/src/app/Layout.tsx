@@ -33,7 +33,13 @@ export function Layout() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-surface text-text">
+    // No background here: the body carries the surface and its textures.
+    <div className="min-h-screen text-text">
+      {/* No z-index: painted first, it stays under the skip link and the dialogs' overlay. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-2 rounded-lg border border-frame"
+      />
       {/* Skip link: visible once focused, first thing Tab reaches. */}
       <a
         href="#main"
@@ -55,9 +61,10 @@ export function Layout() {
                     "rounded-md px-3 py-2 text-sm font-medium",
                     "focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
                     "focus-visible:ring-offset-surface outline-none",
+                    "font-display tracking-wide",
                     isActive
-                      ? "bg-surface-sunken text-text"
-                      : "text-text-muted hover:bg-surface-hover",
+                      ? "text-text-action underline decoration-2 underline-offset-8"
+                      : "text-text-muted hover:text-text",
                   ].join(" ")
                 }
               >

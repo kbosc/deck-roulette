@@ -11,7 +11,7 @@ export function PageHeading({ children, ref }: PageHeadingProps) {
   usePageTitle(children);
 
   return (
-    <h1 ref={ref} tabIndex={-1} className="text-2xl font-semibold outline-none">
+    <h1 ref={ref} tabIndex={-1} className="text-3xl font-semibold text-text-action outline-none">
       {children}
     </h1>
   );

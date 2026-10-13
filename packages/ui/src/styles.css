@@ -8,15 +8,35 @@
 @import "@deck-roulette/tokens/tokens.css";
 @import "@deck-roulette/tokens/theme.css";
 /* Self-hosted: no request to a font CDN, nothing to leak about the visitor. */
+@import "@fontsource-variable/cinzel";
 @import "@fontsource-variable/alegreya";
 @import "@fontsource-variable/atkinson-hyperlegible-next";
 
 @layer base {
   h1,
   h2,
-  h3,
   legend {
     font-family: var(--font-display);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  h3 {
+    font-family: var(--font-book);
+  }
+
+  /*
+   * One repeat and one attachment for every layer: a texture token may hold several
+   * gradients, and a per-layer list would shift onto the wrong ones. A gradient fills
+   * its whole area, so repeating it changes nothing; the grain tile needs it.
+   */
+  body {
+    background-color: var(--surface);
+    background-image: var(--texture-surface), var(--grain);
+    background-attachment: fixed;
+  }
+
+  [data-surface="page"] {
+    background-image: var(--texture-page), var(--grain);
   }
 }
 

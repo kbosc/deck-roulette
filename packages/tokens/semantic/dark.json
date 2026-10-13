@@ -116,5 +116,25 @@
     "$description": "A vellum page lying on the leather: three paper edges, then the candle's shadow.",
     "$type": "shadow",
     "$value": "0 1px 0 0 {color.vellum.200}, 0 2px 0 0 {color.vellum.300}, 0 3px 0 0 {color.umber.500}, 0 14px 22px -8px color-mix(in srgb, {color.leather.950} 85%, transparent)"
+  },
+  "grain": {
+    "$description": "Leather grain, tiled: stretched noise reads as hide rather than paper.",
+    "$type": "image",
+    "$value": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='.035 .06' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .25 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
+  },
+  "texture-surface": {
+    "$description": "A candle above the book, and the edges of the binding falling into shadow.",
+    "$type": "image",
+    "$value": "radial-gradient(90vw 60vh at 50% 0%, color-mix(in srgb, {color.gilt.300} 14%, transparent), transparent 70%), radial-gradient(150vw 110vh at 50% 40%, transparent 50%, color-mix(in srgb, {color.leather.950} 60%, transparent))"
+  },
+  "texture-page": {
+    "$description": "Vellum darkening toward its edges.",
+    "$type": "image",
+    "$value": "radial-gradient(120% 90% at 50% 40%, transparent 60%, color-mix(in srgb, {color.umber.500} 22%, transparent))"
+  },
+  "frame": {
+    "$description": "The gilt rule tooled into the binding. Decorative: carries no information.",
+    "$type": "color",
+    "$value": "color-mix(in srgb, {color.gilt.500} 45%, transparent)"
   }
 }

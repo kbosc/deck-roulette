@@ -170,7 +170,10 @@ export function buildTailwindTheme(
     .join("\n");
 
   const themed = roles
-    .map(({ name, type }) => `  ${THEMED_NAMESPACES[type]}${name}: var(--${name});`)
+    .flatMap(({ name, type }) => {
+      const namespace = THEMED_NAMESPACES[type];
+      return namespace === null ? [] : [`  ${namespace}${name}: var(--${name});`];
+    })
     .join("\n");
 
   return `/* Generated from the JSON in packages/tokens. Do not edit by hand. */
@@ -187,9 +190,11 @@ ${themed}
 `;
 }
 
+/** `null`: the variable exists, but only stylesheets read it; Tailwind has no image scale. */
 const THEMED_NAMESPACES = {
   color: "--color-",
   shadow: "--shadow-",
+  image: null,
 } as const;
 
 type ThemedType = keyof typeof THEMED_NAMESPACES;
@@ -211,8 +216,8 @@ export function themedRoles(theme: TokenTree): readonly ThemedRole[] {
           `Themed role "${name}" has type "${String(type)}", which maps to no utility`,
         );
       }
-      const namespace = THEMED_NAMESPACES[type].slice(2);
-      if (name.startsWith(namespace)) {
+      const namespace = THEMED_NAMESPACES[type]?.slice(2);
+      if (namespace !== undefined && name.startsWith(namespace)) {
         throw new Error(`Themed role "${name}" must not start with "${namespace}"`);
       }
       return { name, type };

@@ -44,7 +44,7 @@ export function PoolCard({
   return (
     <article
       data-surface="page"
-      className="flex flex-col gap-4 p-4 rounded-lg border border-border bg-surface-raised text-text shadow-elevation-rest"
+      className="flex flex-col gap-4 p-4 rounded-sm border border-border bg-surface-raised text-text shadow-elevation-rest"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1 min-w-0">
