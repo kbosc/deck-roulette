@@ -138,9 +138,9 @@
     "$value": "color-mix(in srgb, {color.gilt.500} 45%, transparent)"
   },
   "seal": {
-    "$description": "A gilt seal on the leather. Every stop keeps text-on-action readable: the label crosses all of them.",
+    "$description": "Red wax on the leather: among all the gilt, the one thing to press stands out. Every stop keeps text-on-seal readable.",
     "$type": "image",
-    "$value": "radial-gradient(circle at 35% 30%, {color.gilt.300}, {color.gilt.500} 55%, {color.gilt.700})"
+    "$value": "radial-gradient(circle at 35% 30%, {color.seal.500}, {color.seal.600} 55%, {color.seal.900})"
   },
   "elevation-seal": {
     "$description": "The rim of the seal, then its shadow under the candle.",
@@ -151,5 +151,10 @@
     "$description": "Pushed flat into the leather: the rim stays, the shadow goes inside.",
     "$type": "shadow",
     "$value": "inset 0 0 0 3px color-mix(in srgb, {color.leather.950} 25%, transparent), inset 0 2px 6px color-mix(in srgb, {color.leather.950} 60%, transparent)"
+  },
+  "text-on-seal": {
+    "$description": "The draw label: the seal is red wax in every theme, even where action is gilt.",
+    "$type": "color",
+    "$value": "{color.seal.50}"
   }
 }

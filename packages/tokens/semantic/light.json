@@ -2,7 +2,7 @@
   "$description": "Grimoire by day: the open book in daylight. Same role names as dark.json.",
   "surface": {
     "$type": "color",
-    "$value": "{color.vellum.200}"
+    "$value": "{color.vellum.300}"
   },
   "surface-raised": {
     "$type": "color",
@@ -138,7 +138,7 @@
     "$value": "color-mix(in srgb, {color.umber.500} 45%, transparent)"
   },
   "seal": {
-    "$description": "Red wax pressed onto the page. Every stop keeps text-on-action readable: the label crosses all of them.",
+    "$description": "Red wax pressed onto the page. Every stop keeps text-on-seal readable: the label crosses all of them.",
     "$type": "image",
     "$value": "radial-gradient(circle at 35% 30%, {color.seal.500}, {color.seal.600} 55%, {color.seal.900})"
   },
@@ -151,5 +151,10 @@
     "$description": "Pushed flat into the page: the rim stays, the shadow goes inside.",
     "$type": "shadow",
     "$value": "inset 0 0 0 3px color-mix(in srgb, {color.base.black} 18%, transparent), inset 0 2px 6px color-mix(in srgb, {color.base.black} 45%, transparent)"
+  },
+  "text-on-seal": {
+    "$description": "The draw label: the seal is red wax in every theme, even where action is gilt.",
+    "$type": "color",
+    "$value": "{color.seal.50}"
   }
 }

@@ -13,12 +13,11 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly children: ReactNode;
 };
 
-/** `primary` (a gilt seal on leather, red wax on a page) is kept for drawing, or for the only way out of a dead end. */
+/** `primary` (a red wax seal) is kept for drawing, or for the only way out of a dead end. */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   primary: [
-    "rounded-full font-display tracking-wide text-text-on-action",
-    // The color shows only if the gradient fails to load.
-    "bg-action bg-seal shadow-elevation-seal",
+    "rounded-full font-display tracking-wide text-text-on-seal",
+    "bg-seal shadow-elevation-seal",
     "hover:-translate-y-px active:translate-y-0 active:shadow-elevation-seal-pressed",
   ].join(" "),
   secondary:

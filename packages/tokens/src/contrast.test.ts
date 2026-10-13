@@ -97,8 +97,9 @@ describe.each(Object.entries({ ...themes, "page surface": page }))("%s", (_name,
     expect(contrastRatio(foreground, background)).toBeGreaterThanOrEqual(min);
   });
 
-  it("keeps the draw label readable on every color of the seal", () => {
-    const label = resolveColor((tokens["text-on-action"] as { $value: string }).$value, primitives);
+  // A page that leaves the seal alone keeps the theme's, checked above.
+  it.skipIf(!("seal" in tokens))("keeps the draw label readable on every color of the seal", () => {
+    const label = resolveColor((tokens["text-on-seal"] as { $value: string }).$value, primitives);
     const seal = (tokens["seal"] as { $value: string }).$value;
     const stops = seal.match(/\{[^}]+\}/g) ?? [];
 

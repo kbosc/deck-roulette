@@ -77,6 +77,6 @@ describe("Button", () => {
     const { className } = screen.getByRole("button");
 
     expect(className).toContain("w-full");
-    expect(className).toContain("bg-action");
+    expect(className).toContain("bg-seal");
   });
 });

@@ -3,19 +3,19 @@
   "$color-scheme": "light",
   "surface": {
     "$type": "color",
-    "$value": "{color.vellum.50}"
+    "$value": "{color.parchment.200}"
   },
   "surface-raised": {
     "$type": "color",
-    "$value": "{color.vellum.50}"
+    "$value": "{color.parchment.200}"
   },
   "surface-sunken": {
     "$type": "color",
-    "$value": "{color.vellum.100}"
+    "$value": "{color.vellum.200}"
   },
   "surface-hover": {
     "$type": "color",
-    "$value": "{color.vellum.100}"
+    "$value": "{color.vellum.200}"
   },
   "border": {
     "$type": "color",
@@ -87,7 +87,7 @@
   },
   "text-success": {
     "$type": "color",
-    "$value": "{color.green.700}"
+    "$value": "{color.green.800}"
   },
   "surface-success": {
     "$type": "color",
@@ -99,7 +99,7 @@
   },
   "text-warning": {
     "$type": "color",
-    "$value": "{color.amber.700}"
+    "$value": "{color.amber.800}"
   },
   "surface-warning": {
     "$type": "color",
@@ -113,11 +113,6 @@
     "$description": "Vellum fibres: a page never takes the leather's grain.",
     "$type": "image",
     "$value": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
-  },
-  "seal": {
-    "$description": "Red wax pressed onto the page. Every stop keeps text-on-action readable: the label crosses all of them.",
-    "$type": "image",
-    "$value": "radial-gradient(circle at 35% 30%, {color.seal.500}, {color.seal.600} 55%, {color.seal.900})"
   },
   "elevation-seal": {
     "$description": "The rim the stamp leaves in the wax, then the blob standing off the page.",
