@@ -196,8 +196,8 @@ visuelle dans l'univers de Magic, sans casser le design system.
 > d'où les surfaces contextuelles (`data-surface="page"`), qui redéfinissent les rôles localement.
 
 - [x] Palette Grimoire Nuit / Jour et surface « page », contrastes WCAG au vert partout
-- [ ] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
-- [ ] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
+- [x] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
+- [x] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
 - [ ] Le sceau de cire comme bouton de tirage
 - [ ] Decks déjà sortis barrés à l'encre rouge dans la page du pool
 

@@ -1,0 +1,783 @@
+<!doctype html>
+<!-- The three art directions shown to Kevin on 12/10/2026; he picked B, the grimoire. Open in a browser.
+     Unlike the app, it loads its fonts from Google Fonts. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Deck Roulette Directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=Cinzel:wght@600;700&family=Chakra+Petch:wght@500;600;700&display=swap"
+    />
+    <style>
+      /* Layout: three phone-width Pools screens side by side, each a self-contained visual world; the page around them is quiet. */
+      :root {
+        --page-bg: #e9ece9;
+        --page-fg: #1a2421;
+        --page-muted: #55625d;
+        --page-line: #c8d0cc;
+        --font-ui: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+        --font-felt: "Alegreya", Georgia, serif;
+        --font-grimoire: "Cinzel", "Trajan Pro", Georgia, serif;
+        --font-arena: "Chakra Petch", "Arial Narrow", system-ui, sans-serif;
+        --w: #f3ecd0;
+        --u: #3f84c9;
+        --b: #4a3f45;
+        --r: #d4553b;
+        --g: #3e9461;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --page-bg: #101513;
+          --page-fg: #e6ebe8;
+          --page-muted: #9aa8a2;
+          --page-line: #2a3430;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --page-bg: #101513;
+        --page-fg: #e6ebe8;
+        --page-muted: #9aa8a2;
+        --page-line: #2a3430;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--page-bg);
+        color: var(--page-fg);
+        font: 400 1rem/1.5 var(--font-ui);
+      }
+      .wrap {
+        max-width: 78rem;
+        margin: 0 auto;
+        padding-inline: 16px;
+        padding-block: 2.5rem 4rem;
+      }
+      .intro {
+        max-width: 40rem;
+        display: grid;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+      }
+      .intro h1 {
+        font: 800 2rem/1.1 var(--font-felt);
+        margin: 0;
+        text-wrap: balance;
+      }
+      .intro p {
+        margin: 0;
+        color: var(--page-muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+        gap: 2rem;
+        align-items: start;
+      }
+      .option {
+        display: grid;
+        gap: 0.75rem;
+        min-width: 0;
+      }
+      .option header {
+        display: grid;
+        gap: 0.15rem;
+      }
+      .option h2 {
+        margin: 0;
+        font: 700 1.25rem/1.2 var(--font-felt);
+      }
+      .option .tag {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--page-muted);
+      }
+      .option p.why {
+        margin: 0;
+        color: var(--page-muted);
+        font-size: 0.92rem;
+        max-width: 60ch;
+      }
+
+      /* The phone frame every direction lives in. */
+      .screen {
+        position: relative;
+        border-radius: 1.75rem;
+        overflow: hidden;
+        min-height: 40rem;
+        padding: 1rem 1rem 1.5rem;
+        isolation: isolate;
+        box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.5);
+      }
+      .screen nav {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      .screen nav span {
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.5rem;
+      }
+      .screen h3.page {
+        margin: 0 0 0.25rem;
+      }
+      .screen .sub {
+        margin: 0 0 1.25rem;
+        font-size: 0.88rem;
+      }
+      .pips {
+        display: inline-flex;
+        gap: 3px;
+      }
+      .pip {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow:
+          inset 0 -1px 0 rgb(0 0 0 / 0.3),
+          0 0 0 1px rgb(0 0 0 / 0.25);
+      }
+      .pip.w {
+        background: var(--w);
+      }
+      .pip.u {
+        background: var(--u);
+      }
+      .pip.b {
+        background: var(--b);
+      }
+      .pip.r {
+        background: var(--r);
+      }
+      .pip.g {
+        background: var(--g);
+      }
+      .btn {
+        font: inherit;
+        border: 0;
+        cursor: pointer;
+        width: 100%;
+        min-height: 2.9rem;
+        font-weight: 700;
+      }
+      .btn:focus-visible {
+        outline: 3px solid currentColor;
+        outline-offset: 3px;
+      }
+
+      /* ── A · Salon feutré ───────────────────────────────── */
+      .felt {
+        --felt: #1d4a3f;
+        --felt-deep: #0c241e;
+        --stock: #efe7d3;
+        --ink: #1b1a17;
+        --brass-hi: #f3d68b;
+        --brass: #c9a24a;
+        --brass-lo: #8a6a22;
+        color: #e9e2cf;
+        font-family: var(--font-ui);
+        background:
+          radial-gradient(120% 70% at 50% 0%, rgb(255 240 200 / 0.16), transparent 60%),
+          radial-gradient(140% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.55)),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+          var(--felt);
+      }
+      .felt nav span:first-child {
+        color: #b9c8bf;
+      }
+      .felt nav span.on {
+        background: rgb(0 0 0 / 0.25);
+        color: var(--stock);
+      }
+      .felt h3.page {
+        font: 800 2.4rem/1 var(--font-felt);
+        color: var(--stock);
+        text-shadow: 0 2px 0 rgb(0 0 0 / 0.35);
+      }
+      .felt .sub {
+        color: #b9c8bf;
+      }
+      .felt .table {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.1rem 0.9rem;
+      }
+      .felt .deck {
+        aspect-ratio: 63 / 88;
+        border-radius: 0.6rem;
+        position: relative;
+      }
+      .felt .deck .face {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 0.7rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--sleeve);
+        color: #fff;
+        box-shadow:
+          inset 0 0 0 5px rgb(255 255 255 / 0.06),
+          inset 0 1px 0 rgb(255 255 255 / 0.25),
+          0 1px 0 rgb(0 0 0 / 0.35),
+          0 2px 0 var(--sleeve-edge),
+          0 3px 0 rgb(0 0 0 / 0.4),
+          0 4px 0 var(--sleeve-edge),
+          0 14px 18px -6px rgb(0 0 0 / 0.65);
+      }
+      .felt .deck .face::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(155deg, rgb(255 255 255 / 0.22), transparent 40%);
+        pointer-events: none;
+      }
+      .felt .deck strong {
+        font: 700 1.05rem/1.15 var(--font-felt);
+        text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+      }
+      .felt .deck small {
+        font-size: 0.72rem;
+        opacity: 0.85;
+      }
+      .felt .deck.drawn {
+        transform: rotate(-3deg) translateY(-4px);
+      }
+      .felt .deck.drawn .face {
+        background: var(--stock);
+        color: var(--ink);
+        box-shadow:
+          0 0 0 2px var(--brass),
+          0 18px 28px -8px rgb(0 0 0 / 0.75);
+      }
+      .felt .deck.drawn strong {
+        text-shadow: none;
+      }
+      .felt .deck.gone {
+        opacity: 0.35;
+        filter: saturate(0.3);
+      }
+      .felt .pool-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin: 0 0 0.9rem;
+      }
+      .felt .pool-head h4 {
+        margin: 0;
+        font: 700 1.3rem/1.2 var(--font-felt);
+        color: var(--stock);
+      }
+      .felt .pool-head span {
+        font-size: 0.8rem;
+        color: #b9c8bf;
+      }
+      .felt .btn.primary {
+        margin-top: 1.4rem;
+        border-radius: 0.7rem;
+        color: #2a1e05;
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+        background: linear-gradient(180deg, var(--brass-hi), var(--brass) 45%, var(--brass-lo));
+        box-shadow:
+          inset 0 1px 0 rgb(255 255 255 / 0.6),
+          inset 0 -2px 0 rgb(0 0 0 / 0.25),
+          0 3px 0 #5d4612,
+          0 10px 18px -6px rgb(0 0 0 / 0.6);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .felt .btn.primary:hover {
+        transform: translateY(-1px);
+      }
+      .felt .btn.primary:active {
+        transform: translateY(2px);
+        box-shadow:
+          inset 0 1px 0 rgb(255 255 255 / 0.6),
+          0 1px 0 #5d4612,
+          0 4px 8px -4px rgb(0 0 0 / 0.6);
+      }
+
+      /* ── B · Grimoire ───────────────────────────────────── */
+      .grimoire {
+        --leather: #3a2219;
+        --leather-deep: #1e100b;
+        --vellum: #ecdcb6;
+        --vellum-ink: #2b1d12;
+        --seal: #9c2a22;
+        --gilt: #c8a24e;
+        color: #e8d7b0;
+        background:
+          radial-gradient(90% 60% at 50% 10%, rgb(255 200 140 / 0.14), transparent 70%),
+          radial-gradient(150% 110% at 50% 50%, transparent 50%, rgb(0 0 0 / 0.6)),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='turbulence' baseFrequency='.035 .06' numOctaves='4'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .25 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E"),
+          var(--leather);
+      }
+      .grimoire::before {
+        content: "";
+        position: absolute;
+        inset: 0.55rem;
+        border: 1px solid rgb(200 162 78 / 0.45);
+        border-radius: 1.3rem;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .grimoire nav {
+        font-family: var(--font-grimoire);
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+      }
+      .grimoire nav span.on {
+        color: var(--gilt);
+        border-bottom: 1px solid var(--gilt);
+        border-radius: 0;
+      }
+      .grimoire h3.page {
+        font: 700 2rem/1.05 var(--font-grimoire);
+        color: var(--gilt);
+        letter-spacing: 0.04em;
+        text-align: center;
+      }
+      .grimoire .sub {
+        text-align: center;
+        font-family: var(--font-felt);
+        font-style: italic;
+        color: #cdb98f;
+      }
+      .grimoire .page-sheet {
+        background: var(--vellum);
+        color: var(--vellum-ink);
+        padding: 1.1rem 1rem 1.2rem;
+        border-radius: 3px;
+        box-shadow:
+          0 0 0 1px rgb(0 0 0 / 0.3),
+          0 1px 0 #d8c69c,
+          0 2px 0 #c9b487,
+          0 3px 0 #bba477,
+          0 16px 26px -10px rgb(0 0 0 / 0.7);
+        background-image: radial-gradient(
+          120% 90% at 50% 40%,
+          transparent 60%,
+          rgb(120 80 30 / 0.22)
+        );
+      }
+      .grimoire .page-sheet h4 {
+        margin: 0 0 0.1rem;
+        font: 700 1.2rem/1.2 var(--font-grimoire);
+        letter-spacing: 0.03em;
+      }
+      .grimoire .page-sheet .meta {
+        font: italic 500 0.85rem var(--font-felt);
+        color: #6b5232;
+        margin-bottom: 0.8rem;
+      }
+      .grimoire ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+      }
+      .grimoire li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px dotted rgb(43 29 18 / 0.35);
+        font: 500 1rem var(--font-felt);
+      }
+      .grimoire li.gone {
+        text-decoration: line-through;
+        text-decoration-color: var(--seal);
+        color: #7c6448;
+      }
+      .grimoire li.drawn {
+        font-weight: 800;
+      }
+      .grimoire li.drawn::before {
+        content: "❦";
+        color: var(--seal);
+        margin-right: 0.35rem;
+      }
+      .grimoire li > span:first-child {
+        flex: 1;
+        min-width: 0;
+      }
+      .grimoire .seal-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.4rem;
+      }
+      .grimoire .btn.primary {
+        width: auto;
+        padding: 0 1.6rem;
+        border-radius: 999px;
+        color: #f6e3c4;
+        font-family: var(--font-grimoire);
+        letter-spacing: 0.1em;
+        font-size: 0.9rem;
+        background: radial-gradient(circle at 35% 30%, #c4453b, var(--seal) 55%, #5e1510);
+        box-shadow:
+          inset 0 0 0 3px rgb(0 0 0 / 0.18),
+          inset 0 0 0 5px rgb(255 255 255 / 0.08),
+          0 6px 14px -4px rgb(0 0 0 / 0.7);
+      }
+
+      /* ── C · Arène ──────────────────────────────────────── */
+      .arena {
+        --void: #0b0b16;
+        --panel: rgb(255 255 255 / 0.05);
+        --line: rgb(255 255 255 / 0.12);
+        --text: #eef0ff;
+        --muted: #9a9cc0;
+        --volt: #7cf3ff;
+        color: var(--text);
+        font-family: var(--font-ui);
+        background:
+          radial-gradient(60% 40% at 15% 0%, rgb(63 132 201 / 0.45), transparent 70%),
+          radial-gradient(60% 45% at 100% 30%, rgb(212 85 59 / 0.35), transparent 70%),
+          radial-gradient(70% 50% at 30% 100%, rgb(62 148 97 / 0.35), transparent 70%), var(--void);
+      }
+      .arena nav {
+        font-family: var(--font-arena);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.75rem;
+      }
+      .arena nav span {
+        color: var(--muted);
+      }
+      .arena nav span.on {
+        color: var(--text);
+        background: var(--panel);
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+      .arena h3.page {
+        font: 700 2.6rem/1 var(--font-arena);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+      .arena .sub {
+        color: var(--muted);
+      }
+      .arena .pool {
+        position: relative;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: var(--panel);
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+      .arena .pool::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        pointer-events: none;
+        background: linear-gradient(120deg, var(--u), var(--g) 40%, var(--b) 70%, var(--w));
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
+      .arena .pool h4 {
+        margin: 0;
+        font: 700 1.4rem/1.1 var(--font-arena);
+        text-transform: uppercase;
+      }
+      .arena .meter {
+        display: flex;
+        gap: 4px;
+        margin: 0.75rem 0 1rem;
+      }
+      .arena .meter i {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--volt);
+        box-shadow: 0 0 10px var(--volt);
+      }
+      .arena .meter i.off {
+        background: var(--line);
+        box-shadow: none;
+      }
+      .arena .count {
+        font: 600 0.8rem var(--font-arena);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .arena ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.45rem;
+      }
+      .arena li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.55rem 0.7rem;
+        border-radius: 0.6rem;
+        background: rgb(255 255 255 / 0.04);
+        font-weight: 500;
+      }
+      .arena li.gone {
+        color: var(--muted);
+      }
+      .arena li.drawn {
+        background: rgb(124 243 255 / 0.1);
+        box-shadow:
+          inset 0 0 0 1px rgb(124 243 255 / 0.5),
+          0 0 22px -6px var(--volt);
+      }
+      .arena li > span:first-child {
+        min-width: 0;
+      }
+      .arena .btn.primary {
+        margin-top: 1.1rem;
+        border-radius: 0.7rem;
+        font-family: var(--font-arena);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #071016;
+        background: linear-gradient(90deg, var(--volt), #b38cff);
+        box-shadow:
+          0 0 0 1px rgb(255 255 255 / 0.3) inset,
+          0 8px 30px -6px rgb(124 243 255 / 0.7);
+      }
+
+      .verdict {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--page-line);
+        max-width: 46rem;
+        display: grid;
+        gap: 0.6rem;
+      }
+      .verdict h2 {
+        margin: 0;
+        font: 700 1.3rem var(--font-felt);
+      }
+      .verdict p {
+        margin: 0;
+        color: var(--page-muted);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+        .felt .deck.drawn {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="intro">
+        <h1>Three tables for Deck Roulette</h1>
+        <p>
+          The same Pools screen, the same pool (“Friday night”, four decks, Meren just drawn),
+          dressed three ways. Pick the world; everything else gets rebuilt in tokens from it.
+        </p>
+      </div>
+
+      <div class="grid">
+        <section class="option" aria-labelledby="a-title">
+          <header>
+            <span class="tag">Direction A</span>
+            <h2 id="a-title">Salon feutré</h2>
+            <p class="why">
+              A lamp over a green playmat. Decks are sleeved piles in Magic proportions, the drawn
+              one flips face up. Brass that actually shines.
+            </p>
+          </header>
+          <div
+            class="screen felt"
+            role="img"
+            aria-label="Pools screen in the felt direction: a green playmat with four sleeved decks in a grid, Meren face up, and a brass Draw button"
+          >
+            <nav><span>Library</span><span class="on">Pools</span></nav>
+            <h3 class="page">Pools</h3>
+            <p class="sub">The sets of decks you draw from.</p>
+            <div class="pool-head">
+              <h4>Friday night</h4>
+              <span>2 of 4 left</span>
+            </div>
+            <div class="table">
+              <div class="deck gone" style="--sleeve: #5b2a7a; --sleeve-edge: #3a1a50">
+                <div class="face">
+                  <strong>Atraxa</strong
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip g"></i
+                  ></span>
+                </div>
+              </div>
+              <div class="deck drawn">
+                <div class="face">
+                  <small>Drawn</small><strong>Meren of Clan Nel Toth</strong
+                  ><span class="pips"><i class="pip b"></i><i class="pip g"></i></span>
+                </div>
+              </div>
+              <div class="deck" style="--sleeve: #1f4f86; --sleeve-edge: #123257">
+                <div class="face">
+                  <strong>Kenrith</strong
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip r"></i><i class="pip g"></i
+                  ></span>
+                </div>
+              </div>
+              <div class="deck" style="--sleeve: #9b2f22; --sleeve-edge: #621c14">
+                <div class="face">
+                  <strong>Krenko</strong><span class="pips"><i class="pip r"></i></span>
+                </div>
+              </div>
+            </div>
+            <button class="btn primary" type="button">Draw a deck</button>
+          </div>
+        </section>
+
+        <section class="option" aria-labelledby="b-title">
+          <header>
+            <span class="tag">Direction B</span>
+            <h2 id="b-title">Grimoire</h2>
+            <p class="why">
+              A leather-bound book of decks. Each pool is a vellum page, drawn decks get struck
+              through in red ink, the draw is a wax seal.
+            </p>
+          </header>
+          <div
+            class="screen grimoire"
+            role="img"
+            aria-label="Pools screen in the grimoire direction: leather background, a vellum page listing four decks with two struck through, and a red wax-seal Draw button"
+          >
+            <nav><span>Library</span><span class="on">Pools</span></nav>
+            <h3 class="page">Pools</h3>
+            <p class="sub">The sets of decks you draw from.</p>
+            <div class="page-sheet">
+              <h4>Friday night</h4>
+              <div class="meta">Two decks remain in this cycle</div>
+              <ol>
+                <li class="gone">
+                  <span>Atraxa, Praetors' Voice</span
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip g"></i
+                  ></span>
+                </li>
+                <li class="drawn">
+                  <span>Meren of Clan Nel Toth</span
+                  ><span class="pips"><i class="pip b"></i><i class="pip g"></i></span>
+                </li>
+                <li>
+                  <span>Kenrith, the Returned King</span
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip r"></i><i class="pip g"></i
+                  ></span>
+                </li>
+                <li>
+                  <span>Krenko, Mob Boss</span><span class="pips"><i class="pip r"></i></span>
+                </li>
+              </ol>
+            </div>
+            <div class="seal-row">
+              <button class="btn primary" type="button">Draw a deck</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="option" aria-labelledby="c-title">
+          <header>
+            <span class="tag">Direction C</span>
+            <h2 id="c-title">Arène</h2>
+            <p class="why">
+              Night-time digital arena. The five mana colors become light sources, the pool border
+              carries its colors, the draw glows.
+            </p>
+          </header>
+          <div
+            class="screen arena"
+            role="img"
+            aria-label="Pools screen in the arena direction: dark background lit by mana colors, a glass panel with a progress meter, four decks, Meren highlighted in cyan, and a glowing Draw button"
+          >
+            <nav><span>Library</span><span class="on">Pools</span></nav>
+            <h3 class="page">Pools</h3>
+            <p class="sub">The sets of decks you draw from.</p>
+            <div class="pool">
+              <h4>Friday night</h4>
+              <div class="meter" aria-hidden="true">
+                <i class="off"></i><i class="off"></i><i></i><i></i>
+              </div>
+              <div class="count">2 of 4 left</div>
+              <ul style="margin-top: 0.8rem">
+                <li class="gone">
+                  <span>Atraxa</span
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip g"></i
+                  ></span>
+                </li>
+                <li class="drawn">
+                  <span>Meren of Clan Nel Toth</span
+                  ><span class="pips"><i class="pip b"></i><i class="pip g"></i></span>
+                </li>
+                <li>
+                  <span>Kenrith</span
+                  ><span class="pips"
+                    ><i class="pip w"></i><i class="pip u"></i><i class="pip b"></i
+                    ><i class="pip r"></i><i class="pip g"></i
+                  ></span>
+                </li>
+                <li>
+                  <span>Krenko</span><span class="pips"><i class="pip r"></i></span>
+                </li>
+              </ul>
+              <button class="btn primary" type="button">Draw a deck</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="verdict">
+        <h2>What each one costs</h2>
+        <p>
+          <strong>Salon feutré</strong> continues the tokens already in place (felt, card stock,
+          brass). The work is the deck grid in card proportions and per-deck sleeve colors, which
+          the roadmap already plans.
+        </p>
+        <p>
+          <strong>Grimoire</strong> replaces the palette and adds a third typeface. It reads
+          beautifully as a list, but it is the furthest from a table.
+        </p>
+        <p>
+          <strong>Arène</strong> is the most spectacular and the hardest to keep readable: glows and
+          translucent panels must be checked for contrast in both themes, and a light version is
+          hard to make credible.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
