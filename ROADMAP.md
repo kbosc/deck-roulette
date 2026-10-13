@@ -198,7 +198,7 @@ visuelle dans l'univers de Magic, sans casser le design system.
 - [x] Palette Grimoire Nuit / Jour et surface « page », contrastes WCAG au vert partout
 - [x] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
 - [x] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
-- [ ] Le sceau de cire comme bouton de tirage
+- [x] Le sceau de cire comme bouton de tirage (doré sur le cuir, cire rouge sur une page)
 - [ ] Decks déjà sortis barrés à l'encre rouge dans la page du pool
 
 ---

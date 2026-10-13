@@ -13,13 +13,18 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly children: ReactNode;
 };
 
-/** `primary` (gilt on leather, wax seal on a page) is kept for drawing, or for the only way out of a dead end. */
+/** `primary` (a gilt seal on leather, red wax on a page) is kept for drawing, or for the only way out of a dead end. */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
-  primary:
-    "font-display tracking-wide bg-action text-text-on-action hover:bg-action-hover active:bg-action-active",
-  secondary: "bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
-  ghost: "bg-transparent text-text hover:bg-surface-hover",
-  danger: "bg-danger text-text-on-danger hover:bg-danger-hover",
+  primary: [
+    "rounded-full font-display tracking-wide text-text-on-action",
+    // The color shows only if the gradient fails to load.
+    "bg-action bg-seal shadow-elevation-seal",
+    "hover:-translate-y-px active:translate-y-0 active:shadow-elevation-seal-pressed",
+  ].join(" "),
+  secondary:
+    "rounded-md bg-surface-raised text-text border border-border-strong hover:bg-surface-hover",
+  ghost: "rounded-md bg-transparent text-text hover:bg-surface-hover",
+  danger: "rounded-md bg-danger text-text-on-danger hover:bg-danger-hover",
 };
 
 /** `sm` is below a reliable touch target: only next to a larger one, or pointer-only. */
@@ -31,11 +36,11 @@ const SIZES: Readonly<Record<ButtonSize, string>> = {
 
 const BASE = [
   "inline-flex items-center justify-center",
-  "rounded-md font-medium",
+  "font-medium",
   // Tailwind 4's preflight no longer sets it.
   "cursor-pointer",
-  "transition-colors ease-standard",
-  "outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
+  "transition ease-standard",
+  "outline-hidden focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2",
   "focus-visible:ring-offset-surface",
   "disabled:opacity-50 disabled:pointer-events-none",
 ].join(" ");

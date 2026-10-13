@@ -96,6 +96,20 @@ describe.each(Object.entries({ ...themes, "page surface": page }))("%s", (_name,
 
     expect(contrastRatio(foreground, background)).toBeGreaterThanOrEqual(min);
   });
+
+  it("keeps the draw label readable on every color of the seal", () => {
+    const label = resolveColor((tokens["text-on-action"] as { $value: string }).$value, primitives);
+    const seal = (tokens["seal"] as { $value: string }).$value;
+    const stops = seal.match(/\{[^}]+\}/g) ?? [];
+
+    // A literal color would slip past the loop below.
+    expect(seal).not.toMatch(/#|rgb|hsl|oklch/);
+    expect(stops).not.toHaveLength(0);
+    for (const stop of stops) {
+      const color = resolveColor(stop, primitives);
+      expect(contrastRatio(label, color), stop).toBeGreaterThanOrEqual(4.5);
+    }
+  });
 });
 
 describe("the two themes", () => {

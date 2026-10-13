@@ -40,6 +40,11 @@
   }
 }
 
+/* Image tokens have no Tailwind namespace: each one used in markup gets its utility here. */
+@utility bg-seal {
+  background-image: var(--seal);
+}
+
 /*
  * Anyone who has asked their system to reduce motion gets no animation at all.
  * Declared once here rather than per component: a component that forgets is a

@@ -266,6 +266,10 @@
         "$type": "color",
         "$value": "#fbefd9"
       },
+      "500": {
+        "$type": "color",
+        "$value": "#b8392e"
+      },
       "600": {
         "$type": "color",
         "$value": "#9c2a22"
@@ -273,6 +277,10 @@
       "700": {
         "$type": "color",
         "$value": "#7f1f19"
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#5e1510"
       }
     },
     "gilt": {
@@ -283,6 +291,10 @@
       "500": {
         "$type": "color",
         "$value": "#c8a24e"
+      },
+      "700": {
+        "$type": "color",
+        "$value": "#a68236"
       }
     }
   }
