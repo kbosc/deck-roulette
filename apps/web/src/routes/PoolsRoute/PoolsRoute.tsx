@@ -80,11 +80,12 @@ export function PoolsRoute() {
             <h2 id={listHeadingId} className="text-lg font-semibold">
               Your pools
             </h2>
-            <ul aria-labelledby={listHeadingId} className="mt-3 flex flex-col gap-3">
+            <ul aria-labelledby={listHeadingId} className="mt-3 flex flex-col gap-8">
               {pools.map((pool) => (
                 <li key={pool.id}>
                   <PoolCard
                     pool={pool}
+                    decks={decks}
                     // Empty pool: "Choose decks" is the single way in, no second link.
                     {...(pool.deckIds.length === 0
                       ? {}

@@ -1,7 +1,7 @@
-import type { Pool } from "@deck-roulette/domain";
+import type { Deck, Pool } from "@deck-roulette/domain";
 import { toDeckId, toPoolId } from "@deck-roulette/domain";
 import { drawDeck, resetPool } from "@deck-roulette/domain";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -18,12 +18,33 @@ function makePool(overrides: Partial<Pool> = {}): Pool {
   };
 }
 
+function makeDeck(id: string, name: string): Deck {
+  return { id: toDeckId(id), name, createdAt: "2026-09-28T00:00:00.000Z" };
+}
+
+/** The whole library: "z" belongs to no pool under test. */
+const DECKS = [
+  makeDeck("z", "Krenko"),
+  makeDeck("c", "Meren"),
+  makeDeck("a", "Atraxa"),
+  makeDeck("b", "Kenrith"),
+];
+
+/** What a screen reader gets: the text, minus what is hidden from it. */
+function spokenText(element: HTMLElement): string {
+  const copy = element.cloneNode(true);
+  if (!(copy instanceof HTMLElement)) throw new TypeError("expected an element");
+  copy.querySelectorAll("[aria-hidden='true']").forEach((hidden) => hidden.remove());
+  return copy.textContent ?? "";
+}
+
 /** Plays the draws for real, so the card swaps its control as on screen. */
 function LivePoolCard({ initial }: { readonly initial: Pool }) {
   const [pool, setPool] = useState(initial);
 
   return (
     <PoolCard
+      decks={DECKS}
       pool={pool}
       onDraw={() => {
         const result = drawDeck(pool, () => 0);
@@ -35,6 +56,51 @@ function LivePoolCard({ initial }: { readonly initial: Pool }) {
 }
 
 describe("PoolCard", () => {
+  it("lists the pool's decks in its own order, and only those", () => {
+    render(<PoolCard decks={DECKS} pool={makePool()} onDraw={vi.fn()} onReset={vi.fn()} />);
+
+    const list = screen.getByRole("list", { name: "Decks in Thursday table" });
+
+    expect(within(list).getAllByRole("listitem").map(spokenText)).toEqual([
+      "Atraxa",
+      "Kenrith",
+      "Meren",
+    ]);
+  });
+
+  it("tells which decks have come out, and which one came out last", () => {
+    // Struck through on screen; the line itself is never read aloud.
+    render(
+      <PoolCard
+        decks={DECKS}
+        pool={makePool({ drawnDeckIds: [toDeckId("c"), toDeckId("a")] })}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    );
+
+    const list = screen.getByRole("list", { name: "Decks in Thursday table" });
+
+    expect(within(list).getAllByRole("listitem").map(spokenText)).toEqual([
+      "Atraxa, drawn last",
+      "Kenrith",
+      "Meren, drawn",
+    ]);
+  });
+
+  it("shows no deck list for an empty pool", () => {
+    render(
+      <PoolCard
+        decks={DECKS}
+        pool={makePool({ deckIds: [] })}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByRole("list")).toBeNull();
+  });
+
   it("keeps focus on the card's control when drawing the last deck swaps it", async () => {
     const user = userEvent.setup();
     render(<LivePoolCard initial={makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b")] })} />);
@@ -59,10 +125,13 @@ describe("PoolCard", () => {
 
   it("leaves focus alone when the pool changes for another reason", () => {
     const pool = makePool();
-    const { rerender } = render(<PoolCard pool={pool} onDraw={vi.fn()} onReset={vi.fn()} />);
+    const { rerender } = render(
+      <PoolCard decks={DECKS} pool={pool} onDraw={vi.fn()} onReset={vi.fn()} />,
+    );
 
     rerender(
       <PoolCard
+        decks={DECKS}
         pool={{ ...pool, drawnDeckIds: [...pool.deckIds] }}
         onDraw={vi.fn()}
         onReset={vi.fn()}
@@ -75,7 +144,7 @@ describe("PoolCard", () => {
   it("offers a draw while decks remain", async () => {
     const onDraw = vi.fn();
     const user = userEvent.setup();
-    render(<PoolCard pool={makePool()} onDraw={onDraw} onReset={vi.fn()} />);
+    render(<PoolCard decks={DECKS} pool={makePool()} onDraw={onDraw} onReset={vi.fn()} />);
 
     await user.click(screen.getByRole("button", { name: "Draw a deck" }));
 
@@ -85,6 +154,7 @@ describe("PoolCard", () => {
   it("says how far through the cycle the pool is", () => {
     render(
       <PoolCard
+        decks={DECKS}
         pool={makePool({ drawnDeckIds: [toDeckId("a")] })}
         onDraw={vi.fn()}
         onReset={vi.fn()}
@@ -99,7 +169,7 @@ describe("PoolCard", () => {
     const onReset = vi.fn();
     const user = userEvent.setup();
     const exhausted = makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b"), toDeckId("c")] });
-    render(<PoolCard pool={exhausted} onDraw={vi.fn()} onReset={onReset} />);
+    render(<PoolCard decks={DECKS} pool={exhausted} onDraw={vi.fn()} onReset={onReset} />);
 
     expect(screen.queryByRole("button", { name: "Draw a deck" })).toBeNull();
 
@@ -110,14 +180,21 @@ describe("PoolCard", () => {
 
   it("never resets a cycle in silence", () => {
     const exhausted = makePool({ drawnDeckIds: [toDeckId("a"), toDeckId("b"), toDeckId("c")] });
-    render(<PoolCard pool={exhausted} onDraw={vi.fn()} onReset={vi.fn()} />);
+    render(<PoolCard decks={DECKS} pool={exhausted} onDraw={vi.fn()} onReset={vi.fn()} />);
 
     expect(screen.getByText("Cycle over")).toBeDefined();
     expect(screen.getByText(/Every deck in this pool has come out/)).toBeDefined();
   });
 
   it("explains an empty pool rather than offering a draw", () => {
-    render(<PoolCard pool={makePool({ deckIds: [] })} onDraw={vi.fn()} onReset={vi.fn()} />);
+    render(
+      <PoolCard
+        decks={DECKS}
+        pool={makePool({ deckIds: [] })}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    );
 
     expect(screen.queryByRole("button", { name: "Draw a deck" })).toBeNull();
     expect(screen.getByText("No deck in this pool")).toBeDefined();
@@ -125,7 +202,14 @@ describe("PoolCard", () => {
   });
 
   it("does not confuse an empty pool with an exhausted one", () => {
-    render(<PoolCard pool={makePool({ deckIds: [] })} onDraw={vi.fn()} onReset={vi.fn()} />);
+    render(
+      <PoolCard
+        decks={DECKS}
+        pool={makePool({ deckIds: [] })}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    );
 
     // "Start a new cycle" on a pool with no deck would do nothing at all.
     expect(screen.queryByRole("button", { name: "Start a new cycle" })).toBeNull();
@@ -135,6 +219,7 @@ describe("PoolCard", () => {
   it("lets the app turn the name into a link, still inside the heading", () => {
     render(
       <PoolCard
+        decks={DECKS}
         pool={makePool()}
         onDraw={vi.fn()}
         onReset={vi.fn()}
@@ -149,6 +234,7 @@ describe("PoolCard", () => {
   it("offers the empty pool's way out", () => {
     render(
       <PoolCard
+        decks={DECKS}
         pool={makePool({ deckIds: [] })}
         onDraw={vi.fn()}
         onReset={vi.fn()}
@@ -162,6 +248,7 @@ describe("PoolCard", () => {
   it("keeps the empty pool's way out for empty pools only", () => {
     render(
       <PoolCard
+        decks={DECKS}
         pool={makePool()}
         onDraw={vi.fn()}
         onReset={vi.fn()}
@@ -173,7 +260,7 @@ describe("PoolCard", () => {
   });
 
   it("names the pool as a heading", () => {
-    render(<PoolCard pool={makePool()} onDraw={vi.fn()} onReset={vi.fn()} />);
+    render(<PoolCard decks={DECKS} pool={makePool()} onDraw={vi.fn()} onReset={vi.fn()} />);
 
     expect(screen.getByRole("heading", { name: "Thursday table" })).toBeDefined();
   });

@@ -199,7 +199,7 @@ visuelle dans l'univers de Magic, sans casser le design system.
 - [x] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
 - [x] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
 - [x] Le sceau de cire comme bouton de tirage (doré sur le cuir, cire rouge sur une page)
-- [ ] Decks déjà sortis barrés à l'encre rouge dans la page du pool
+- [x] Decks déjà sortis barrés à l'encre rouge sur la carte du pool, sceau sous la page
 
 ---
 

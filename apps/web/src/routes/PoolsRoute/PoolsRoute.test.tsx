@@ -158,6 +158,19 @@ describe("PoolsRoute", () => {
     expect(screen.getByRole("status").textContent).toBe("Atraxa, from Thursday table.");
   });
 
+  it("lists the pool's decks on its card, marking the one drawn", async () => {
+    seedPoolWithDeck("Thursday table", "Atraxa");
+    const user = userEvent.setup();
+    renderPools();
+
+    const list = screen.getByRole("list", { name: "Decks in Thursday table" });
+    expect(within(list).getByRole("listitem").textContent).toBe("Atraxa");
+
+    await user.click(screen.getByRole("button", { name: "Draw a deck" }));
+
+    expect(within(list).getByRole("listitem").textContent).toContain("Atraxa, drawn last");
+  });
+
   it("offers a new cycle once every deck has come out, and makes them drawable again", async () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
     const user = userEvent.setup();
