@@ -1,28 +1,12 @@
-import type { Deck, Pool } from "@deck-roulette/domain";
+import type { Pool } from "@deck-roulette/domain";
 import { toDeckId, toPoolId } from "@deck-roulette/domain";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 import { Button } from "../../atoms/Button";
+import { PoolDeckList } from "../../molecules/PoolDeckList";
 import { PoolCard } from "./PoolCard";
 
 const deckIds = ["a", "b", "c", "d", "e", "f", "g", "h"].map(toDeckId);
-
-const names = [
-  "Atraxa, Praetors' Voice",
-  "Meren of Clan Nel Toth",
-  "Kenrith, the Returned King",
-  "Krenko, Mob Boss",
-  "Edgar Markov",
-  "The Ur-Dragon",
-  "Yuriko, the Tiger's Shadow",
-  "Lathril, Blade of the Elves",
-];
-
-const decks: Deck[] = deckIds.map((id, i) => ({
-  id,
-  name: names[i] ?? "Unnamed",
-  createdAt: "2026-09-28T00:00:00.000Z",
-}));
 
 const pool: Pool = {
   id: toPoolId("p1"),
@@ -35,7 +19,7 @@ const pool: Pool = {
 const meta = {
   title: "Organisms/PoolCard",
   component: PoolCard,
-  args: { pool, decks, onDraw: fn(), onReset: fn() },
+  args: { pool, onDraw: fn(), onReset: fn() },
   parameters: { layout: "padded" },
 } satisfies Meta<typeof PoolCard>;
 
@@ -92,6 +76,25 @@ export const WithLinks: Story = {
       <Button asChild size="sm" variant="secondary">
         <a href="#pool">Choose decks</a>
       </Button>
+    ),
+  },
+};
+
+/** On the pool's own page: the h1 names the pool, the card lists its decks. */
+export const OnItsPage: Story = {
+  args: {
+    headingLevel: 2,
+    renderTitle: () => "This cycle",
+    pool: { ...pool, drawnDeckIds: deckIds.slice(0, 2) },
+    children: (
+      <PoolDeckList
+        pool={{ ...pool, drawnDeckIds: deckIds.slice(0, 2) }}
+        decks={deckIds.map((id, i) => ({
+          id,
+          name: `Deck ${String(i + 1)}`,
+          createdAt: "2026-09-28T00:00:00.000Z",
+        }))}
+      />
     ),
   },
 };

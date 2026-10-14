@@ -85,7 +85,6 @@ export function PoolsRoute() {
                 <li key={pool.id}>
                   <PoolCard
                     pool={pool}
-                    decks={decks}
                     // Empty pool: "Choose decks" is the single way in, no second link.
                     {...(pool.deckIds.length === 0
                       ? {}
@@ -101,7 +100,7 @@ export function PoolsRoute() {
                         })}
                     emptyAction={
                       <Button asChild size="sm" variant="secondary">
-                        <Link to={`/pools/${pool.id}`}>Choose decks</Link>
+                        <Link to={`/pools/${pool.id}/decks`}>Choose decks</Link>
                       </Button>
                     }
                     onDraw={() => draw(pool)}

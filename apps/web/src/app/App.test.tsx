@@ -80,6 +80,25 @@ describe("App", () => {
     await user.click(screen.getByRole("link", { name: "Choose decks" }));
 
     expect(document.activeElement).toBe(
+      screen.getByRole("heading", { level: 1, name: "Choose decks for Thursday table" }),
+    );
+    expect(document.title).toBe("Choose decks for Thursday table · Deck Roulette");
+  });
+
+  it("opens a pool's page from the table of contents, focus on its heading", async () => {
+    useLibrary.getState().addDeck("Atraxa");
+    useLibrary.getState().addPool("Thursday table");
+    const { decks, pools } = useLibrary.getState();
+    const [deck] = decks;
+    const [pool] = pools;
+    if (deck === undefined || pool === undefined) throw new Error("seeding failed");
+    useLibrary.getState().addDeckToPool(pool.id, deck.id);
+    const user = userEvent.setup();
+    renderAt("/pools");
+
+    await user.click(screen.getByRole("link", { name: "Thursday table" }));
+
+    expect(document.activeElement).toBe(
       screen.getByRole("heading", { level: 1, name: "Thursday table" }),
     );
     expect(document.title).toBe("Thursday table · Deck Roulette");

@@ -1,4 +1,4 @@
-import type { Deck, Pool, PoolDrawState } from "@deck-roulette/domain";
+import type { Pool, PoolDrawState } from "@deck-roulette/domain";
 import { getPoolDrawState, getRemainingDeckIds } from "@deck-roulette/domain";
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
@@ -7,13 +7,15 @@ import { Button } from "../../atoms/Button";
 
 export type PoolCardProps = {
   readonly pool: Pool;
-  /** The library's decks: the card picks out the pool's own, in the pool's order. */
-  readonly decks: readonly Deck[];
   readonly onDraw: () => void;
   readonly onReset: () => void;
   readonly actions?: ReactNode;
-  /** Lets the app make the name a link without the design system knowing its router. */
+  /** Replaces the name: a router link, or a title of its own where the page already names the pool. */
   readonly renderTitle?: (name: string) => ReactNode;
+  /** 3 in a list under the page's h2; 2 when the card is the page's only section. */
+  readonly headingLevel?: 2 | 3;
+  /** Shown on the page, between its title and its controls. */
+  readonly children?: ReactNode;
   /** Shown only while the pool is empty, when there is nothing else to do with it. */
   readonly emptyAction?: ReactNode;
 };
@@ -21,20 +23,19 @@ export type PoolCardProps = {
 /** Each state renders the control that applies, never a disabled draw button. */
 export function PoolCard({
   pool,
-  decks,
   onDraw,
   onReset,
   actions,
   renderTitle,
   emptyAction,
+  headingLevel = 3,
+  children,
 }: PoolCardProps) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   const state = getPoolDrawState(pool);
   const total = pool.deckIds.length;
   const remaining = getRemainingDeckIds(pool).length;
   const drawn = total - remaining;
-  const poolDecks = pool.deckIds.flatMap((id) => decks.find((deck) => deck.id === id) ?? []);
-  const drawnIds = new Set(pool.drawnDeckIds);
-  const lastDrawnId = pool.drawnDeckIds.at(-1);
 
   // Each state renders its own button, so the one just pressed disappears:
   // hand focus to its replacement, or it falls to the body.
@@ -56,9 +57,9 @@ export function PoolCard({
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1 min-w-0">
-            <h3 className="font-semibold text-text truncate">
+            <Heading className="font-semibold text-text truncate">
               {renderTitle === undefined ? pool.name : renderTitle(pool.name)}
-            </h3>
+            </Heading>
 
             {/* Spelled out rather than "3/8": read aloud, a slash is noise. */}
             <p className="text-sm text-text-muted">
@@ -74,36 +75,7 @@ export function PoolCard({
           </div>
         </div>
 
-        {poolDecks.length === 0 ? null : (
-          <ol aria-label={`Decks in ${pool.name}`} className="flex flex-col font-book">
-            {poolDecks.map((deck) => (
-              <li
-                key={deck.id}
-                className="flex gap-2 border-b border-dotted border-border-strong py-2 last:border-b-0"
-              >
-                {deck.id === lastDrawnId ? (
-                  <>
-                    <span aria-hidden="true" className="text-text-action">
-                      ❦
-                    </span>
-                    <span className="min-w-0 break-words font-bold">{deck.name}</span>
-                    <span className="sr-only">, drawn last</span>
-                  </>
-                ) : drawnIds.has(deck.id) ? (
-                  <>
-                    {/* Red ink, as if crossed out by hand. Line-through is never read aloud. */}
-                    <span className="min-w-0 break-words text-text-muted line-through decoration-action decoration-2">
-                      {deck.name}
-                    </span>
-                    <span className="sr-only">, drawn</span>
-                  </>
-                ) : (
-                  <span className="min-w-0 break-words">{deck.name}</span>
-                )}
-              </li>
-            ))}
-          </ol>
-        )}
+        {children}
 
         {state === "exhausted" ? (
           <div className="flex flex-col gap-2">

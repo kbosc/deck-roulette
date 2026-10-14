@@ -1,42 +1,30 @@
 import { Button, Checkbox, EmptyState } from "@deck-roulette/ui";
 import { Link, useParams } from "react-router";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
+import { PoolNotFound } from "../../components/PoolNotFound";
 import { useLibrary } from "../../store/library";
 
-export function PoolDetailRoute() {
+export function PoolDecksRoute() {
   const { poolId } = useParams();
   const decks = useLibrary((state) => state.decks);
   const pool = useLibrary((state) => state.pools.find((p) => p.id === poolId));
   const addDeckToPool = useLibrary((state) => state.addDeckToPool);
   const removeDeckFromPool = useLibrary((state) => state.removeDeckFromPool);
   // Called before the early return: hooks cannot be conditional.
-  usePageTitle(pool === undefined ? "Pool not found" : pool.name);
+  const title = pool === undefined ? "Pool not found" : `Choose decks for ${pool.name}`;
+  usePageTitle(title);
 
-  // Also reached from a stale bookmark, or after a deletion in another tab.
-  if (pool === undefined) {
-    return (
-      <EmptyState
-        headingLevel={2}
-        title="This pool does not exist"
-        description="It may have been deleted, or the link may be out of date."
-        action={
-          <Button asChild>
-            <Link to="/pools">Back to the pools</Link>
-          </Button>
-        }
-      />
-    );
-  }
+  if (pool === undefined) return <PoolNotFound />;
 
   return (
     <>
       <Link
-        to="/pools"
+        to={`/pools/${pool.id}`}
         className="inline-flex min-h-11 items-center rounded-sm text-sm text-text-action underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
       >
-        All pools
+        Back to {pool.name}
       </Link>
-      <PageHeading>{pool.name}</PageHeading>
+      <PageHeading>{title}</PageHeading>
 
       <div className="mt-6">
         {decks.length === 0 ? (

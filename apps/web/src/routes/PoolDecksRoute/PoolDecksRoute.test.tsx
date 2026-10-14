@@ -8,7 +8,7 @@ import { useLibrary } from "../../store/library";
 function renderPool(poolName: string) {
   const pool = useLibrary.getState().pools.find((p) => p.name === poolName);
   const router = createMemoryRouter(routes, {
-    initialEntries: [`/pools/${pool?.id ?? "unknown"}`],
+    initialEntries: [`/pools/${pool?.id ?? "unknown"}/decks`],
   });
   return render(<RouterProvider router={router} />);
 }
@@ -18,17 +18,19 @@ function poolDeckNames() {
   return (pools[0]?.deckIds ?? []).map((id) => decks.find((d) => d.id === id)?.name);
 }
 
-describe("PoolDetailRoute", () => {
+describe("PoolDecksRoute", () => {
   beforeEach(() => {
     localStorage.clear();
     useLibrary.setState({ decks: [], pools: [] });
   });
 
-  it("titles the page with the pool's name", () => {
+  it("titles the page with what it is for, and the pool's name", () => {
     useLibrary.getState().addPool("Thursday table");
     renderPool("Thursday table");
 
-    expect(screen.getByRole("heading", { level: 1, name: "Thursday table" })).toBeDefined();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Choose decks for Thursday table" }),
+    ).toBeDefined();
   });
 
   it("groups the decks under a legend naming the pool", () => {
@@ -70,10 +72,13 @@ describe("PoolDetailRoute", () => {
     );
   });
 
-  it("leads back to the list of pools", () => {
+  it("leads back to the pool's page", () => {
     useLibrary.getState().addPool("Thursday table");
     renderPool("Thursday table");
+    const pool = useLibrary.getState().pools[0];
 
-    expect(screen.getByRole("link", { name: "All pools" }).getAttribute("href")).toBe("/pools");
+    expect(screen.getByRole("link", { name: "Back to Thursday table" }).getAttribute("href")).toBe(
+      `/pools/${pool?.id ?? ""}`,
+    );
   });
 });

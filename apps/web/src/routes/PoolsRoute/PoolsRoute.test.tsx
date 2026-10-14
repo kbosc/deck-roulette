@@ -73,7 +73,7 @@ describe("PoolsRoute", () => {
 
     const pool = useLibrary.getState().pools[0];
     expect(screen.getByRole("link", { name: "Choose decks" }).getAttribute("href")).toBe(
-      `/pools/${pool?.id ?? ""}`,
+      `/pools/${pool?.id ?? ""}/decks`,
     );
     expect(screen.queryByRole("link", { name: "Thursday table" })).toBeNull();
   });
@@ -158,17 +158,11 @@ describe("PoolsRoute", () => {
     expect(screen.getByRole("status").textContent).toBe("Atraxa, from Thursday table.");
   });
 
-  it("lists the pool's decks on its card, marking the one drawn", async () => {
+  it("stays a table of contents: a pool's decks are listed on its own page", () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
-    const user = userEvent.setup();
     renderPools();
 
-    const list = screen.getByRole("list", { name: "Decks in Thursday table" });
-    expect(within(list).getByRole("listitem").textContent).toBe("Atraxa");
-
-    await user.click(screen.getByRole("button", { name: "Draw a deck" }));
-
-    expect(within(list).getByRole("listitem").textContent).toContain("Atraxa, drawn last");
+    expect(screen.queryByRole("list", { name: "Decks in Thursday table" })).toBeNull();
   });
 
   it("offers a new cycle once every deck has come out, and makes them drawable again", async () => {

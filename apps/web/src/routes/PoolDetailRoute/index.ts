@@ -1,1 +1,0 @@
-export { PoolDetailRoute } from "./PoolDetailRoute";

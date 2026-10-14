@@ -199,7 +199,18 @@ visuelle dans l'univers de Magic, sans casser le design system.
 - [x] Typographie : Cinzel (titres, boutons) hébergée avec l'app, Alegreya pour les noms de decks
 - [x] Matières : grain du cuir, vignettage du vélin, filet doré du cadre, coins de page
 - [x] Le sceau de cire comme bouton de tirage (doré sur le cuir, cire rouge sur une page)
-- [x] Decks déjà sortis barrés à l'encre rouge sur la carte du pool, sceau sous la page
+- [x] Decks déjà sortis barrés à l'encre rouge, sceau sous la page, cire rouge dans les deux thèmes
+
+> **Décision du 13/10/2026 : le grimoire a un sommaire et des pages.** Une liste de pools où
+> chaque carte déroule ses decks devient illisible à 30 decks. L'écran Pools devient le
+> **sommaire** (nom, avancement, sceau) ; chaque pool a **sa page** (`/pools/:id`) avec la liste
+> barrée ; le choix des decks passe sur `/pools/:id/decks`. Un carrousel sur l'écran Pools a été
+> écarté : vue d'ensemble perdue, accessibilité difficile, pas de lien vers un pool.
+
+- [x] Le sommaire et une page par pool
+- [ ] Tourner les pages : coins de page pour le pool précédent / suivant, flèches du clavier
+- [ ] L'animation de page tournée (View Transitions), coupée avec `prefers-reduced-motion`
+- [ ] Bonus : tirer la page à la souris ou au doigt, toujours doublé par les boutons
 
 ---
 
