@@ -45,6 +45,10 @@
   background-image: var(--seal);
 }
 
+@utility bg-page-fold {
+  background-image: var(--page-fold);
+}
+
 /*
  * Anyone who has asked their system to reduce motion gets no animation at all.
  * Declared once here rather than per component: a component that forgets is a

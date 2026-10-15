@@ -1,5 +1,5 @@
 import { addDeckToPool } from "@deck-roulette/domain";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -93,5 +93,113 @@ describe("PoolRoute", () => {
     renderPool("Nowhere");
 
     expect(screen.getByRole("heading", { name: "This pool does not exist" })).toBeDefined();
+  });
+
+  describe("turning the pages", () => {
+    function seedBook() {
+      seedPool("Friday night", ["Atraxa"]);
+      useLibrary.getState().addPool("Sunday");
+      useLibrary.getState().addPool("Thursday table");
+    }
+
+    function idOf(name: string) {
+      return useLibrary.getState().pools.find((p) => p.name === name)?.id ?? "";
+    }
+
+    it("says where the page sits in the book", () => {
+      seedBook();
+      renderPool("Sunday");
+
+      expect(screen.getByText("Page 2 of 3")).toBeDefined();
+    });
+
+    it("leads to the pages on either side", () => {
+      seedBook();
+      renderPool("Sunday");
+
+      const pages = screen.getByRole("navigation", { name: "Turn the page" });
+      expect(
+        within(pages)
+          .getByRole("link", { name: "Previous page: Friday night" })
+          .getAttribute("href"),
+      ).toBe(`/pools/${idOf("Friday night")}`);
+      expect(
+        within(pages).getByRole("link", { name: "Next page: Thursday table" }).getAttribute("href"),
+      ).toBe(`/pools/${idOf("Thursday table")}`);
+    });
+
+    it("has no page before the first one, nor after the last", () => {
+      seedBook();
+      const first = renderPool("Friday night");
+      expect(screen.queryByRole("link", { name: /^Previous page/ })).toBeNull();
+      first.unmount();
+
+      renderPool("Thursday table");
+      expect(screen.queryByRole("link", { name: /^Next page/ })).toBeNull();
+    });
+
+    it("turns with the arrow keys", () => {
+      seedBook();
+      renderPool("Sunday");
+
+      fireEvent.keyDown(document.body, { key: "ArrowRight" });
+      expect(screen.getByRole("heading", { level: 1, name: "Thursday table" })).toBeDefined();
+
+      fireEvent.keyDown(document.body, { key: "ArrowLeft" });
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    // Alt+Left is the browser's own Back; the others belong to the OS or to text selection.
+    it.each(["altKey", "ctrlKey", "metaKey", "shiftKey"])(
+      "leaves arrows with %s to the browser",
+      (modifier) => {
+        seedBook();
+        renderPool("Sunday");
+
+        fireEvent.keyDown(document.body, { key: "ArrowRight", [modifier]: true });
+
+        expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+      },
+    );
+
+    it("leaves arrows to a control that uses them, like the theme picker", () => {
+      seedBook();
+      renderPool("Sunday");
+
+      fireEvent.keyDown(screen.getByRole("radio", { name: "System" }), { key: "ArrowRight" });
+
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    it("leaves arrows a component has already handled", () => {
+      seedBook();
+      renderPool("Sunday");
+      document.body.addEventListener("keydown", (event) => event.preventDefault(), { once: true });
+
+      fireEvent.keyDown(document.body, { key: "ArrowRight" });
+
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    it("turns one page per press, not the whole book while the key is held", () => {
+      seedBook();
+      renderPool("Friday night");
+
+      fireEvent.keyDown(document.body, { key: "ArrowRight" });
+      fireEvent.keyDown(document.body, { key: "ArrowRight", repeat: true });
+
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    it("does not carry a draw over to the next page", async () => {
+      seedBook();
+      const user = userEvent.setup();
+      renderPool("Friday night");
+
+      await user.click(screen.getByRole("button", { name: "Draw a deck" }));
+      await user.click(screen.getByRole("link", { name: "Next page: Sunday" }));
+
+      expect(screen.getByRole("status").textContent).toBe("");
+    });
   });
 });

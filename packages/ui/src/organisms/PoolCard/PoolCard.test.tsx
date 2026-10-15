@@ -182,6 +182,19 @@ describe("PoolCard", () => {
     expect(screen.getByText("Atraxa, drawn")).toBeDefined();
   });
 
+  it("ends the page with what the app passes as its footer", () => {
+    render(
+      <PoolCard
+        pool={makePool()}
+        onDraw={vi.fn()}
+        onReset={vi.fn()}
+        footer={<nav aria-label="Turn the page" />}
+      />,
+    );
+
+    expect(screen.getByRole("navigation", { name: "Turn the page" })).toBeDefined();
+  });
+
   it("can head the page's only section", () => {
     render(<PoolCard pool={makePool()} headingLevel={2} onDraw={vi.fn()} onReset={vi.fn()} />);
 

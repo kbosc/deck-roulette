@@ -156,5 +156,10 @@
     "$description": "The draw label: the seal is red wax in every theme, even where action is gilt.",
     "$type": "color",
     "$value": "{color.seal.50}"
+  },
+  "page-fold": {
+    "$description": "A dog-eared corner: the page itself shaded by the lifted corner, then the back of the corner fading out, so the page grain shows around it. Decorative; the link beside it says where it leads.",
+    "$type": "image",
+    "$value": "linear-gradient(to top left, transparent, color-mix(in srgb, {color.ink.900} 22%, transparent) 50%, {color.parchment.400} 50%, transparent)"
   }
 }

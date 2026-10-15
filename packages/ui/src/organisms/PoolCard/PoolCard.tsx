@@ -16,6 +16,8 @@ export type PoolCardProps = {
   readonly headingLevel?: 2 | 3;
   /** Shown on the page, between its title and its controls. */
   readonly children?: ReactNode;
+  /** The foot of the page, after its controls: page numbers, the way to turn it. */
+  readonly footer?: ReactNode;
   /** Shown only while the pool is empty, when there is nothing else to do with it. */
   readonly emptyAction?: ReactNode;
 };
@@ -30,6 +32,7 @@ export function PoolCard({
   emptyAction,
   headingLevel = 3,
   children,
+  footer,
 }: PoolCardProps) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const state = getPoolDrawState(pool);
@@ -53,7 +56,8 @@ export function PoolCard({
     <article className="flex flex-col gap-5">
       <div
         data-surface="page"
-        className="flex flex-col gap-4 p-4 rounded-sm border border-border bg-surface-raised text-text shadow-elevation-rest"
+        // Relative: the footer may pin something to the page's corners.
+        className="relative flex flex-col gap-4 p-4 rounded-sm border border-border bg-surface-raised text-text shadow-elevation-rest"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1 min-w-0">
@@ -103,6 +107,8 @@ export function PoolCard({
             {emptyAction}
           </div>
         ) : null}
+
+        {footer}
       </div>
 
       {state === "ready" ? (

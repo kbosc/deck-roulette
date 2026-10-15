@@ -208,7 +208,7 @@ visuelle dans l'univers de Magic, sans casser le design system.
 > écarté : vue d'ensemble perdue, accessibilité difficile, pas de lien vers un pool.
 
 - [x] Le sommaire et une page par pool
-- [ ] Tourner les pages : coins de page pour le pool précédent / suivant, flèches du clavier
+- [x] Tourner les pages : coins cornés et liens vers le pool précédent / suivant, flèches du clavier
 - [ ] L'animation de page tournée (View Transitions), coupée avec `prefers-reduced-motion`
 - [ ] Bonus : tirer la page à la souris ou au doigt, toujours doublé par les boutons
 
