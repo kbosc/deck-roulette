@@ -47,7 +47,8 @@ export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
           // Announced once below, not pip by pip.
           aria-hidden="true"
           style={{ backgroundColor: PIPS[color] }}
-          className={[SIZES[size], "rounded-full border border-border shrink-0"]
+          // The strong border, held to 3:1 by the token tests: white and blue pips vanish on vellum.
+          className={[SIZES[size], "rounded-full border border-border-strong shrink-0"]
             .filter(Boolean)
             .join(" ")}
         />
