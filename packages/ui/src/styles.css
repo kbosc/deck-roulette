@@ -49,6 +49,52 @@
   background-image: var(--page-fold);
 }
 
+/* One per screen: two elements sharing a view-transition-name cancel the transition. */
+@utility turnable-page {
+  view-transition-name: grimoire-page;
+}
+
+/*
+ * Turning a page of the grimoire. The app sets :root[data-turn] to the direction while
+ * the page changes inside document.startViewTransition(): the old page slides out, the new
+ * one slides in from the side it comes from, both fading.
+ */
+::view-transition-group(grimoire-page) {
+  /* The pages differ in height: morphing the box would stretch the paper. */
+  animation: none;
+}
+
+:root[data-turn="next"] {
+  --turn-shift: var(--spacing-6);
+}
+
+:root[data-turn="previous"] {
+  --turn-shift: calc(var(--spacing-6) * -1);
+}
+
+/* Without a direction (Back from another screen), the browser's plain cross-fade stays. */
+:root[data-turn]::view-transition-old(grimoire-page) {
+  animation: page-leave var(--duration-normal) var(--ease-accelerate) both;
+}
+
+:root[data-turn]::view-transition-new(grimoire-page) {
+  animation: page-enter var(--duration-normal) var(--ease-decelerate) both;
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--turn-shift) * -1));
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--turn-shift));
+  }
+}
+
 /*
  * Anyone who has asked their system to reduce motion gets no animation at all.
  * Declared once here rather than per component: a component that forgets is a
@@ -62,6 +108,13 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* The pseudo-elements of a view transition are not matched by `*`. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

@@ -1,8 +1,8 @@
 import { addDeckToPool } from "@deck-roulette/domain";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { routes } from "../../app/routes";
 import { useLibrary } from "../../store/library";
 
@@ -200,6 +200,93 @@ describe("PoolRoute", () => {
       await user.click(screen.getByRole("link", { name: "Next page: Sunday" }));
 
       expect(screen.getByRole("status").textContent).toBe("");
+    });
+  });
+
+  describe("the page-turn animation", () => {
+    // jsdom has no View Transitions: stand in for the browser, running the update at once.
+    const startViewTransition = vi.fn((update: () => unknown) => {
+      void update();
+      const done = Promise.resolve();
+      return { finished: done, ready: done, updateCallbackDone: done, skipTransition: vi.fn() };
+    });
+
+    beforeEach(() => {
+      Object.defineProperty(document, "startViewTransition", {
+        value: startViewTransition,
+        configurable: true,
+      });
+      startViewTransition.mockClear();
+    });
+
+    afterEach(() => {
+      Reflect.deleteProperty(document, "startViewTransition");
+      delete document.documentElement.dataset["turn"];
+    });
+
+    function seedTwoPages() {
+      useLibrary.getState().addPool("Friday night");
+      useLibrary.getState().addPool("Sunday");
+    }
+
+    it("animates a turn made with the corner link, forwards", async () => {
+      seedTwoPages();
+      const user = userEvent.setup();
+      renderPool("Friday night");
+
+      await user.click(screen.getByRole("link", { name: "Next page: Sunday" }));
+
+      expect(startViewTransition).toHaveBeenCalledOnce();
+      expect(document.documentElement.dataset["turn"]).toBe("next");
+    });
+
+    it("animates a turn made with the keyboard, backwards", () => {
+      seedTwoPages();
+      renderPool("Sunday");
+
+      fireEvent.keyDown(document.body, { key: "ArrowLeft" });
+
+      expect(startViewTransition).toHaveBeenCalledOnce();
+      expect(document.documentElement.dataset["turn"]).toBe("previous");
+    });
+
+    function poolPath(name: string) {
+      return `/pools/${useLibrary.getState().pools.find((p) => p.name === name)?.id ?? ""}`;
+    }
+
+    it("turns backwards when the browser goes back to the previous page", async () => {
+      seedTwoPages();
+      const router = createMemoryRouter(routes, { initialEntries: [poolPath("Friday night")] });
+      render(<RouterProvider router={router} />);
+
+      await act(() => router.navigate(poolPath("Sunday"), { viewTransition: true }));
+      await act(() => router.navigate(-1));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Friday night" })).toBeDefined();
+      expect(document.documentElement.dataset["turn"]).toBe("previous");
+    });
+
+    it("turns no page when coming back from another screen", async () => {
+      seedTwoPages();
+      const router = createMemoryRouter(routes, { initialEntries: [poolPath("Friday night")] });
+      render(<RouterProvider router={router} />);
+
+      await act(() => router.navigate(poolPath("Sunday"), { viewTransition: true }));
+      await act(() => router.navigate(`${poolPath("Sunday")}/decks`));
+      await act(() => router.navigate(-1));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+      expect(document.documentElement.dataset["turn"]).toBeUndefined();
+    });
+
+    it("does not animate leaving the page for the table of contents", async () => {
+      seedTwoPages();
+      const user = userEvent.setup();
+      renderPool("Sunday");
+
+      await user.click(screen.getByRole("link", { name: "All pools" }));
+
+      expect(startViewTransition).not.toHaveBeenCalled();
     });
   });
 });

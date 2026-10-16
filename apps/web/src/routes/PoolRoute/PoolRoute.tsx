@@ -1,6 +1,6 @@
 import type { Pool } from "@deck-roulette/domain";
 import { Button, PageTurn, PoolCard, PoolDeckList } from "@deck-roulette/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
 import { PoolNotFound } from "../../components/PoolNotFound";
@@ -9,13 +9,40 @@ import { useLibrary } from "../../store/library";
 export function PoolRoute() {
   const { poolId } = useParams();
   const pool = useLibrary((state) => state.pools.find((p) => p.id === poolId));
+  const pageIndex = useLibrary((state) => state.pools.findIndex((p) => p.id === poolId));
   // Called before the early return: hooks cannot be conditional.
   usePageTitle(pool === undefined ? "Pool not found" : pool.name);
+  useTurnDirection(pageIndex);
 
   if (pool === undefined) return <PoolNotFound />;
 
   // Keyed: turning the page must not carry the last draw's announcement over.
   return <PoolPage key={pool.id} pool={pool} />;
+}
+
+type Direction = "previous" | "next";
+
+/**
+ * Tells the page-turn animation which way to slide, read from :root[data-turn].
+ * Derived from the pages left and reached, not from what was clicked: the browser's
+ * Back and Forward replay the transition too, and must turn the right way.
+ */
+function useTurnDirection(pageIndex: number) {
+  const previousIndex = useRef<number | null>(null);
+
+  // Layout effect: set before the browser builds the transition from the updated page.
+  useLayoutEffect(() => {
+    const from = previousIndex.current;
+    previousIndex.current = pageIndex;
+    const root = document.documentElement;
+
+    // null: just arrived from another screen, which turns no page.
+    if (from === null || from === -1 || pageIndex === -1 || from === pageIndex) {
+      delete root.dataset["turn"];
+    } else {
+      root.dataset["turn"] = pageIndex > from ? "next" : "previous";
+    }
+  }, [pageIndex]);
 }
 
 /** True when the key is meant for what has focus, not for turning the page. */
@@ -48,12 +75,13 @@ function PoolPage({ pool }: { readonly pool: Pool }) {
       // A held key would leaf through the whole book in a blink.
       if (event.repeat || belongsToFocus(event)) return;
 
-      const target =
-        event.key === "ArrowLeft" ? previous : event.key === "ArrowRight" ? next : undefined;
-      if (target === undefined) return;
+      const direction: Direction | undefined =
+        event.key === "ArrowLeft" ? "previous" : event.key === "ArrowRight" ? "next" : undefined;
+      const target = direction === "previous" ? previous : direction === "next" ? next : undefined;
+      if (direction === undefined || target === undefined) return;
 
       event.preventDefault();
-      void navigate(`/pools/${target.id}`);
+      void navigate(`/pools/${target.id}`, { viewTransition: true });
     }
 
     document.addEventListener("keydown", onKeyDown);
@@ -93,6 +121,7 @@ function PoolPage({ pool }: { readonly pool: Pool }) {
         <PoolCard
           pool={pool}
           headingLevel={2}
+          turnable
           // The h1 already names the pool.
           renderTitle={() => "This cycle"}
           // Empty pool: the empty state's link is the single way in.
@@ -112,6 +141,7 @@ function PoolPage({ pool }: { readonly pool: Pool }) {
               renderLink={(direction, props) => (
                 <Link
                   to={`/pools/${(direction === "previous" ? previous : next)?.id ?? ""}`}
+                  viewTransition
                   {...props}
                 />
               )}

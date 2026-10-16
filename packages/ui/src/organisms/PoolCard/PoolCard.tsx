@@ -18,6 +18,8 @@ export type PoolCardProps = {
   readonly children?: ReactNode;
   /** The foot of the page, after its controls: page numbers, the way to turn it. */
   readonly footer?: ReactNode;
+  /** Animates the page when the app turns it. One per screen: the transition needs a unique name. */
+  readonly turnable?: boolean;
   /** Shown only while the pool is empty, when there is nothing else to do with it. */
   readonly emptyAction?: ReactNode;
 };
@@ -33,6 +35,7 @@ export function PoolCard({
   headingLevel = 3,
   children,
   footer,
+  turnable = false,
 }: PoolCardProps) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const state = getPoolDrawState(pool);
@@ -57,7 +60,10 @@ export function PoolCard({
       <div
         data-surface="page"
         // Relative: the footer may pin something to the page's corners.
-        className="relative flex flex-col gap-4 p-4 rounded-sm border border-border bg-surface-raised text-text shadow-elevation-rest"
+        className={[
+          "relative flex flex-col gap-4 p-4 rounded-sm border border-border bg-surface-raised text-text shadow-elevation-rest",
+          turnable ? "turnable-page" : "",
+        ].join(" ")}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1 min-w-0">

@@ -195,6 +195,19 @@ describe("PoolCard", () => {
     expect(screen.getByRole("navigation", { name: "Turn the page" })).toBeDefined();
   });
 
+  it("names its page for the page-turn animation only when asked", () => {
+    const { rerender } = render(<PoolCard pool={makePool()} onDraw={vi.fn()} onReset={vi.fn()} />);
+    const page = () =>
+      screen.getByRole("heading", { name: "Thursday table" }).closest("[data-surface]");
+
+    expect(page()?.classList.contains("turnable-page")).toBe(false);
+
+    // A second turnable page on screen would cancel the transition.
+    rerender(<PoolCard pool={makePool()} turnable onDraw={vi.fn()} onReset={vi.fn()} />);
+
+    expect(page()?.classList.contains("turnable-page")).toBe(true);
+  });
+
   it("can head the page's only section", () => {
     render(<PoolCard pool={makePool()} headingLevel={2} onDraw={vi.fn()} onReset={vi.fn()} />);
 

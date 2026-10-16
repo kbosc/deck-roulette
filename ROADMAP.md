@@ -209,8 +209,13 @@ visuelle dans l'univers de Magic, sans casser le design system.
 
 - [x] Le sommaire et une page par pool
 - [x] Tourner les pages : coins cornés et liens vers le pool précédent / suivant, flèches du clavier
-- [ ] L'animation de page tournée (View Transitions), coupée avec `prefers-reduced-motion`
-- [ ] Bonus : tirer la page à la souris ou au doigt, toujours doublé par les boutons
+- [x] Le passage d'une page à l'autre (View Transitions) : un glissement dans le sens de lecture, coupé avec `prefers-reduced-motion`
+
+> **Décision du 15/10/2026 : pas de page qui se courbe.** Une bascule 3D (page rigide qui pivote
+> sur la reliure) a été essayée puis retirée : elle faisait « site des années 2000 ». Un effet
+> crédible demande de courber le papier (WebGL ou découpes `clip-path`), un gros chantier qui
+> n'apprend rien sur la stack. Le bonus « tirer la page à la souris » qui s'appuyait dessus est
+> abandonné. On garde la mécanique (sens déduit de la navigation) avec un glissement discret.
 
 ---
 
