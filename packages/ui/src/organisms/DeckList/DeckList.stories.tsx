@@ -56,7 +56,7 @@ export const Default: Story = {};
 export const WithActions: Story = {
   args: {
     renderActions: (deck) => (
-      <Button size="sm" variant="danger">
+      <Button size="sm" variant="ghost">
         Delete {deck.name}
       </Button>
     ),

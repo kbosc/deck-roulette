@@ -23,7 +23,7 @@ function Harness({
       description="Atraxa will be removed from every pool it belongs to. This cannot be undone."
       confirmLabel="Delete"
       onConfirm={onConfirm}
-      trigger={<Button variant="danger">Delete deck</Button>}
+      trigger={<Button variant="ghost">Delete deck</Button>}
     />
   );
 }

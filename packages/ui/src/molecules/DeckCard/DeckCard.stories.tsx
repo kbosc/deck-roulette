@@ -54,7 +54,7 @@ export const WithActions: Story = {
         <Button size="sm" variant="ghost">
           Edit
         </Button>
-        <Button size="sm" variant="danger">
+        <Button size="sm" variant="ghost">
           Delete
         </Button>
       </>
@@ -70,7 +70,7 @@ export const LongName: Story = {
       name: "Kotori, Pilot Prodigy and the very long list of vehicles she crews",
     },
     actions: (
-      <Button size="sm" variant="danger">
+      <Button size="sm" variant="ghost">
         Delete
       </Button>
     ),

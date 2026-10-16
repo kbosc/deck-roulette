@@ -13,7 +13,10 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
   readonly children: ReactNode;
 };
 
-/** `primary` (a red wax seal) is kept for drawing, or for the only way out of a dead end. */
+/**
+ * `primary` (a red wax seal) is kept for drawing, or for the only way out of a dead end.
+ * `danger` is kept for confirming a deletion: the button that asks for it stays quiet.
+ */
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
   primary: [
     "rounded-full font-display tracking-wide text-text-on-seal",

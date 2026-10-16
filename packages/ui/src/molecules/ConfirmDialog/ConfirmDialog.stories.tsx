@@ -29,7 +29,7 @@ function Controlled(args: React.ComponentProps<typeof ConfirmDialog>) {
       {...args}
       open={open}
       onOpenChange={setOpen}
-      trigger={<Button variant="danger">Delete deck</Button>}
+      trigger={<Button variant="ghost">Delete deck</Button>}
     />
   );
 }

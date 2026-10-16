@@ -63,12 +63,12 @@ describe("Button", () => {
 
   it("carries the styles over to the slotted child", () => {
     render(
-      <Button asChild variant="danger">
-        <a href="/delete">Delete</a>
+      <Button asChild variant="secondary">
+        <a href="/decks">Choose decks</a>
       </Button>,
     );
 
-    expect(screen.getByRole("link").className).toContain("bg-danger");
+    expect(screen.getByRole("link").className).toContain("bg-surface-raised");
   });
 
   it("appends a caller's className instead of replacing its own", () => {

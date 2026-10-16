@@ -50,7 +50,7 @@ export const WithActions: Story = {
         <Button size="sm" variant="ghost">
           Rename
         </Button>
-        <Button size="sm" variant="danger">
+        <Button size="sm" variant="ghost">
           Delete
         </Button>
       </>
