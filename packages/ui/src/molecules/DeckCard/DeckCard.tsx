@@ -6,6 +6,8 @@ import { ManaIdentity } from "../../atoms/ManaIdentity";
 export type DeckCardProps = {
   readonly deck: Deck;
   readonly actions?: ReactNode;
+  /** Replaces the name, inside the heading: a link to the deck's page, typically. */
+  readonly renderTitle?: (name: string) => ReactNode;
   /** Said by a badge, not only by the ring: color is never the only signal. */
   readonly highlighted?: boolean;
 };
@@ -16,7 +18,7 @@ function formatCommanders(deck: Deck): string | undefined {
 }
 
 /** Not a clickable card: it holds buttons, and interactive elements cannot nest. */
-export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) {
+export function DeckCard({ deck, actions, renderTitle, highlighted = false }: DeckCardProps) {
   const commanders = formatCommanders(deck);
 
   return (
@@ -31,7 +33,9 @@ export function DeckCard({ deck, actions, highlighted = false }: DeckCardProps) 
       ].join(" ")}
     >
       <div className="flex flex-col gap-2 min-w-0">
-        <h3 className="font-semibold text-text truncate">{deck.name}</h3>
+        <h3 className="font-semibold text-text truncate">
+          {renderTitle === undefined ? deck.name : renderTitle(deck.name)}
+        </h3>
 
         {commanders === undefined ? null : (
           <p className="text-sm text-text-muted truncate">{commanders}</p>

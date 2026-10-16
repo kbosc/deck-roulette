@@ -1,8 +1,18 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it } from "vitest";
 import { LibraryRoute } from "./LibraryRoute";
 import { useLibrary } from "../../store/library";
+
+/** Deck names are links: they need a router around them. */
+function renderLibrary() {
+  return render(
+    <MemoryRouter>
+      <LibraryRoute />
+    </MemoryRouter>,
+  );
+}
 
 /** The asterisk is aria-hidden: the accessible name carries "(required)" instead. */
 function nameField() {
@@ -22,7 +32,7 @@ describe("LibraryRoute", () => {
 
   it("shows a deck on screen once it has been added", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
 
@@ -31,7 +41,7 @@ describe("LibraryRoute", () => {
 
   it("introduces the decks with a level 2 heading, so no level is skipped", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
 
@@ -40,7 +50,7 @@ describe("LibraryRoute", () => {
 
   it("empties the field after adding, ready for the next one", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
 
@@ -48,7 +58,7 @@ describe("LibraryRoute", () => {
   });
 
   it("says nothing about the name before anything has been submitted", () => {
-    render(<LibraryRoute />);
+    renderLibrary();
 
     expect(screen.queryByRole("alert")).toBeNull();
     expect(nameField().getAttribute("aria-invalid")).toBeNull();
@@ -56,7 +66,7 @@ describe("LibraryRoute", () => {
 
   it("explains why an empty name is refused, instead of doing nothing", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -66,7 +76,7 @@ describe("LibraryRoute", () => {
 
   it("refuses a name made of spaces only, like an empty one", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "   ");
 
@@ -75,7 +85,7 @@ describe("LibraryRoute", () => {
 
   it("marks the field invalid and ties the message to it", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -86,7 +96,7 @@ describe("LibraryRoute", () => {
 
   it("refuses a name already in the library, whatever its case", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await addDeck(user, "atraxa");
@@ -99,7 +109,7 @@ describe("LibraryRoute", () => {
 
   it("keeps the refused name in the field, so it can be corrected", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await addDeck(user, "atraxa");
@@ -109,7 +119,7 @@ describe("LibraryRoute", () => {
 
   it("puts focus back in the field, ready to type the name", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -118,7 +128,7 @@ describe("LibraryRoute", () => {
 
   it("clears the message as soon as the name becomes valid", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
     await user.type(nameField(), "A");
@@ -128,7 +138,7 @@ describe("LibraryRoute", () => {
 
   it("keeps the message while the name is still only spaces", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
     await user.type(nameField(), "  ");
@@ -138,7 +148,7 @@ describe("LibraryRoute", () => {
 
   it("names the delete button after the deck it would delete", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
 
@@ -147,7 +157,7 @@ describe("LibraryRoute", () => {
 
   it("asks before deleting, saying what will be lost", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
@@ -160,7 +170,7 @@ describe("LibraryRoute", () => {
 
   it("keeps the deck when the question is cancelled", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
@@ -172,7 +182,7 @@ describe("LibraryRoute", () => {
 
   it("deletes the deck once confirmed", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
@@ -184,7 +194,7 @@ describe("LibraryRoute", () => {
 
   it("deletes only the deck that was asked about", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await addDeck(user, "Krenko");
@@ -196,7 +206,7 @@ describe("LibraryRoute", () => {
 
   it("puts focus somewhere stable after a deletion", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
@@ -207,7 +217,7 @@ describe("LibraryRoute", () => {
 
   it("returns focus to the delete button when the question is cancelled", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     const trigger = screen.getByRole("button", { name: "Delete Atraxa" });
@@ -219,7 +229,7 @@ describe("LibraryRoute", () => {
 
   it("announces the deletion without moving focus to the message", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
@@ -230,7 +240,7 @@ describe("LibraryRoute", () => {
 
   it("mounts a single dialog, not one per deck", async () => {
     const user = userEvent.setup();
-    render(<LibraryRoute />);
+    renderLibrary();
 
     await addDeck(user, "Atraxa");
     await addDeck(user, "Krenko");
@@ -240,5 +250,17 @@ describe("LibraryRoute", () => {
     await user.click(screen.getByRole("button", { name: "Delete Krenko" }));
 
     expect(screen.queryAllByRole("dialog")).toHaveLength(1);
+  });
+
+  it("links every deck's name to its page", async () => {
+    const user = userEvent.setup();
+    renderLibrary();
+
+    await addDeck(user, "Atraxa");
+
+    const deck = useLibrary.getState().decks[0];
+    expect(screen.getByRole("link", { name: "Atraxa" }).getAttribute("href")).toBe(
+      `/decks/${deck?.id ?? ""}`,
+    );
   });
 });

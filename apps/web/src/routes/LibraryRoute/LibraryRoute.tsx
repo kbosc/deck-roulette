@@ -1,6 +1,7 @@
 import type { Deck, NameProblem } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, DeckList } from "@deck-roulette/ui";
 import { useRef, useState } from "react";
+import { Link } from "react-router";
 import { NameForm } from "../../components/NameForm";
 import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
@@ -65,6 +66,14 @@ export function LibraryRoute() {
         <DeckList
           decks={decks}
           label="Your decks"
+          renderTitle={(deck) => (
+            <Link
+              to={`/decks/${deck.id}`}
+              className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
+            >
+              {deck.name}
+            </Link>
+          )}
           renderActions={(deck) => (
             <Button size="sm" variant="ghost" onClick={() => askToDelete(deck)}>
               {/* The space stays outside the span, or the name becomes "DeleteAtraxa". */}

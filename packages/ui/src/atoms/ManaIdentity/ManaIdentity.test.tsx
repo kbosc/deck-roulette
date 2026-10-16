@@ -34,4 +34,11 @@ describe("ManaIdentity", () => {
 
     expect(container.textContent).toContain("White");
   });
+
+  it("can spell the colors out on screen without reading them twice", () => {
+    const { container } = render(<ManaIdentity colors={["W", "U"]} showNames />);
+
+    expect(screen.getAllByText("White, Blue")).toHaveLength(1);
+    expect(container.textContent).toBe("White, Blue");
+  });
 });

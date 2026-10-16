@@ -59,6 +59,19 @@ describe("DeckList", () => {
     expect(screen.getAllByRole("button")).toHaveLength(3);
   });
 
+  it("lets every deck name lead to its own page", () => {
+    render(
+      <DeckList
+        decks={decks}
+        empty={empty}
+        label="Decks"
+        renderTitle={(deck) => <a href={`/decks/${deck.id}`}>{deck.name}</a>}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Krenko" }).getAttribute("href")).toBe("/decks/d2");
+  });
+
   it("renders no controls when none are given", () => {
     render(<DeckList decks={decks} empty={empty} label="Decks" />);
 

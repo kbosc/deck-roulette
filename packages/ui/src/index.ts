@@ -18,6 +18,8 @@ export type { EmptyStateProps, HeadingLevel } from "./molecules/EmptyState";
 export { EmptyState } from "./molecules/EmptyState";
 export type { PageTurnDirection, PageTurnLinkProps, PageTurnProps } from "./molecules/PageTurn";
 export { PageTurn } from "./molecules/PageTurn";
+export type { DeckDetailsProps } from "./molecules/DeckDetails";
+export { DeckDetails } from "./molecules/DeckDetails";
 export type { PoolDeckListProps } from "./molecules/PoolDeckList";
 export { PoolDeckList } from "./molecules/PoolDeckList";
 export type { SegmentedControlOption, SegmentedControlProps } from "./molecules/SegmentedControl";

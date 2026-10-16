@@ -5,6 +5,8 @@ export type ManaIdentitySize = "sm" | "md";
 export type ManaIdentityProps = {
   readonly colors: ColorIdentity;
   readonly size?: ManaIdentitySize;
+  /** Writes the names beside the pips, for wherever there is room to spell them out. */
+  readonly showNames?: boolean;
 };
 
 /** Sorted here, not trusted from the data. */
@@ -34,13 +36,13 @@ const SIZES: Readonly<Record<ManaIdentitySize, string>> = {
   md: "size-5",
 };
 
-export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
+export function ManaIdentity({ colors, size = "md", showNames = false }: ManaIdentityProps) {
   const ordered = WUBRG.filter((color) => colors.includes(color));
   const label =
     ordered.length === 0 ? "No color identity" : ordered.map((c) => NAMES[c]).join(", ");
 
   return (
-    <span className="inline-flex items-center gap-1">
+    <span className="inline-flex flex-wrap items-center gap-1">
       {ordered.map((color) => (
         <span
           key={color}
@@ -53,7 +55,7 @@ export function ManaIdentity({ colors, size = "md" }: ManaIdentityProps) {
             .join(" ")}
         />
       ))}
-      <span className="sr-only">{label}</span>
+      <span className={showNames ? "ms-1 text-sm text-text" : "sr-only"}>{label}</span>
     </span>
   );
 }

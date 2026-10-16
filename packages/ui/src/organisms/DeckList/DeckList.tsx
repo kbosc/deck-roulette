@@ -9,12 +9,20 @@ export type DeckListProps = {
   /** Required: a blank area reads as a bug or as loading. */
   readonly empty: EmptyStateProps;
   readonly renderActions?: (deck: Deck) => ReactNode;
+  readonly renderTitle?: (deck: Deck) => ReactNode;
   readonly highlightedDeckId?: DeckId;
   /** Tells two lists apart for screen readers: "Decks in Thursday table". */
   readonly label: string;
 };
 
-export function DeckList({ decks, empty, renderActions, highlightedDeckId, label }: DeckListProps) {
+export function DeckList({
+  decks,
+  empty,
+  renderActions,
+  renderTitle,
+  highlightedDeckId,
+  label,
+}: DeckListProps) {
   if (decks.length === 0) {
     return <EmptyState {...empty} />;
   }
@@ -27,6 +35,7 @@ export function DeckList({ decks, empty, renderActions, highlightedDeckId, label
             deck={deck}
             highlighted={deck.id === highlightedDeckId}
             {...(renderActions === undefined ? {} : { actions: renderActions(deck) })}
+            {...(renderTitle === undefined ? {} : { renderTitle: () => renderTitle(deck) })}
           />
         </li>
       ))}

@@ -1,6 +1,6 @@
 import type { Deck } from "@deck-roulette/domain";
 import { toDeckId } from "@deck-roulette/domain";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Button } from "../../atoms/Button";
 import { DeckCard } from "./DeckCard";
@@ -19,6 +19,13 @@ describe("DeckCard", () => {
     render(<DeckCard deck={makeDeck()} />);
 
     expect(screen.getByRole("heading", { name: "Atraxa, Praetors' Voice" })).toBeDefined();
+  });
+
+  it("lets the caller turn the name into a link, and keeps it a heading", () => {
+    render(<DeckCard deck={makeDeck()} renderTitle={(name) => <a href="/decks/d1">{name}</a>} />);
+
+    const heading = screen.getByRole("heading", { name: "Atraxa, Praetors' Voice" });
+    expect(within(heading).getByRole("link").getAttribute("href")).toBe("/decks/d1");
   });
 
   it("joins two commanders rather than printing an array", () => {

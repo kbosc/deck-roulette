@@ -1,5 +1,6 @@
 import type { ColorIdentity } from "@deck-roulette/domain";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { ManaIdentity } from "./ManaIdentity";
 
 const meta = {
@@ -12,7 +13,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+/** Read the rendered width: jsdom ignores CSS, so only a browser can tell sr-only from shown. */
+function labelWidth(canvasElement: HTMLElement, label: string): number {
+  // The innermost span: the wrapper holds the same text.
+  const element = [...canvasElement.querySelectorAll("span")].find(
+    (span) => span.childElementCount === 0 && span.textContent === label,
+  );
+  return element?.getBoundingClientRect().width ?? 0;
+}
+
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    await expect(labelWidth(canvasElement, "White, Blue, Black")).toBeLessThanOrEqual(1);
+  },
+};
 
 /** Entered out of order, printed in WUBRG order. */
 export const AlwaysInWubrgOrder: Story = {
@@ -21,6 +35,14 @@ export const AlwaysInWubrgOrder: Story = {
 
 export const Small: Story = {
   args: { size: "sm" },
+};
+
+/** On a deck's page, where there is room: the pips alone rely on hue. */
+export const WithNames: Story = {
+  args: { colors: ["W", "U"], showNames: true },
+  play: async ({ canvasElement }) => {
+    await expect(labelWidth(canvasElement, "White, Blue")).toBeGreaterThan(1);
+  },
 };
 
 /** Includes the two pale ones side by side: white and colorless. */
