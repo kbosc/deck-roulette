@@ -1,4 +1,6 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router";
+// The DOM build: without it, a navigation's flushSync option is silently ignored.
+import { RouterProvider } from "react-router/dom";
 import { routes } from "./routes";
 
 const router = createBrowserRouter(routes);

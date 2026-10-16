@@ -1,17 +1,20 @@
 import { addDeckToPool } from "@deck-roulette/domain";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createMemoryRouter, RouterProvider } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { createMemoryRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { routes } from "../../app/routes";
 import { useLibrary } from "../../store/library";
 
+/** Opened from the library, as in the app: Back has somewhere to go. */
 function renderDeck(deckName: string) {
   const deck = useLibrary.getState().decks.find((d) => d.name === deckName);
   const router = createMemoryRouter(routes, {
-    initialEntries: [`/decks/${deck?.id ?? "unknown"}`],
+    initialEntries: ["/", `/decks/${deck?.id ?? "unknown"}`],
   });
-  return render(<RouterProvider router={router} />);
+  render(<RouterProvider router={router} />);
+  return router;
 }
 
 /** Until a pool's decks can be chosen from the deck's page. */
@@ -79,5 +82,88 @@ describe("DeckRoute", () => {
       "/",
     );
     expect(document.title).toBe("Deck not found · Deck Roulette");
+  });
+
+  describe("deleting the deck", () => {
+    async function askToDelete(deckName: string) {
+      const user = userEvent.setup();
+      const router = renderDeck(deckName);
+      const trigger = screen.getByRole("button", { name: "Delete deck" });
+      await user.click(trigger);
+      return { user, router, trigger };
+    }
+
+    it("asks first, saying what will be lost", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      await askToDelete("Atraxa");
+
+      expect(screen.getByRole("dialog", { name: "Delete Atraxa?" })).toBeDefined();
+      expect(screen.getByText(/removed from every pool/)).toBeDefined();
+      expect(useLibrary.getState().decks).toHaveLength(1);
+    });
+
+    it("keeps the deck, and focus on the button, when cancelled", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const { user, trigger } = await askToDelete("Atraxa");
+
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+      expect(useLibrary.getState().decks).toHaveLength(1);
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("deletes it from the library and from its pools once confirmed", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addDeck("Krenko");
+      putInPool("Atraxa", "Friday night");
+      const { user } = await askToDelete("Atraxa");
+
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+
+      expect(useLibrary.getState().decks.map((d) => d.name)).toEqual(["Krenko"]);
+      expect(useLibrary.getState().pools[0]?.deckIds).toEqual([]);
+    });
+
+    it("lands on the library, focused on its heading, and says what was deleted", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const { user } = await askToDelete("Atraxa");
+
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+
+      const heading = screen.getByRole("heading", { level: 1, name: "Library" });
+      await waitFor(() => expect(document.activeElement).toBe(heading));
+      expect(await within(screen.getByRole("status")).findByText("Atraxa deleted.")).toBeDefined();
+    });
+
+    it("never shows the deck as missing on the way out", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      await askToDelete("Atraxa");
+      const setTitle = vi.spyOn(document, "title", "set");
+
+      // Outside act(): it would batch the navigation with the deletion and hide the race.
+      const actEnvironment = Reflect.get(globalThis, "IS_REACT_ACT_ENVIRONMENT");
+      Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", false);
+      try {
+        screen.getByRole("button", { name: "Delete" }).click();
+        await screen.findByRole("heading", { level: 1, name: "Library" });
+      } finally {
+        Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", actEnvironment);
+      }
+
+      const titles = setTitle.mock.calls.map(([title]) => title);
+      setTitle.mockRestore();
+      expect(titles).not.toContain("Deck not found · Deck Roulette");
+    });
+
+    it("leaves no way back to the deleted deck's page", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const { user, router } = await askToDelete("Atraxa");
+
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+      await act(() => router.navigate(-1));
+
+      expect(screen.queryByRole("heading", { name: "This deck does not exist" })).toBeNull();
+      expect(screen.getByRole("heading", { level: 1, name: "Library" })).toBeDefined();
+    });
   });
 });

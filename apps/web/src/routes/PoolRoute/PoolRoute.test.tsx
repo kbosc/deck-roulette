@@ -1,7 +1,8 @@
 import { addDeckToPool } from "@deck-roulette/domain";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createMemoryRouter, RouterProvider } from "react-router";
+import { createMemoryRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { routes } from "../../app/routes";
 import { useLibrary } from "../../store/library";
@@ -49,7 +50,9 @@ describe("PoolRoute", () => {
 
     await user.click(screen.getByRole("button", { name: "Draw a deck" }));
 
-    expect(screen.getByRole("status").textContent).toBe("Atraxa, from Thursday table.");
+    expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe(
+      "Atraxa, from Thursday table.",
+    );
     const list = screen.getByRole("list", { name: "Decks in Thursday table" });
     expect(within(list).getByRole("listitem").textContent).toContain("Atraxa, drawn last");
   });
@@ -63,7 +66,7 @@ describe("PoolRoute", () => {
     await user.click(screen.getByRole("button", { name: "Start a new cycle" }));
 
     expect(screen.getByRole("button", { name: "Draw a deck" })).toBeDefined();
-    expect(screen.getByRole("status").textContent).toBe("");
+    expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe("");
   });
 
   it("leads to choosing the pool's decks", () => {
@@ -199,7 +202,7 @@ describe("PoolRoute", () => {
       await user.click(screen.getByRole("button", { name: "Draw a deck" }));
       await user.click(screen.getByRole("link", { name: "Next page: Sunday" }));
 
-      expect(screen.getByRole("status").textContent).toBe("");
+      expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe("");
     });
   });
 

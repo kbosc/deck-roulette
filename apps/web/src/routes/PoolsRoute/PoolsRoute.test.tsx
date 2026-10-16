@@ -1,6 +1,7 @@
 import { addDeckToPool } from "@deck-roulette/domain";
 import { render, screen, within } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router";
+import { createMemoryRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useLibrary } from "../../store/library";
@@ -108,7 +109,9 @@ describe("PoolsRoute", () => {
 
     expect(useLibrary.getState().pools).toHaveLength(0);
     expect(useLibrary.getState().decks).toHaveLength(1);
-    expect(screen.getByRole("status").textContent).toBe("Thursday table deleted.");
+    expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe(
+      "Thursday table deleted.",
+    );
   });
 
   it("says the decks survive, before asking to delete", async () => {
@@ -155,7 +158,9 @@ describe("PoolsRoute", () => {
 
     await user.click(screen.getByRole("button", { name: "Draw a deck" }));
 
-    expect(screen.getByRole("status").textContent).toBe("Atraxa, from Thursday table.");
+    expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe(
+      "Atraxa, from Thursday table.",
+    );
   });
 
   it("stays a table of contents: a pool's decks are listed on its own page", () => {

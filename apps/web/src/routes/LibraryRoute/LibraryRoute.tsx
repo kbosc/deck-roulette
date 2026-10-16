@@ -1,6 +1,5 @@
-import type { Deck, NameProblem } from "@deck-roulette/domain";
-import { Button, ConfirmDialog, DeckList } from "@deck-roulette/ui";
-import { useRef, useState } from "react";
+import type { NameProblem } from "@deck-roulette/domain";
+import { DeckList } from "@deck-roulette/ui";
 import { Link } from "react-router";
 import { NameForm } from "../../components/NameForm";
 import { PageHeading } from "../../components/PageHeading";
@@ -14,33 +13,12 @@ const nameMessages: Record<NameProblem, string> = {
 export function LibraryRoute() {
   const decks = useLibrary((state) => state.decks);
   const addDeck = useLibrary((state) => state.addDeck);
-  const removeDeck = useLibrary((state) => state.removeDeck);
   // Not a selector: one returning a new array would re-render on every store change.
   const deckNames = decks.map((deck) => deck.name);
 
-  // One dialog for the whole list. Kept mounted after closing, `isAsking` drives it:
-  // unmounting it would cut Radix's close sequence and lose focus restoration.
-  const [deckToDelete, setDeckToDelete] = useState<Deck | null>(null);
-  const [isAsking, setIsAsking] = useState(false);
-  const [lastDeleted, setLastDeleted] = useState<string | null>(null);
-
-  const headingRef = useRef<HTMLHeadingElement>(null);
-
-  function askToDelete(deck: Deck) {
-    setDeckToDelete(deck);
-    setIsAsking(true);
-  }
-
-  function confirmDeletion() {
-    if (deckToDelete === null) return;
-
-    removeDeck(deckToDelete.id);
-    setLastDeleted(deckToDelete.name);
-  }
-
   return (
     <>
-      <PageHeading ref={headingRef}>Library</PageHeading>
+      <PageHeading>Library</PageHeading>
 
       <div className="mt-6">
         <NameForm
@@ -48,17 +26,9 @@ export function LibraryRoute() {
           placeholder="Atraxa, Praetors' Voice"
           existingNames={deckNames}
           messages={nameMessages}
-          onCreate={(name) => {
-            addDeck(name);
-            setLastDeleted(null);
-          }}
+          onCreate={addDeck}
         />
       </div>
-
-      {/* Always rendered: a live region that appears with its text is often not announced. */}
-      <p role="status" className="sr-only">
-        {lastDeleted === null ? "" : `${lastDeleted} deleted.`}
-      </p>
 
       <div className="mt-6">
         {/* The empty state carries its own h2; the cards are h3. */}
@@ -74,12 +44,6 @@ export function LibraryRoute() {
               {deck.name}
             </Link>
           )}
-          renderActions={(deck) => (
-            <Button size="sm" variant="ghost" onClick={() => askToDelete(deck)}>
-              {/* The space stays outside the span, or the name becomes "DeleteAtraxa". */}
-              Delete <span className="sr-only">{deck.name}</span>
-            </Button>
-          )}
           empty={{
             headingLevel: 2,
             title: "No deck yet",
@@ -87,19 +51,6 @@ export function LibraryRoute() {
           }}
         />
       </div>
-
-      {deckToDelete === null ? null : (
-        <ConfirmDialog
-          open={isAsking}
-          onOpenChange={setIsAsking}
-          title={`Delete ${deckToDelete.name}?`}
-          description={`${deckToDelete.name} will be removed from every pool it belongs to. This cannot be undone.`}
-          confirmLabel="Delete"
-          onConfirm={confirmDeletion}
-          // The opener disappears with its row: focus would fall to the body.
-          onConfirmedFocus={() => headingRef.current?.focus()}
-        />
-      )}
     </>
   );
 }

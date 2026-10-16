@@ -1,6 +1,8 @@
-import { DeckDetails } from "@deck-roulette/ui";
-import { useMemo } from "react";
-import { Link, useParams } from "react-router";
+import type { Deck } from "@deck-roulette/domain";
+import { Button, ConfirmDialog, DeckDetails } from "@deck-roulette/ui";
+import { useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
+import { useAnnounce } from "../../components/Announcer";
 import { DeckNotFound } from "../../components/DeckNotFound";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
@@ -40,6 +42,37 @@ export function DeckRoute() {
           )}
         />
       </div>
+
+      <div className="mt-6">
+        <DeleteDeck deck={deck} />
+      </div>
     </>
+  );
+}
+
+function DeleteDeck({ deck }: { readonly deck: Deck }) {
+  const removeDeck = useLibrary((state) => state.removeDeck);
+  const navigate = useNavigate();
+  const announce = useAnnounce();
+  const [isAsking, setIsAsking] = useState(false);
+
+  async function leaveAndDelete() {
+    // Replace: Back must not lead to the page of a deck that no longer exists.
+    await navigate("/", { replace: true, flushSync: true });
+    // Only once this page is gone, or it would render "deck not found" for a frame.
+    removeDeck(deck.id);
+    announce(`${deck.name} deleted.`);
+  }
+
+  return (
+    <ConfirmDialog
+      open={isAsking}
+      onOpenChange={setIsAsking}
+      trigger={<Button variant="ghost">Delete deck</Button>}
+      title={`Delete ${deck.name}?`}
+      description={`${deck.name} will be removed from every pool it belongs to. This cannot be undone.`}
+      confirmLabel="Delete"
+      onConfirm={() => void leaveAndDelete()}
+    />
   );
 }

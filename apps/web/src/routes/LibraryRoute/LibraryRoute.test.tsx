@@ -146,112 +146,6 @@ describe("LibraryRoute", () => {
     expect(screen.getByRole("alert")).toBeDefined();
   });
 
-  it("names the delete button after the deck it would delete", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-
-    expect(screen.getByRole("button", { name: "Delete Atraxa" })).toBeDefined();
-  });
-
-  it("asks before deleting, saying what will be lost", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
-
-    expect(screen.getByRole("dialog", { name: "Delete Atraxa?" })).toBeDefined();
-    expect(screen.getByText(/removed from every pool/)).toBeDefined();
-    // The deck is still there while the question is being asked.
-    expect(useLibrary.getState().decks).toHaveLength(1);
-  });
-
-  it("keeps the deck when the question is cancelled", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-
-    expect(useLibrary.getState().decks).toHaveLength(1);
-    expect(screen.getByRole("heading", { name: "Atraxa" })).toBeDefined();
-  });
-
-  it("deletes the deck once confirmed", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(useLibrary.getState().decks).toHaveLength(0);
-    expect(screen.getByRole("heading", { name: "No deck yet" })).toBeDefined();
-  });
-
-  it("deletes only the deck that was asked about", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await addDeck(user, "Krenko");
-    await user.click(screen.getByRole("button", { name: "Delete Krenko" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(useLibrary.getState().decks.map((deck) => deck.name)).toEqual(["Atraxa"]);
-  });
-
-  it("puts focus somewhere stable after a deletion", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(document.activeElement).toBe(screen.getByRole("heading", { level: 1 }));
-  });
-
-  it("returns focus to the delete button when the question is cancelled", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    const trigger = screen.getByRole("button", { name: "Delete Atraxa" });
-    await user.click(trigger);
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-
-    expect(document.activeElement).toBe(trigger);
-  });
-
-  it("announces the deletion without moving focus to the message", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await user.click(screen.getByRole("button", { name: "Delete Atraxa" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(screen.getByRole("status").textContent).toBe("Atraxa deleted.");
-  });
-
-  it("mounts a single dialog, not one per deck", async () => {
-    const user = userEvent.setup();
-    renderLibrary();
-
-    await addDeck(user, "Atraxa");
-    await addDeck(user, "Krenko");
-
-    expect(screen.queryAllByRole("dialog")).toHaveLength(0);
-
-    await user.click(screen.getByRole("button", { name: "Delete Krenko" }));
-
-    expect(screen.queryAllByRole("dialog")).toHaveLength(1);
-  });
-
   it("links every deck's name to its page", async () => {
     const user = userEvent.setup();
     renderLibrary();
@@ -262,5 +156,14 @@ describe("LibraryRoute", () => {
     expect(screen.getByRole("link", { name: "Atraxa" }).getAttribute("href")).toBe(
       `/decks/${deck?.id ?? ""}`,
     );
+  });
+
+  it("leaves deleting to the deck's own page", async () => {
+    const user = userEvent.setup();
+    renderLibrary();
+
+    await addDeck(user, "Atraxa");
+
+    expect(screen.queryByRole("button", { name: /delete/i })).toBeNull();
   });
 });
