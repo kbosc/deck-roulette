@@ -192,9 +192,11 @@ sérialisation et migration de schéma · pourquoi la logique métier ne vit pas
 **Objectif pédagogique :** sortir du style « généré par défaut » en ancrant l'identité
 visuelle dans l'univers de Magic, sans casser le design system.
 
-- [ ] Direction proposée avec le skill `frontend-design` (typographie, palette, matières, mouvement)
-- [ ] Traduite **en tokens** uniquement : aucune valeur en dur, le lint l'interdit déjà
-- [ ] Vérifiée dans Storybook, thèmes clair et sombre, contrastes WCAG toujours au vert
+- [x] Direction proposée avec le skill `frontend-design` (typographie, palette, matières, mouvement)
+- [x] Traduite **en tokens** uniquement : aucune valeur en dur, le lint l'interdit déjà
+- [x] Vérifiée dans Storybook, thèmes clair et sombre, contrastes WCAG toujours au vert :
+      chaque story est un test (`@storybook/addon-vitest`), rendue dans Chromium dans les deux
+      thèmes et passée à axe ; une violation fait échouer `pnpm verify`
 - [x] Hiérarchie des boutons : `primary` réservé au tirage et à la seule sortie d'une impasse
 - [x] Élévation par thème en tokens (le générateur gère les ombres par thème)
 - [x] Sélecteur d'apparence Système / Clair / Sombre : choix persisté, pas de flash du mauvais

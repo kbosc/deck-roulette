@@ -1,0 +1,10 @@
+/*
+ * Set by the stories test projects only. axe gives up on contrast over any background-image
+ * (it reports "incomplete", never a violation), so the textures go and the text is measured
+ * on the surface color underneath, as the token tests assume.
+ * The seal keeps its gradient: the token tests check its label against every stop.
+ */
+:root[data-textures="off"] body,
+:root[data-textures="off"] [data-surface="page"] {
+  background-image: none;
+}

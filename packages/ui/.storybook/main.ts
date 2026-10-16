@@ -8,6 +8,8 @@ const config: StorybookConfig = {
     // and none of the half that needs a keyboard and a human.
     "@storybook/addon-a11y",
     "@storybook/addon-docs",
+    // Turns every story into a Vitest test: the a11y check above fails `pnpm test`.
+    "@storybook/addon-vitest",
   ],
   framework: "@storybook/react-vite",
 

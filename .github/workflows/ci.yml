@@ -44,6 +44,10 @@ jobs:
 
       - run: pnpm typecheck
 
+      # The stories are tested in a real Chromium: axe cannot check contrast in jsdom.
+      # The version comes from packages/ui's lockfile entry, so browser and driver match.
+      - run: pnpm --filter @deck-roulette/ui exec playwright install --with-deps chromium
+
       - run: pnpm test
 
       # The stylesheet is generated, never committed. Building it here proves

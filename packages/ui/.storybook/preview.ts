@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
 import "../src/styles.css";
+import "./textures-off.css";
 
 const preview: Preview = {
   parameters: {
@@ -29,7 +30,10 @@ const preview: Preview = {
 
   decorators: [
     (Story, context) => {
-      document.documentElement.dataset["theme"] = String(context.globals["theme"]);
+      const root = document.documentElement;
+      root.dataset["theme"] = String(context.globals["theme"]);
+      if (context.globals["textures"] === "off") root.dataset["textures"] = "off";
+      else delete root.dataset["textures"];
       document.body.style.background = "var(--surface)";
       document.body.style.color = "var(--text)";
       return Story();
