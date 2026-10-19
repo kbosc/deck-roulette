@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { addDeck, addPool, deleteDeck, deletePool } from "./library";
-import type { Library } from "./library";
+import { addDeck, addPool, deleteDeck, deletePool, updateDeck } from "./library";
+import type { DeckEdit, Library } from "./library";
 import { toDeckId, toPoolId } from "./ids";
 import { makeDeck, makePool } from "./test-utils";
 
@@ -155,5 +155,141 @@ describe("deletePool", () => {
     deletePool(library, toPoolId("chill"));
 
     expect(library).toEqual(makeLibrary());
+  });
+});
+
+/** Atraxa with every detail set, to see what an edit keeps and what it unsets. */
+function makeEditableLibrary(): Library {
+  return {
+    decks: [
+      makeDeck({
+        id: "a",
+        name: "Atraxa",
+        commanders: ["Atraxa, Praetors' Voice"],
+        colors: ["W", "U", "B", "G"],
+        bracket: 3,
+        url: "https://archidekt.com/decks/1",
+      }),
+      makeDeck({ id: "b", name: "Krenko" }),
+    ],
+    pools: [makePool({ id: "chill", deckIds: ["a", "b"], drawnDeckIds: ["a"] })],
+  };
+}
+
+const A = toDeckId("a");
+
+function deckA(library: Library) {
+  return library.decks.find((deck) => deck.id === A);
+}
+
+describe("updateDeck", () => {
+  it("replaces what the form edits", () => {
+    const library = updateDeck(makeEditableLibrary(), A, {
+      name: "Tana and Tymna",
+      commanders: ["Tana, the Bloodsower", "Tymna the Weaver"],
+      colors: ["W", "B", "R", "G"],
+      bracket: 2,
+    });
+
+    expect(deckA(library)).toMatchObject({
+      name: "Tana and Tymna",
+      commanders: ["Tana, the Bloodsower", "Tymna the Weaver"],
+      colors: ["W", "B", "R", "G"],
+      bracket: 2,
+    });
+  });
+
+  it("keeps what the form does not edit: id, creation date, link", () => {
+    const before = deckA(makeEditableLibrary());
+
+    const after = deckA(updateDeck(makeEditableLibrary(), A, { name: "Atraxa" }));
+
+    expect(after?.id).toBe(before?.id);
+    expect(after?.createdAt).toBe(before?.createdAt);
+    expect(after?.url).toBe(before?.url);
+  });
+
+  it("unsets a detail left out of the edit", () => {
+    const deck = deckA(updateDeck(makeEditableLibrary(), A, { name: "Atraxa" }));
+
+    expect(deck).not.toHaveProperty("commanders");
+    expect(deck).not.toHaveProperty("colors");
+    expect(deck).not.toHaveProperty("bracket");
+  });
+
+  it("trims the name and the commanders", () => {
+    const deck = deckA(
+      updateDeck(makeEditableLibrary(), A, { name: " Atraxa ", commanders: [" Atraxa "] }),
+    );
+
+    expect(deck?.name).toBe("Atraxa");
+    expect(deck?.commanders).toEqual(["Atraxa"]);
+  });
+
+  it("refuses an empty name", () => {
+    expect(() => updateDeck(makeEditableLibrary(), A, { name: "  " })).toThrow(TypeError);
+  });
+
+  it("refuses the name of another deck, whatever its case", () => {
+    expect(() => updateDeck(makeEditableLibrary(), A, { name: "krenko" })).toThrow(TypeError);
+  });
+
+  it("lets a deck keep its own name, or change only its case", () => {
+    expect(deckA(updateDeck(makeEditableLibrary(), A, { name: "ATRAXA" }))?.name).toBe("ATRAXA");
+  });
+
+  it("refuses a blank commander", () => {
+    expect(() =>
+      updateDeck(makeEditableLibrary(), A, { name: "Atraxa", commanders: [" "] }),
+    ).toThrow(TypeError);
+  });
+
+  it("trims and checks the second commander too", () => {
+    const edit: DeckEdit = { name: "Tana and Tymna", commanders: ["Tana", " Tymna "] };
+    expect(deckA(updateDeck(makeEditableLibrary(), A, edit))?.commanders).toEqual([
+      "Tana",
+      "Tymna",
+    ]);
+
+    expect(() =>
+      updateDeck(makeEditableLibrary(), A, { name: "Tana and Tymna", commanders: ["Tana", "  "] }),
+    ).toThrow(TypeError);
+  });
+
+  it("reads no color at all as not set, not as colorless", () => {
+    const deck = deckA(updateDeck(makeEditableLibrary(), A, { name: "Atraxa", colors: [] }));
+
+    expect(deck).not.toHaveProperty("colors");
+  });
+
+  it("orders the colors as players read them, without colorless next to a color", () => {
+    const deck = deckA(
+      updateDeck(makeEditableLibrary(), A, { name: "Atraxa", colors: ["G", "C", "W"] }),
+    );
+
+    expect(deck?.colors).toEqual(["W", "G"]);
+  });
+
+  it("refuses a deck that does not exist", () => {
+    expect(() => updateDeck(makeEditableLibrary(), toDeckId("zzz"), { name: "Ghost" })).toThrow(
+      RangeError,
+    );
+  });
+
+  it("leaves the other decks and the pools as they were, by reference", () => {
+    const before = makeEditableLibrary();
+
+    const after = updateDeck(before, A, { name: "Atraxa" });
+
+    expect(after.decks[1]).toBe(before.decks[1]);
+    expect(after.pools).toBe(before.pools);
+  });
+
+  it("does not mutate the given library", () => {
+    const library = makeEditableLibrary();
+
+    updateDeck(library, A, { name: "Renamed", bracket: 5 });
+
+    expect(library).toEqual(makeEditableLibrary());
   });
 });

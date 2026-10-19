@@ -83,6 +83,28 @@ describe("useLibrary", () => {
     });
   });
 
+  describe("editing a deck", () => {
+    it("replaces the deck's details, and keeps it in its pools", () => {
+      const { deckId } = poolWithOneDeck();
+
+      useLibrary.getState().updateDeck(deckId, { name: "Atraxa", bracket: 4 });
+
+      expect(useLibrary.getState().decks[0]?.bracket).toBe(4);
+      expect(useLibrary.getState().pools[0]?.deckIds).toEqual([deckId]);
+    });
+
+    it("passes on the domain's refusal and changes nothing", () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addDeck("Krenko");
+      const before = useLibrary.getState().decks;
+      const krenko = before[1];
+      if (krenko === undefined) throw new Error("setup failed");
+
+      expect(() => useLibrary.getState().updateDeck(krenko.id, { name: "atraxa" })).toThrow();
+      expect(useLibrary.getState().decks).toBe(before);
+    });
+  });
+
   describe("adding a pool", () => {
     it("adds an empty pool to the library", () => {
       useLibrary.getState().addPool("Thursday table");

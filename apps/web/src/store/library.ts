@@ -1,4 +1,4 @@
-import type { DeckId, DrawResult, Library, Pool, PoolId } from "@deck-roulette/domain";
+import type { DeckEdit, DeckId, DrawResult, Library, Pool, PoolId } from "@deck-roulette/domain";
 import {
   CURRENT_SCHEMA_VERSION,
   addDeck as addDeckToLibrary,
@@ -12,12 +12,14 @@ import {
   drawDeck,
   removeDeckFromPool as poolWithoutDeck,
   resetPool,
+  updateDeck,
 } from "@deck-roulette/domain";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type LibraryState = Library & {
   readonly addDeck: (name: string) => void;
+  readonly updateDeck: (deckId: DeckId, edit: DeckEdit) => void;
   readonly removeDeck: (deckId: DeckId) => void;
   readonly addPool: (name: string) => void;
   readonly removePool: (poolId: PoolId) => void;
@@ -68,6 +70,10 @@ export const useLibrary = create<LibraryState>()(
 
         // Never mutate: the data would be right and the screen stale.
         set((state) => addDeckToLibrary(state, deck));
+      },
+
+      updateDeck: (deckId, edit) => {
+        set((state) => updateDeck(state, deckId, edit));
       },
 
       removeDeck: (deckId) => {
