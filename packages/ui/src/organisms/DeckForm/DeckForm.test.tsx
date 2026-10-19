@@ -87,8 +87,8 @@ describe("DeckForm", () => {
     render(<DeckForm deck={makeDeck()} checkName={acceptAnyName} onSave={onSave} />);
 
     await user.type(screen.getByRole("textbox", { name: "Commander" }), " Tana ");
-    await user.click(screen.getByRole("button", { name: "Add a partner" }));
-    await user.type(screen.getByRole("textbox", { name: "Partner" }), "Tymna");
+    await user.click(screen.getByRole("button", { name: "Add a second commander" }));
+    await user.type(screen.getByRole("textbox", { name: "Second commander" }), "Tymna");
     await user.click(screen.getByRole("checkbox", { name: "Green" }));
     await user.click(screen.getByRole("checkbox", { name: "White" }));
     await user.click(screen.getByRole("radio", { name: "4" }));
@@ -100,6 +100,33 @@ describe("DeckForm", () => {
       colors: ["W", "G"],
       bracket: 4,
     });
+  });
+
+  it("keeps colorless apart from the colors, and says so", async () => {
+    const user = userEvent.setup();
+    render(
+      <DeckForm
+        deck={makeDeck({ colors: ["W", "U"] })}
+        checkName={acceptAnyName}
+        onSave={vi.fn()}
+      />,
+    );
+    const colors = screen.getByRole("group", { name: "Color identity" });
+
+    await user.click(screen.getByRole("checkbox", { name: "Colorless" }));
+    expect(
+      within(colors)
+        .getAllByRole("checkbox")
+        .filter((box) => box instanceof HTMLInputElement && box.checked),
+    ).toEqual([screen.getByRole("checkbox", { name: "Colorless" })]);
+
+    await user.click(screen.getByRole("checkbox", { name: "Green" }));
+    expect(screen.getByRole("checkbox", { name: "Colorless" })).toHaveProperty("checked", false);
+    expect(screen.getByRole("checkbox", { name: "Green" })).toHaveProperty("checked", true);
+
+    expect(
+      document.getElementById(colors.getAttribute("aria-describedby") ?? "")?.textContent,
+    ).toMatch(/Colorless cannot go with a color/);
   });
 
   it("saves an emptied field as not set", async () => {
@@ -140,16 +167,18 @@ describe("DeckForm", () => {
     expect(document.activeElement).toBe(commander);
   });
 
-  it("moves focus into the partner field it adds, and back when it is removed", async () => {
+  it("moves focus into the second commander field it adds, and back when it is removed", async () => {
     const user = userEvent.setup();
     render(<DeckForm deck={makeDeck()} checkName={acceptAnyName} onSave={vi.fn()} />);
 
-    await user.click(screen.getByRole("button", { name: "Add a partner" }));
-    expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Partner" }));
+    await user.click(screen.getByRole("button", { name: "Add a second commander" }));
+    expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Second commander" }));
 
-    await user.click(screen.getByRole("button", { name: "Remove partner" }));
-    expect(screen.queryByRole("textbox", { name: "Partner" })).toBeNull();
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Add a partner" }));
+    await user.click(screen.getByRole("button", { name: "Remove second commander" }));
+    expect(screen.queryByRole("textbox", { name: "Second commander" })).toBeNull();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Add a second commander" }),
+    );
   });
 
   it("refuses a bad name, says why next to the field, and puts focus there", async () => {

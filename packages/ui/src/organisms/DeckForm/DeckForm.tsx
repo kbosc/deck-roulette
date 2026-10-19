@@ -1,6 +1,6 @@
 import type { Bracket, Color, Deck, DeckEdit } from "@deck-roulette/domain";
 import type { FormEvent } from "react";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "../../atoms/Button";
 import { Checkbox } from "../../atoms/Checkbox";
 import { Input } from "../../atoms/Input";
@@ -11,6 +11,8 @@ export type DeckFormProps = {
   /** The naming rules live in the domain: the message, or undefined when the name is fine. */
   readonly checkName: (name: string) => string | undefined;
   readonly onSave: (edit: DeckEdit) => void;
+  /** Lets the page warn before unsaved changes are lost. */
+  readonly onDirtyChange?: (dirty: boolean) => void;
 };
 
 const COLORS: ReadonlyArray<readonly [Color, string]> = [
@@ -45,18 +47,18 @@ const BRACKET_OPTIONS = [
 type Draft = {
   readonly name: string;
   readonly commander: string;
-  /** null: no partner field on screen. */
-  readonly partner: string | null;
+  /** null: no second commander field on screen. */
+  readonly second: string | null;
   readonly colors: readonly Color[];
   readonly bracket: BracketChoice;
 };
 
 function draftOf(deck: Deck): Draft {
-  const [commander = "", partner] = deck.commanders ?? [];
+  const [commander = "", second] = deck.commanders ?? [];
   return {
     name: deck.name,
     commander,
-    partner: partner ?? null,
+    second: second ?? null,
     colors: deck.colors ?? [],
     bracket: deck.bracket === undefined ? "none" : `${deck.bracket}`,
   };
@@ -64,7 +66,7 @@ function draftOf(deck: Deck): Draft {
 
 /** Blank fields mean "not set": the domain refuses a blank commander. */
 function editOf(draft: Draft): DeckEdit {
-  const [first, second] = [draft.commander, draft.partner ?? ""]
+  const [first, second] = [draft.commander, draft.second ?? ""]
     .map((name) => name.trim())
     .filter((name) => name !== "");
   const bracket = BRACKETS[draft.bracket];
@@ -80,6 +82,13 @@ function editOf(draft: Draft): DeckEdit {
   };
 }
 
+/** Colorless is the absence of colors: ticking it clears them, ticking a color clears it. */
+function toggle(colors: readonly Color[], color: Color, checked: boolean): readonly Color[] {
+  if (!checked) return colors.filter((c) => c !== color);
+  if (color === "C") return ["C"];
+  return [...colors.filter((c) => c !== "C"), color];
+}
+
 function sameEdit(a: DeckEdit, b: DeckEdit): boolean {
   // Both built by editOf: same keys, in the same order.
   return JSON.stringify(a) === JSON.stringify(b);
@@ -89,9 +98,9 @@ const ROW = "flex flex-col gap-1 border-b border-border py-3 sm:grid sm:grid-col
 const TERM = "font-display text-sm tracking-wide text-text-muted sm:pt-3";
 
 /** Every detail of a deck, editable in place: no edit mode, a save bar once something changed. */
-export function DeckForm({ deck, checkName, onSave }: DeckFormProps) {
+export function DeckForm({ deck, checkName, onSave, onDirtyChange }: DeckFormProps) {
   const [draft, setDraft] = useState(() => draftOf(deck));
-  // Read back once saved: the library tidies what it stores (colorless next to a color…).
+  // Read back once saved: the library tidies what it stores (trimmed names, color order…).
   const [shownDeck, setShownDeck] = useState(deck);
   if (deck !== shownDeck) {
     setShownDeck(deck);
@@ -105,11 +114,13 @@ export function DeckForm({ deck, checkName, onSave }: DeckFormProps) {
   const saveBarRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   // The field or button to focus once it is rendered: it does not exist yet when clicked.
-  const focusNext = useRef<"partner" | "add-partner" | null>(null);
+  const focusNext = useRef<"second" | "add-second" | null>(null);
 
   const edit = editOf(draft);
   const dirty = !sameEdit(edit, editOf(draftOf(deck)));
   const nameError = nameChecked ? checkName(draft.name) : undefined;
+
+  useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
 
   function update(changes: Partial<Draft>) {
     setDraft((current) => ({ ...current, ...changes }));
@@ -182,10 +193,10 @@ export function DeckForm({ deck, checkName, onSave }: DeckFormProps) {
             value={draft.commander}
             onChange={(event) => update({ commander: event.target.value })}
           />
-          {draft.partner === null ? (
+          {draft.second === null ? (
             <Button
               ref={(button) => {
-                if (button !== null && focusNext.current === "add-partner") {
+                if (button !== null && focusNext.current === "add-second") {
                   focusNext.current = null;
                   button.focus();
                 }
@@ -195,72 +206,75 @@ export function DeckForm({ deck, checkName, onSave }: DeckFormProps) {
               variant="ghost"
               className="mt-2"
               onClick={() => {
-                focusNext.current = "partner";
-                update({ partner: "" });
+                focusNext.current = "second";
+                update({ second: "" });
               }}
             >
-              Add a partner
+              Add a second commander
             </Button>
           ) : null}
         </div>
       </div>
 
-      {draft.partner === null ? null : (
+      {draft.second === null ? null : (
         <div className={ROW}>
-          <label htmlFor={`${id}-partner`} className={TERM}>
-            Partner
+          <label htmlFor={`${id}-second`} className={TERM}>
+            Second commander
           </label>
           <div className="flex items-center gap-2 sm:col-span-2">
             <Input
               ref={(input) => {
-                if (input !== null && focusNext.current === "partner") {
+                if (input !== null && focusNext.current === "second") {
                   focusNext.current = null;
                   input.focus();
                 }
               }}
-              id={`${id}-partner`}
+              id={`${id}-second`}
               appearance="blank"
               placeholder="Not set"
-              value={draft.partner}
-              onChange={(event) => update({ partner: event.target.value })}
+              value={draft.second}
+              onChange={(event) => update({ second: event.target.value })}
             />
             <Button
               type="button"
               size="sm"
               variant="ghost"
               onClick={() => {
-                focusNext.current = "add-partner";
-                update({ partner: null });
+                focusNext.current = "add-second";
+                update({ second: null });
               }}
             >
-              Remove <span className="sr-only">partner</span>
+              Remove <span className="sr-only">second commander</span>
             </Button>
           </div>
         </div>
       )}
 
       {/* The legend names the checkboxes for screen readers; the term beside them is for the eye. */}
-      <fieldset>
+      <fieldset aria-describedby={`${id}-colors-hint`}>
         <legend className="sr-only">Color identity</legend>
         <div className={ROW}>
           <p aria-hidden="true" className={TERM}>
             Color identity
           </p>
-          <div className="flex flex-wrap gap-x-4 sm:col-span-2">
-            {COLORS.map(([color, label]) => (
-              <Checkbox
-                key={color}
-                label={label}
-                checked={draft.colors.includes(color)}
-                onChange={(event) =>
-                  update({
-                    colors: event.target.checked
-                      ? [...draft.colors, color]
-                      : draft.colors.filter((c) => c !== color),
-                  })
-                }
-              />
-            ))}
+          <div className="sm:col-span-2">
+            <div className="flex flex-wrap gap-x-4">
+              {COLORS.map(([color, label]) => (
+                <Checkbox
+                  key={color}
+                  label={label}
+                  checked={draft.colors.includes(color)}
+                  onChange={(event) =>
+                    update({ colors: toggle(draft.colors, color, event.target.checked) })
+                  }
+                />
+              ))}
+            </div>
+            {/* Said up front: ticking one unticks the others without a word otherwise. */}
+            <p id={`${id}-colors-hint`} className="text-sm text-text-muted">
+              Colorless cannot go with a color: ticking it unticks the colors, and the other way
+              round.
+            </p>
           </div>
         </div>
       </fieldset>

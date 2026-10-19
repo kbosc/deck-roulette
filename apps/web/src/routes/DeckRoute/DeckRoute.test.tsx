@@ -116,14 +116,11 @@ describe("DeckRoute", () => {
       const user = userEvent.setup();
       renderDeck("Atraxa");
 
-      // Colorless next to a color, a partner with no commander: both tidied on save.
-      await user.click(screen.getByRole("checkbox", { name: "White" }));
-      await user.click(screen.getByRole("checkbox", { name: "Colorless" }));
-      await user.click(screen.getByRole("button", { name: "Add a partner" }));
-      await user.type(screen.getByRole("textbox", { name: "Partner" }), "Tymna");
+      // A second commander with no first one: moved up on save.
+      await user.click(screen.getByRole("button", { name: "Add a second commander" }));
+      await user.type(screen.getByRole("textbox", { name: "Second commander" }), "Tymna");
       await user.click(screen.getByRole("button", { name: "Save changes" }));
 
-      expect(screen.getByRole("checkbox", { name: "Colorless" })).toHaveProperty("checked", false);
       expect(screen.getByRole("textbox", { name: "Commander" })).toHaveProperty("value", "Tymna");
       expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull();
     });
@@ -149,6 +146,7 @@ describe("DeckRoute", () => {
       await user.click(screen.getByRole("radio", { name: "5" }));
       const krenko = useLibrary.getState().decks[1];
       await act(() => router.navigate(`/decks/${krenko?.id ?? ""}`));
+      await user.click(screen.getByRole("button", { name: "Leave" }));
 
       expect(screen.getByRole("heading", { level: 1, name: "Krenko" })).toBeDefined();
       expect(screen.getByRole("radio", { name: "Not set" })).toHaveProperty("checked", true);
@@ -187,6 +185,89 @@ describe("DeckRoute", () => {
       "/",
     );
     expect(document.title).toBe("Deck not found · Deck Roulette");
+  });
+
+  describe("leaving with unsaved changes", () => {
+    async function changeSomething() {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      const router = renderDeck("Atraxa");
+      await user.click(screen.getByRole("radio", { name: "4" }));
+      return { user, router };
+    }
+
+    it("asks first, and stays with the changes kept", async () => {
+      const { user } = await changeSomething();
+
+      await user.click(screen.getByRole("link", { name: "Pools" }));
+      expect(screen.getByRole("dialog", { name: "Leave without saving?" })).toBeDefined();
+      await user.click(screen.getByRole("button", { name: "Stay" }));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Atraxa" })).toBeDefined();
+      expect(screen.getByRole("radio", { name: "4" })).toHaveProperty("checked", true);
+    });
+
+    it("goes once told to, focused on the next page's heading", async () => {
+      const { user } = await changeSomething();
+
+      await user.click(screen.getByRole("link", { name: "Pools" }));
+      await user.click(screen.getByRole("button", { name: "Leave" }));
+
+      const heading = screen.getByRole("heading", { level: 1, name: "Pools" });
+      await waitFor(() => expect(document.activeElement).toBe(heading));
+      expect(useLibrary.getState().decks[0]?.bracket).toBeUndefined();
+    });
+
+    it("asks on Back too, and stays", async () => {
+      const { user, router } = await changeSomething();
+
+      await act(() => router.navigate(-1));
+      await user.click(screen.getByRole("button", { name: "Stay" }));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Atraxa" })).toBeDefined();
+    });
+
+    it("asks nothing for a jump within the page, like the skip link", async () => {
+      const { router } = await changeSomething();
+
+      await act(() => router.navigate("#main"));
+
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("asks nothing once the changes are saved", async () => {
+      const { user } = await changeSomething();
+
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+      await user.click(screen.getByRole("link", { name: "Pools" }));
+
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(screen.getByRole("heading", { level: 1, name: "Pools" })).toBeDefined();
+    });
+
+    it("asks nothing when the deck itself is deleted", async () => {
+      const { user } = await changeSomething();
+
+      await user.click(screen.getByRole("button", { name: "Delete deck" }));
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(screen.getByRole("heading", { level: 1, name: "Library" })).toBeDefined();
+    });
+
+    it("has the browser ask before closing or reloading the tab, and only then", async () => {
+      const { user } = await changeSomething();
+      const unload = () => {
+        const event = new Event("beforeunload", { cancelable: true });
+        window.dispatchEvent(event);
+        return event.defaultPrevented;
+      };
+
+      expect(unload()).toBe(true);
+
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+      expect(unload()).toBe(false);
+    });
   });
 
   describe("deleting the deck", () => {
