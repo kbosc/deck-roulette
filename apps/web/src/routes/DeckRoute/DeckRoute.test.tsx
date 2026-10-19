@@ -43,12 +43,117 @@ describe("DeckRoute", () => {
     expect(document.title).toBe("Atraxa · Deck Roulette");
   });
 
-  it("says which details are not set yet", () => {
+  it("says when the deck is in no pool yet", () => {
     useLibrary.getState().addDeck("Atraxa");
     renderDeck("Atraxa");
 
-    expect(screen.getAllByText("Not set")).toHaveLength(3);
-    expect(screen.getByText("In no pool yet")).toBeDefined();
+    expect(screen.getByText("In no pool yet.")).toBeDefined();
+  });
+
+  describe("editing the deck", () => {
+    it("saves the details into the library, and says so", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+
+      await user.type(
+        screen.getByRole("textbox", { name: "Commander" }),
+        "Atraxa, Praetors' Voice",
+      );
+      await user.click(screen.getByRole("radio", { name: "4" }));
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+      expect(useLibrary.getState().decks[0]).toMatchObject({
+        commanders: ["Atraxa, Praetors' Voice"],
+        bracket: 4,
+      });
+      expect(await within(screen.getByRole("status")).findByText("Changes saved.")).toBeDefined();
+    });
+
+    it("renames the page and the tab along with the deck", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+
+      const name = screen.getByRole("textbox", { name: "Name" });
+      await user.clear(name);
+      await user.type(name, "Superfriends{Enter}");
+
+      expect(screen.getByRole("heading", { level: 1, name: "Superfriends" })).toBeDefined();
+      expect(document.title).toBe("Superfriends · Deck Roulette");
+    });
+
+    it("refuses the name of another deck, with the library's wording", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addDeck("Krenko");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+
+      const name = screen.getByRole("textbox", { name: "Name" });
+      await user.clear(name);
+      await user.type(name, "krenko{Enter}");
+
+      expect(screen.getByRole("alert").textContent).toBe(
+        "A deck with this name is already in your library.",
+      );
+      expect(useLibrary.getState().decks[0]?.name).toBe("Atraxa");
+    });
+
+    it("lets the deck keep its own name while other details change", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+
+      await user.click(screen.getByRole("radio", { name: "2" }));
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+      expect(screen.queryByRole("alert")).toBeNull();
+      expect(useLibrary.getState().decks[0]?.bracket).toBe(2);
+    });
+
+    it("shows what was actually saved, once the library has tidied it", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+
+      // Colorless next to a color, a partner with no commander: both tidied on save.
+      await user.click(screen.getByRole("checkbox", { name: "White" }));
+      await user.click(screen.getByRole("checkbox", { name: "Colorless" }));
+      await user.click(screen.getByRole("button", { name: "Add a partner" }));
+      await user.type(screen.getByRole("textbox", { name: "Partner" }), "Tymna");
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+      expect(screen.getByRole("checkbox", { name: "Colorless" })).toHaveProperty("checked", false);
+      expect(screen.getByRole("textbox", { name: "Commander" })).toHaveProperty("value", "Tymna");
+      expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull();
+    });
+
+    it("saves nothing when Enter is pressed without a change", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      const user = userEvent.setup();
+      renderDeck("Atraxa");
+      const before = useLibrary.getState().decks;
+
+      await user.type(screen.getByRole("textbox", { name: "Name" }), "{Enter}");
+
+      // No save button without a change, and HTML only submits on Enter through one.
+      expect(useLibrary.getState().decks).toBe(before);
+    });
+
+    it("starts afresh on another deck's page", async () => {
+      useLibrary.getState().addDeck("Atraxa");
+      useLibrary.getState().addDeck("Krenko");
+      const user = userEvent.setup();
+      const router = renderDeck("Atraxa");
+
+      await user.click(screen.getByRole("radio", { name: "5" }));
+      const krenko = useLibrary.getState().decks[1];
+      await act(() => router.navigate(`/decks/${krenko?.id ?? ""}`));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Krenko" })).toBeDefined();
+      expect(screen.getByRole("radio", { name: "Not set" })).toHaveProperty("checked", true);
+      expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull();
+    });
   });
 
   it("links to every pool holding the deck, and to none other", () => {

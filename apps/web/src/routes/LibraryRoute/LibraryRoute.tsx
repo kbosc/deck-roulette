@@ -1,14 +1,9 @@
-import type { NameProblem } from "@deck-roulette/domain";
 import { DeckList } from "@deck-roulette/ui";
 import { Link } from "react-router";
+import { deckNameMessages } from "../../app/deckNames";
 import { NameForm } from "../../components/NameForm";
 import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
-
-const nameMessages: Record<NameProblem, string> = {
-  empty: "Give the deck a name.",
-  duplicate: "A deck with this name is already in your library.",
-};
 
 export function LibraryRoute() {
   const decks = useLibrary((state) => state.decks);
@@ -25,7 +20,7 @@ export function LibraryRoute() {
           label="Deck name"
           placeholder="Atraxa, Praetors' Voice"
           existingNames={deckNames}
-          messages={nameMessages}
+          messages={deckNameMessages}
           onCreate={addDeck}
         />
       </div>

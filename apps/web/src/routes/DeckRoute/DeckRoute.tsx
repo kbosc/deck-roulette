@@ -1,7 +1,9 @@
-import type { Deck } from "@deck-roulette/domain";
-import { Button, ConfirmDialog, DeckDetails } from "@deck-roulette/ui";
+import type { Deck, Pool } from "@deck-roulette/domain";
+import { validateName } from "@deck-roulette/domain";
+import { Button, ConfirmDialog, DeckForm } from "@deck-roulette/ui";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
+import { deckNameMessages } from "../../app/deckNames";
 import { useAnnounce } from "../../components/Announcer";
 import { DeckNotFound } from "../../components/DeckNotFound";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
@@ -32,21 +34,64 @@ export function DeckRoute() {
       <PageHeading>{deck.name}</PageHeading>
 
       <div className="mt-6">
-        <DeckDetails
-          deck={deck}
-          pools={pools}
-          renderPoolName={(pool) => (
-            <Link to={`/pools/${pool.id}`} className={LINK}>
-              {pool.name}
-            </Link>
-          )}
-        />
+        {/* Keyed: another deck's page must not inherit this one's unsaved changes. */}
+        <EditDeck key={deck.id} deck={deck} />
       </div>
+
+      <DeckPools pools={pools} />
 
       <div className="mt-6">
         <DeleteDeck deck={deck} />
       </div>
     </>
+  );
+}
+
+function EditDeck({ deck }: { readonly deck: Deck }) {
+  const decks = useLibrary((state) => state.decks);
+  const updateDeck = useLibrary((state) => state.updateDeck);
+  const announce = useAnnounce();
+  // Itself left out: keeping its own name is not a duplicate.
+  const otherNames = decks.filter((d) => d.id !== deck.id).map((d) => d.name);
+
+  return (
+    <DeckForm
+      deck={deck}
+      checkName={(name) => {
+        const problem = validateName(name, otherNames);
+        return problem === null ? undefined : deckNameMessages[problem];
+      }}
+      onSave={(edit) => {
+        updateDeck(deck.id, edit);
+        announce("Changes saved.");
+      }}
+    />
+  );
+}
+
+function DeckPools({ pools }: { readonly pools: readonly Pool[] }) {
+  return (
+    <section aria-labelledby="deck-pools" className="mt-8">
+      <h2 id="deck-pools" className="text-lg font-semibold">
+        Pools
+      </h2>
+      {pools.length === 0 ? (
+        <p className="mt-2 text-text-muted">In no pool yet.</p>
+      ) : (
+        <ul className="mt-2 flex flex-col gap-1">
+          {pools.map((pool) => (
+            <li key={pool.id}>
+              <Link
+                to={`/pools/${pool.id}`}
+                className={`inline-flex min-h-11 items-center ${LINK}`}
+              >
+                {pool.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
