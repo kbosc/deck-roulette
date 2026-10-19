@@ -10,6 +10,11 @@
   "easing": {
     "standard": { "$type": "cubicBezier", "$value": "cubic-bezier(0.2, 0, 0, 1)" },
     "decelerate": { "$type": "cubicBezier", "$value": "cubic-bezier(0, 0, 0, 1)" },
-    "accelerate": { "$type": "cubicBezier", "$value": "cubic-bezier(0.3, 0, 1, 1)" }
+    "accelerate": { "$type": "cubicBezier", "$value": "cubic-bezier(0.3, 0, 1, 1)" },
+    "overshoot": {
+      "$type": "cubicBezier",
+      "$value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "$description": "Goes past its target and settles back: a small bounce on arrival, for a selection sliding into place."
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 
 export type SegmentedControlOption<T extends string> = {
   readonly value: T;
@@ -22,18 +22,59 @@ export function SegmentedControl<T extends string>({
 }: SegmentedControlProps<T>) {
   // A shared name would make two controls on the same page one radio group.
   const name = useId();
+  const groupRef = useRef<HTMLFieldSetElement>(null);
+  // Where the checked option sits: the indicator slides there. null until measured.
+  const [slot, setSlot] = useState<{ left: number; width: number } | null>(null);
+  // No slide on the first placement: it would sweep in from the left edge.
+  const [placed, setPlaced] = useState(false);
+
+  useLayoutEffect(() => {
+    const group = groupRef.current;
+    if (group === null) return;
+
+    function measure() {
+      const checked = group?.querySelector<HTMLElement>("label:has(:checked)");
+      if (checked == null) return;
+      setSlot({ left: checked.offsetLeft, width: checked.offsetWidth });
+    }
+
+    measure();
+    // Fonts loading or the layout wrapping move the options without a change of value.
+    const observer = new ResizeObserver(measure);
+    observer.observe(group);
+    return () => observer.disconnect();
+  }, [value]);
+
+  useLayoutEffect(() => {
+    if (slot === null || placed) return;
+    // A frame later: the first position must land before the transition is switched on.
+    const frame = requestAnimationFrame(() => setPlaced(true));
+    return () => cancelAnimationFrame(frame);
+  }, [slot, placed]);
 
   return (
-    <fieldset className="inline-flex rounded-md border border-border bg-surface-sunken p-1">
+    <fieldset
+      ref={groupRef}
+      className="relative inline-flex rounded-md border border-border bg-surface-sunken p-1"
+    >
       <legend className="sr-only">{legend}</legend>
+      {/* Decoration only: the radios say which option is checked. */}
+      <span
+        aria-hidden="true"
+        className={[
+          "absolute inset-y-1 left-0 rounded-sm border border-border-strong bg-surface-raised",
+          slot === null ? "invisible" : "",
+          // Durations are not in the Tailwind theme: `duration-slow` would silently be 150ms.
+          placed ? "transition-all duration-(--duration-slow) ease-overshoot" : "",
+        ].join(" ")}
+        style={slot === null ? undefined : { translate: `${slot.left}px 0`, width: slot.width }}
+      />
       {options.map((option) => (
         <label
           key={option.value}
           className={[
-            "flex min-h-11 cursor-pointer items-center rounded-sm px-3 text-sm font-medium",
-            "border border-transparent text-text-muted hover:text-text",
-            // The fill alone is under 3:1 against the track: the border carries the state.
-            "has-checked:border-border-strong has-checked:bg-surface-raised has-checked:text-text",
+            "relative flex min-h-11 cursor-pointer items-center rounded-sm px-3 text-sm font-medium",
+            "text-text-muted hover:text-text has-checked:text-text",
             // An outline rather than a ring: forced-colors mode keeps outlines, drops shadows.
             "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus-ring",
           ].join(" ")}
