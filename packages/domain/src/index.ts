@@ -12,7 +12,7 @@ export { createDeck, createPool, validateName } from "./creation";
 export type { DeckId, PoolId } from "./ids";
 export { toDeckId, toPoolId } from "./ids";
 export type { DeckEdit, Library } from "./library";
-export { deleteDeck, addDeck, addPool, deletePool, updateDeck } from "./library";
+export { deleteDeck, addDeck, addPool, deletePool, renamePool, updateDeck } from "./library";
 export type { Color, ColorIdentity, Bracket, Commanders, Deck, Pool } from "./types";
 export type { Random, PoolDrawState, DrawResult } from "./draw";
 export {

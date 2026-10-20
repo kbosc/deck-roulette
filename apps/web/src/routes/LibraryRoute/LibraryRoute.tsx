@@ -1,6 +1,6 @@
 import { DeckList } from "@deck-roulette/ui";
 import { Link } from "react-router";
-import { deckNameMessages } from "../../app/deckNames";
+import { deckNameMessages } from "../../app/names";
 import { NameForm } from "../../components/NameForm";
 import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";

@@ -1,32 +1,23 @@
-import type { NameProblem, Pool } from "@deck-roulette/domain";
-import { Button, ConfirmDialog, EmptyState, PoolCard } from "@deck-roulette/ui";
-import { useId, useRef, useState } from "react";
+import type { Pool } from "@deck-roulette/domain";
+import { Button, EmptyState, PoolCard } from "@deck-roulette/ui";
+import { useId, useState } from "react";
 import { Link } from "react-router";
+import { poolNameMessages } from "../../app/names";
 import { NameForm } from "../../components/NameForm";
 import { PageHeading } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
-
-const nameMessages: Record<NameProblem, string> = {
-  empty: "Give the pool a name.",
-  duplicate: "A pool with this name already exists.",
-};
 
 export function PoolsRoute() {
   const decks = useLibrary((state) => state.decks);
   const pools = useLibrary((state) => state.pools);
   const addPool = useLibrary((state) => state.addPool);
-  const removePool = useLibrary((state) => state.removePool);
   const drawFromPool = useLibrary((state) => state.drawFromPool);
   const resetPool = useLibrary((state) => state.resetPool);
   // Not a selector: one returning a new array would re-render on every store change.
   const poolNames = pools.map((pool) => pool.name);
 
-  // Same pattern as the library: one dialog, kept mounted, driven by `isAsking`.
-  const [poolToDelete, setPoolToDelete] = useState<Pool | null>(null);
-  const [isAsking, setIsAsking] = useState(false);
   const [announcement, setAnnouncement] = useState("");
 
-  const headingRef = useRef<HTMLHeadingElement>(null);
   const listHeadingId = useId();
 
   function draw(pool: Pool) {
@@ -37,16 +28,9 @@ export function PoolsRoute() {
     setAnnouncement(`${deck?.name ?? "A deck"}, from ${pool.name}.`);
   }
 
-  function confirmDeletion() {
-    if (poolToDelete === null) return;
-
-    removePool(poolToDelete.id);
-    setAnnouncement(`${poolToDelete.name} deleted.`);
-  }
-
   return (
     <>
-      <PageHeading ref={headingRef}>Pools</PageHeading>
+      <PageHeading>Pools</PageHeading>
       <p className="mt-2 text-text-muted">The sets of decks you draw from.</p>
 
       <div className="mt-6">
@@ -54,7 +38,7 @@ export function PoolsRoute() {
           label="Pool name"
           placeholder="Thursday table"
           existingNames={poolNames}
-          messages={nameMessages}
+          messages={poolNameMessages}
           onCreate={(name) => {
             addPool(name);
             setAnnouncement("");
@@ -85,19 +69,15 @@ export function PoolsRoute() {
                 <li key={pool.id}>
                   <PoolCard
                     pool={pool}
-                    // Empty pool: "Choose decks" is the single way in, no second link.
-                    {...(pool.deckIds.length === 0
-                      ? {}
-                      : {
-                          renderTitle: (name: string) => (
-                            <Link
-                              to={`/pools/${pool.id}`}
-                              className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
-                            >
-                              {name}
-                            </Link>
-                          ),
-                        })}
+                    // Always a link: renaming and deleting live on the pool's page.
+                    renderTitle={(name) => (
+                      <Link
+                        to={`/pools/${pool.id}`}
+                        className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus-ring"
+                      >
+                        {name}
+                      </Link>
+                    )}
                     emptyAction={
                       <Button asChild size="sm" variant="secondary">
                         <Link to={`/pools/${pool.id}/decks`}>Choose decks</Link>
@@ -108,19 +88,6 @@ export function PoolsRoute() {
                       resetPool(pool.id);
                       setAnnouncement("");
                     }}
-                    actions={
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setPoolToDelete(pool);
-                          setIsAsking(true);
-                        }}
-                      >
-                        {/* The space stays outside the span, or the name becomes "DeleteThursday table". */}
-                        Delete <span className="sr-only">{pool.name}</span>
-                      </Button>
-                    }
                   />
                 </li>
               ))}
@@ -128,19 +95,6 @@ export function PoolsRoute() {
           </>
         )}
       </div>
-
-      {poolToDelete === null ? null : (
-        <ConfirmDialog
-          open={isAsking}
-          onOpenChange={setIsAsking}
-          title={`Delete ${poolToDelete.name}?`}
-          description="The pool and its draw history will be lost. Its decks stay in your library."
-          confirmLabel="Delete"
-          onConfirm={confirmDeletion}
-          // The opener disappears with its row: focus would fall to the body.
-          onConfirmedFocus={() => headingRef.current?.focus()}
-        />
-      )}
     </>
   );
 }

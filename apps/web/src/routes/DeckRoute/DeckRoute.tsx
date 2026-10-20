@@ -3,7 +3,7 @@ import { validateName } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, DeckForm } from "@deck-roulette/ui";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Link, useBeforeUnload, useBlocker, useNavigate, useParams } from "react-router";
-import { deckNameMessages } from "../../app/deckNames";
+import { deckNameMessages } from "../../app/names";
 import { useAnnounce } from "../../components/Announcer";
 import { DeckNotFound } from "../../components/DeckNotFound";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";

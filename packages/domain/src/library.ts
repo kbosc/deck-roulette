@@ -54,6 +54,21 @@ export function deletePool(library: Library, poolId: PoolId): Library {
   return { ...library, pools };
 }
 
+export function renamePool(library: Library, poolId: PoolId, name: string): Library {
+  const pool = library.pools.find((p) => p.id === poolId);
+  if (pool === undefined) throw new RangeError(`no pool with id ${poolId}`);
+
+  const trimmed = name.trim();
+  if (trimmed === "") throw new TypeError("a pool name cannot be empty");
+  // Itself excluded: changing only the case of its own name is fine.
+  if (library.pools.some((p) => p.id !== poolId && isSameName(p.name, trimmed))) {
+    throw new TypeError("a pool with this name already exists");
+  }
+
+  const renamed = { ...pool, name: trimmed };
+  return { ...library, pools: library.pools.map((p) => (p.id === poolId ? renamed : p)) };
+}
+
 /** What the deck form edits. Complete, not a patch: a detail left out is unset. */
 export type DeckEdit = Omit<DeckInput, "url">;
 

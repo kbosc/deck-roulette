@@ -11,6 +11,7 @@ import {
   deletePool,
   drawDeck,
   removeDeckFromPool as poolWithoutDeck,
+  renamePool,
   resetPool,
   updateDeck,
 } from "@deck-roulette/domain";
@@ -22,6 +23,7 @@ type LibraryState = Library & {
   readonly updateDeck: (deckId: DeckId, edit: DeckEdit) => void;
   readonly removeDeck: (deckId: DeckId) => void;
   readonly addPool: (name: string) => void;
+  readonly renamePool: (poolId: PoolId, name: string) => void;
   readonly removePool: (poolId: PoolId) => void;
   readonly addDeckToPool: (poolId: PoolId, deckId: DeckId) => void;
   readonly removeDeckFromPool: (poolId: PoolId, deckId: DeckId) => void;
@@ -83,6 +85,10 @@ export const useLibrary = create<LibraryState>()(
       addPool: (name) => {
         const pool = createPool(name, deps);
         set((state) => addPoolToLibrary(state, pool));
+      },
+
+      renamePool: (poolId, name) => {
+        set((state) => renamePool(state, poolId, name));
       },
 
       removePool: (poolId) => {

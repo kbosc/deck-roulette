@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDeck, addPool, deleteDeck, deletePool, updateDeck } from "./library";
+import { addDeck, addPool, deleteDeck, deletePool, renamePool, updateDeck } from "./library";
 import type { DeckEdit, Library } from "./library";
 import { toDeckId, toPoolId } from "./ids";
 import { makeDeck, makePool } from "./test-utils";
@@ -291,5 +291,61 @@ describe("updateDeck", () => {
     updateDeck(library, A, { name: "Renamed", bracket: 5 });
 
     expect(library).toEqual(makeEditableLibrary());
+  });
+});
+
+describe("renamePool", () => {
+  const CHILL = toPoolId("chill");
+
+  function chill(library: Library) {
+    return library.pools.find((pool) => pool.id === CHILL);
+  }
+
+  it("renames the pool, trimmed", () => {
+    expect(chill(renamePool(makeLibrary(), CHILL, "  Friday night "))?.name).toBe("Friday night");
+  });
+
+  it("keeps its decks and its draw history", () => {
+    const pool = chill(renamePool(makeLibrary(), CHILL, "Friday night"));
+
+    expect(pool?.deckIds).toEqual(["a", "b"]);
+    expect(pool?.drawnDeckIds).toEqual(["a"]);
+  });
+
+  it("refuses an empty name", () => {
+    expect(() => renamePool(makeLibrary(), CHILL, "  ")).toThrow(TypeError);
+  });
+
+  it("refuses the name of another pool, whatever its case", () => {
+    expect(() => renamePool(makeLibrary(), CHILL, "CEDH")).toThrow(TypeError);
+  });
+
+  it("lets a pool change only the case of its own name", () => {
+    expect(chill(renamePool(makeLibrary(), CHILL, "CHILL NIGHT"))?.name).toBe("CHILL NIGHT");
+  });
+
+  it("allows a pool named like a deck: they do not share names", () => {
+    expect(chill(renamePool(makeLibrary(), CHILL, "Atraxa"))?.name).toBe("Atraxa");
+  });
+
+  it("refuses a pool that does not exist", () => {
+    expect(() => renamePool(makeLibrary(), toPoolId("zzz"), "Ghost")).toThrow(RangeError);
+  });
+
+  it("leaves the decks and the other pools as they were, by reference", () => {
+    const before = makeLibrary();
+
+    const after = renamePool(before, CHILL, "Friday night");
+
+    expect(after.decks).toBe(before.decks);
+    expect(after.pools[1]).toBe(before.pools[1]);
+  });
+
+  it("does not mutate the given library", () => {
+    const library = makeLibrary();
+
+    renamePool(library, CHILL, "Friday night");
+
+    expect(library).toEqual(makeLibrary());
   });
 });

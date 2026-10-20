@@ -1,5 +1,5 @@
 import { addDeckToPool } from "@deck-roulette/domain";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
@@ -7,12 +7,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { routes } from "../../app/routes";
 import { useLibrary } from "../../store/library";
 
+/** Opened from the list of pools, as in the app: Back has somewhere to go. */
 function renderPool(poolName: string) {
   const pool = useLibrary.getState().pools.find((p) => p.name === poolName);
   const router = createMemoryRouter(routes, {
-    initialEntries: [`/pools/${pool?.id ?? "unknown"}`],
+    initialEntries: ["/pools", `/pools/${pool?.id ?? "unknown"}`],
   });
-  return render(<RouterProvider router={router} />);
+  render(<RouterProvider router={router} />);
+  return router;
 }
 
 function seedPool(poolName: string, deckNames: readonly string[]) {
@@ -133,9 +135,9 @@ describe("PoolRoute", () => {
 
     it("has no page before the first one, nor after the last", () => {
       seedBook();
-      const first = renderPool("Friday night");
+      renderPool("Friday night");
       expect(screen.queryByRole("link", { name: /^Previous page/ })).toBeNull();
-      first.unmount();
+      cleanup();
 
       renderPool("Thursday table");
       expect(screen.queryByRole("link", { name: /^Next page/ })).toBeNull();
@@ -150,6 +152,19 @@ describe("PoolRoute", () => {
 
       fireEvent.keyDown(document.body, { key: "ArrowLeft" });
       expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    it("leaves arrows alone while a dialog is open over the page", async () => {
+      seedBook();
+      const user = userEvent.setup();
+      renderPool("Sunday");
+
+      await user.click(screen.getByRole("button", { name: "Delete pool" }));
+      fireEvent.keyDown(screen.getByRole("button", { name: "Cancel" }), { key: "ArrowRight" });
+
+      // Hidden: the modal hides the page behind it from assistive tech.
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday", hidden: true })).toBeDefined();
+      expect(screen.getByRole("dialog", { name: "Delete Sunday?" })).toBeDefined();
     });
 
     // Alt+Left is the browser's own Back; the others belong to the OS or to text selection.
@@ -290,6 +305,166 @@ describe("PoolRoute", () => {
       await user.click(screen.getByRole("link", { name: "All pools" }));
 
       expect(startViewTransition).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("about this pool", () => {
+    function nameField() {
+      return screen.getByRole("textbox", { name: "Name" });
+    }
+
+    it("offers to rename only once the name has changed", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      expect(screen.queryByRole("button", { name: "Rename" })).toBeNull();
+      await user.type(nameField(), "!");
+      expect(screen.getByRole("button", { name: "Rename" })).toBeDefined();
+    });
+
+    it("renames the pool, its page and its tab, and says so", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.clear(nameField());
+      await user.type(nameField(), " Friday night {Enter}");
+
+      expect(useLibrary.getState().pools[0]?.name).toBe("Friday night");
+      expect(screen.getByRole("heading", { level: 1, name: "Friday night" })).toBeDefined();
+      expect(document.title).toBe("Friday night · Deck Roulette");
+      expect(nameField()).toHaveProperty("value", "Friday night");
+      expect(await screen.findByText("Renamed to Friday night.")).toBeDefined();
+    });
+
+    it("refuses the name of another pool, next to the field, with focus there", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      useLibrary.getState().addPool("Sunday");
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.clear(nameField());
+      await user.type(nameField(), "sunday");
+      await user.click(screen.getByRole("button", { name: "Rename" }));
+
+      expect(screen.getByRole("alert").textContent).toBe("A pool with this name already exists.");
+      expect(document.activeElement).toBe(nameField());
+      expect(useLibrary.getState().pools[0]?.name).toBe("Thursday table");
+    });
+
+    it("renames nothing on Enter without a change", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+      const before = useLibrary.getState().pools;
+
+      // A form with a single text field submits on Enter even without a submit button.
+      await user.type(nameField(), "{Enter}");
+
+      expect(useLibrary.getState().pools).toBe(before);
+    });
+
+    it("explains an empty name after a try, and drops it once fixed", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.clear(nameField());
+      await user.click(screen.getByRole("button", { name: "Rename" }));
+      expect(screen.getByRole("alert").textContent).toBe("Give the pool a name.");
+
+      await user.type(nameField(), "F");
+      expect(screen.queryByRole("alert")).toBeNull();
+    });
+
+    it("lets the pool change only the case of its own name", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.clear(nameField());
+      await user.type(nameField(), "THURSDAY TABLE{Enter}");
+
+      expect(screen.queryByRole("alert")).toBeNull();
+      expect(useLibrary.getState().pools[0]?.name).toBe("THURSDAY TABLE");
+    });
+
+    it("puts the name back, and focus in the field, when discarded", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.type(nameField(), "!");
+      await user.click(screen.getByRole("button", { name: "Discard" }));
+
+      expect(nameField()).toHaveProperty("value", "Thursday table");
+      expect(document.activeElement).toBe(nameField());
+    });
+
+    it("asks before deleting, saying the decks survive", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      const trigger = screen.getByRole("button", { name: "Delete pool" });
+      await user.click(trigger);
+      expect(screen.getByRole("dialog", { name: "Delete Thursday table?" }).textContent).toContain(
+        "Its decks stay in your library.",
+      );
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+      expect(useLibrary.getState().pools).toHaveLength(1);
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("deletes it, keeps its decks, and lands on the pools, focused and told", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.click(screen.getByRole("button", { name: "Delete pool" }));
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+
+      expect(useLibrary.getState().pools).toHaveLength(0);
+      expect(useLibrary.getState().decks).toHaveLength(1);
+      const heading = screen.getByRole("heading", { level: 1, name: "Pools" });
+      await waitFor(() => expect(document.activeElement).toBe(heading));
+      expect(await screen.findByText("Thursday table deleted.")).toBeDefined();
+    });
+
+    it("never shows the pool as missing on the way out", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+      await user.click(screen.getByRole("button", { name: "Delete pool" }));
+      const setTitle = vi.spyOn(document, "title", "set");
+
+      // Outside act(): it would batch the navigation with the deletion and hide the race.
+      const actEnvironment = Reflect.get(globalThis, "IS_REACT_ACT_ENVIRONMENT");
+      Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", false);
+      try {
+        screen.getByRole("button", { name: "Delete" }).click();
+        await screen.findByRole("heading", { level: 1, name: "Pools" });
+      } finally {
+        Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", actEnvironment);
+      }
+
+      const titles = setTitle.mock.calls.map(([title]) => title);
+      setTitle.mockRestore();
+      expect(titles).not.toContain("Pool not found · Deck Roulette");
+    });
+
+    it("leaves no way back to the deleted pool's page", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      const router = renderPool("Thursday table");
+
+      await user.click(screen.getByRole("button", { name: "Delete pool" }));
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+      await act(() => router.navigate(-1));
+
+      expect(screen.queryByRole("heading", { name: "This pool does not exist" })).toBeNull();
     });
   });
 });

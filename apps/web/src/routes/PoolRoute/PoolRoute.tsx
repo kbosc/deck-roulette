@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
 import { PoolNotFound } from "../../components/PoolNotFound";
+import { PoolSettings } from "./PoolSettings";
 import { useLibrary } from "../../store/library";
 
 export function PoolRoute() {
@@ -53,7 +54,9 @@ function belongsToFocus(event: KeyboardEvent): boolean {
   const target = event.target;
   return (
     target instanceof HTMLElement &&
-    (target.isContentEditable || target.closest("input, textarea, select") !== null)
+    (target.isContentEditable ||
+      // A dialog over the page owns the keyboard: turning would unmount it under the user.
+      target.closest("input, textarea, select, [role='dialog'], [role='alertdialog']") !== null)
   );
 }
 
@@ -151,6 +154,8 @@ function PoolPage({ pool }: { readonly pool: Pool }) {
           <PoolDeckList pool={pool} decks={decks} />
         </PoolCard>
       </div>
+
+      <PoolSettings pool={pool} />
     </>
   );
 }

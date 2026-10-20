@@ -115,6 +115,19 @@ describe("useLibrary", () => {
     });
   });
 
+  describe("renaming a pool", () => {
+    it("renames it and keeps its decks", () => {
+      const { deckId, poolId } = poolWithOneDeck();
+
+      useLibrary.getState().renamePool(poolId, "Friday night");
+
+      expect(useLibrary.getState().pools[0]).toMatchObject({
+        name: "Friday night",
+        deckIds: [deckId],
+      });
+    });
+  });
+
   describe("removing a pool", () => {
     it("takes the pool out and keeps its decks in the library", () => {
       useLibrary.getState().addDeck("Atraxa");

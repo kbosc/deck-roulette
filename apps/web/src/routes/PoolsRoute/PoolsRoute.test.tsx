@@ -56,8 +56,8 @@ describe("PoolsRoute", () => {
     expect(within(list).getByRole("heading", { name: "Thursday table" })).toBeDefined();
   });
 
-  it("links the name of a pool that has decks to its page", () => {
-    seedPoolWithDeck("Thursday table", "Atraxa");
+  it("links every pool's name to its page, empty or not", () => {
+    useLibrary.getState().addPool("Thursday table");
     renderPools();
 
     const pool = useLibrary.getState().pools[0];
@@ -66,7 +66,7 @@ describe("PoolsRoute", () => {
     );
   });
 
-  it("offers a single way to choose the decks of an empty pool", async () => {
+  it("offers to choose the decks of an empty pool", async () => {
     const user = userEvent.setup();
     renderPools();
 
@@ -76,7 +76,6 @@ describe("PoolsRoute", () => {
     expect(screen.getByRole("link", { name: "Choose decks" }).getAttribute("href")).toBe(
       `/pools/${pool?.id ?? ""}/decks`,
     );
-    expect(screen.queryByRole("link", { name: "Thursday table" })).toBeNull();
   });
 
   it("introduces the pools with a level 2 heading, so no level is skipped", async () => {
@@ -99,56 +98,11 @@ describe("PoolsRoute", () => {
     expect(useLibrary.getState().pools).toHaveLength(1);
   });
 
-  it("deletes a pool once confirmed, and keeps its decks in the library", async () => {
+  it("leaves renaming and deleting to the pool's own page", () => {
     seedPoolWithDeck("Thursday table", "Atraxa");
-    const user = userEvent.setup();
     renderPools();
 
-    await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(useLibrary.getState().pools).toHaveLength(0);
-    expect(useLibrary.getState().decks).toHaveLength(1);
-    expect(within(screen.getByRole("main")).getByRole("status").textContent).toBe(
-      "Thursday table deleted.",
-    );
-  });
-
-  it("says the decks survive, before asking to delete", async () => {
-    seedPoolWithDeck("Thursday table", "Atraxa");
-    const user = userEvent.setup();
-    renderPools();
-
-    await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
-
-    expect(screen.getByRole("dialog", { name: "Delete Thursday table?" }).textContent).toContain(
-      "Its decks stay in your library.",
-    );
-  });
-
-  it("keeps the pool and returns to its delete button when cancelled", async () => {
-    seedPoolWithDeck("Thursday table", "Atraxa");
-    const user = userEvent.setup();
-    renderPools();
-
-    await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-
-    expect(useLibrary.getState().pools).toHaveLength(1);
-    expect(document.activeElement).toBe(
-      screen.getByRole("button", { name: "Delete Thursday table" }),
-    );
-  });
-
-  it("puts focus on the page heading after a deletion", async () => {
-    seedPoolWithDeck("Thursday table", "Atraxa");
-    const user = userEvent.setup();
-    renderPools();
-
-    await user.click(screen.getByRole("button", { name: "Delete Thursday table" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-
-    expect(document.activeElement).toBe(screen.getByRole("heading", { level: 1 }));
+    expect(screen.queryByRole("button", { name: /delete|rename/i })).toBeNull();
   });
 
   it("names the deck that was drawn", async () => {
