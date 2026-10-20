@@ -142,15 +142,30 @@ et du branchement — aucune logique métier, aucun style en dur.
 
 - [x] Vite + React 19 + TypeScript strict
 - [ ] Routage : liste des pools · détail d'un pool · bibliothèque de decks · réglages — _bibliothèque et pools en place_
-- [ ] CRUD des decks avec formulaires validés (nom obligatoire, pas de doublon, casse ignorée) — _création et suppression faites, édition à venir_
+- [x] CRUD des decks avec formulaires validés (nom obligatoire, pas de doublon, casse ignorée)
 - [ ] Création et édition d'un pool, sélection des decks qui le composent
 - [ ] États vides travaillés partout
 - [x] Confirmation sur les suppressions
 - [ ] Page d'un deck (`/decks/:id`) : édition, image du commandant (Scryfall par défaut ou
-      personnelle), stats ; la suppression y vit, dans une zone à part en bas de page
-- [ ] Suppression et renommage d'un pool déplacés sur sa page : la liste reste un sommaire
+      personnelle), stats ; la suppression y vit, dans une zone à part en bas de page —
+      _édition sur place et suppression faites ; image en phase 7, stats en phase 8_
+- [x] Suppression et renommage d'un pool déplacés sur sa page : la liste reste un sommaire
 - [ ] Sélection multiple dans la bibliothèque et le sommaire des pools (comme une boîte mail)
       pour supprimer plusieurs decks ou pools d'un coup
+
+> **Point du 19/10/2026.** La fiche d'un deck s'édite sur place, sans mode « édition » :
+> de vrais champs, soulignés comme les blancs d'un formulaire papier (un texte qui devient
+> champ au clic n'existe que pour la souris), et une barre « Save » qui n'apparaît qu'en cas
+> de changement. Quitter la page avec des modifications non enregistrées demande
+> confirmation (`useBlocker`, et `useBeforeUnload` pour l'onglet). Le renommage et la
+> suppression d'un pool vivent sur sa page ; chaque nom de pool est un lien, même vide.
+>
+> **Incidents.** (1) « Deck not found » affiché une frame pendant la suppression : la
+> navigation de React Router passe par une transition, la mise à jour du store non. Corrigé
+> par `navigate(..., { flushSync: true })`, qui exige le `RouterProvider` de
+> `react-router/dom` — sinon l'option est ignorée sans un mot. (2) Le test `act()` masquait
+> la course : il regroupe tout ; le test qui la prouve clique hors `act()`. (3) `duration-slow`
+> ne générait aucun CSS : les durées ne sont pas dans le thème Tailwind.
 
 > **Décision du 16/10/2026 : on supprime depuis la page de l'élément, pas depuis la liste.**
 > Les listes restent des sommaires calmes ; le seul bouton rouge plein est celui de la
