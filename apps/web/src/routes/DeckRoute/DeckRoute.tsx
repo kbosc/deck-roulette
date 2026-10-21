@@ -1,11 +1,12 @@
 import type { Deck, Pool } from "@deck-roulette/domain";
 import { validateName } from "@deck-roulette/domain";
 import { Button, ConfirmDialog, DeckForm } from "@deck-roulette/ui";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { Link, useBeforeUnload, useBlocker, useNavigate, useParams } from "react-router";
+import { useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
 import { deckNameMessages } from "../../app/names";
 import { useAnnounce } from "../../components/Announcer";
 import { DeckNotFound } from "../../components/DeckNotFound";
+import { useUnsavedChanges } from "../../components/UnsavedChanges";
 import { PageHeading, usePageTitle } from "../../components/PageHeading";
 import { useLibrary } from "../../store/library";
 
@@ -32,22 +33,7 @@ export function DeckRoute() {
 
 function DeckPage({ deck, pools }: { readonly deck: Deck; readonly pools: readonly Pool[] }) {
   const [dirty, setDirty] = useState(false);
-  // Deleting leaves on purpose: the changes go with the deck, nothing to warn about.
-  const leaving = useRef(false);
-
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      dirty && !leaving.current && currentLocation.pathname !== nextLocation.pathname,
-  );
-  // Closing the tab or reloading never reaches the router: only the browser can ask.
-  useBeforeUnload(
-    useCallback(
-      (event) => {
-        if (dirty) event.preventDefault();
-      },
-      [dirty],
-    ),
-  );
+  const unsaved = useUnsavedChanges(dirty, `Your changes to ${deck.name} will be lost.`);
 
   return (
     <>
@@ -63,25 +49,11 @@ function DeckPage({ deck, pools }: { readonly deck: Deck; readonly pools: readon
       <DeckPools pools={pools} />
 
       <div className="mt-6">
-        <DeleteDeck deck={deck} onLeave={() => (leaving.current = true)} />
+        {/* Deleting drops the changes with the deck: nothing to warn about. */}
+        <DeleteDeck deck={deck} onLeave={unsaved.leaveOnPurpose} />
       </div>
 
-      <ConfirmDialog
-        open={blocker.state === "blocked"}
-        onOpenChange={(open) => {
-          if (!open && !leaving.current) blocker.reset?.();
-        }}
-        title="Leave without saving?"
-        description={`Your changes to ${deck.name} will be lost.`}
-        confirmLabel="Leave"
-        cancelLabel="Stay"
-        onConfirm={() => {
-          leaving.current = true;
-          blocker.proceed?.();
-        }}
-        // The next page focuses its heading; Radix would pull focus back to the link clicked.
-        onConfirmedFocus={() => undefined}
-      />
+      {unsaved.dialog}
     </>
   );
 }

@@ -402,6 +402,62 @@ describe("PoolRoute", () => {
       expect(document.activeElement).toBe(nameField());
     });
 
+    it("asks before turning the page with a new name not saved, and stays if told", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      useLibrary.getState().addPool("Sunday");
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.type(nameField(), "!");
+      await user.click(screen.getByRole("link", { name: /^Next page/ }));
+      expect(screen.getByRole("dialog", { name: "Leave without saving?" }).textContent).toContain(
+        "The new name of Thursday table will be lost.",
+      );
+      await user.click(screen.getByRole("button", { name: "Stay" }));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Thursday table" })).toBeDefined();
+      expect(nameField()).toHaveProperty("value", "Thursday table!");
+    });
+
+    it("asks too when the page is turned with an arrow key", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      useLibrary.getState().addPool("Sunday");
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.type(nameField(), "!");
+      // Focus elsewhere than the field, which keeps its arrows for the caret.
+      fireEvent.keyDown(document.body, { key: "ArrowRight" });
+
+      expect(await screen.findByRole("dialog", { name: "Leave without saving?" })).toBeDefined();
+    });
+
+    it("turns the page once told to leave", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      useLibrary.getState().addPool("Sunday");
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.type(nameField(), "!");
+      await user.click(screen.getByRole("link", { name: /^Next page/ }));
+      await user.click(screen.getByRole("button", { name: "Leave" }));
+
+      expect(screen.getByRole("heading", { level: 1, name: "Sunday" })).toBeDefined();
+    });
+
+    it("asks nothing when the pool itself is deleted with a name not saved", async () => {
+      seedPool("Thursday table", ["Atraxa"]);
+      const user = userEvent.setup();
+      renderPool("Thursday table");
+
+      await user.type(nameField(), "!");
+      await user.click(screen.getByRole("button", { name: "Delete pool" }));
+      await user.click(screen.getByRole("button", { name: "Delete" }));
+
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(screen.getByRole("heading", { level: 1, name: "Pools" })).toBeDefined();
+    });
+
     it("asks before deleting, saying the decks survive", async () => {
       seedPool("Thursday table", ["Atraxa"]);
       const user = userEvent.setup();

@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { poolNameMessages } from "../../app/names";
 import { useAnnounce } from "../../components/Announcer";
+import { useUnsavedChanges } from "../../components/UnsavedChanges";
 import { useLibrary } from "../../store/library";
 
 /** Renaming and deleting live here, on the pool's own page: the list stays a table of contents. */
@@ -31,6 +32,7 @@ export function PoolSettings({ pool }: { readonly pool: Pool }) {
   const problem = validateName(name, otherNames);
   const error = checked && problem !== null ? poolNameMessages[problem] : undefined;
   const dirty = name.trim() !== pool.name;
+  const unsaved = useUnsavedChanges(dirty, `The new name of ${pool.name} will be lost.`);
 
   /** The bar goes away: focus on one of its buttons would fall to the page. */
   function keepFocus() {
@@ -90,19 +92,29 @@ export function PoolSettings({ pool }: { readonly pool: Pool }) {
       </form>
 
       <div className="mt-6">
-        <DeletePool pool={pool} />
+        {/* Deleting drops the new name with the pool: nothing to warn about. */}
+        <DeletePool pool={pool} onLeave={unsaved.leaveOnPurpose} />
       </div>
+
+      {unsaved.dialog}
     </section>
   );
 }
 
-function DeletePool({ pool }: { readonly pool: Pool }) {
+type DeletePoolProps = {
+  readonly pool: Pool;
+  /** Called before navigating away, so the page does not ask about an unsaved name. */
+  readonly onLeave: () => void;
+};
+
+function DeletePool({ pool, onLeave }: DeletePoolProps) {
   const removePool = useLibrary((state) => state.removePool);
   const navigate = useNavigate();
   const announce = useAnnounce();
   const [isAsking, setIsAsking] = useState(false);
 
   async function leaveAndDelete() {
+    onLeave();
     // Replace: Back must not lead to the page of a pool that no longer exists.
     await navigate("/pools", { replace: true, flushSync: true });
     // Only once this page is gone, or it would render "pool not found" for a frame.
